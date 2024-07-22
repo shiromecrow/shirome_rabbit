@@ -160,7 +160,7 @@ void run_movement_suspension(int *direction, unsigned short front_count,
 			// 迷路破損のため停止(一時停止後に周辺の地図情報を初期化して再探索に変更予定)
 			error_mode = 6;
 			g_WallControl_mode = 0;
-			pl_yellow_LED_count(2 * 2 * 2 * 2 * 2);
+			pl_yellow_LED_count(6);
 			pl_DriveMotor_stop();
 			pl_DriveMotor_standby(OFF);
 			//break;
@@ -277,7 +277,7 @@ void AdatiWayReturn(float input_StraightVelocity, float input_TurningVelocity, f
 
 		//異常終了
 		if (x == 0 && y == 0) {
-			error_mode=1;
+			error_mode=6;
 			pl_DriveMotor_stop();
 			pl_DriveMotor_standby(OFF);
 			break;
@@ -379,9 +379,9 @@ void AdatiWayReturn(float input_StraightVelocity, float input_TurningVelocity, f
 		}
 		if (x<0 || y<0 || x>MAZE_SQUARE_NUM-1 || y>MAZE_SQUARE_NUM-1){
 			// 自己位置の破損
-			error_mode=1;
+			error_mode=7;
 			g_WallControl_mode=0;
-			pl_yellow_LED_count(32);
+			pl_yellow_LED_count(7);
 			pl_DriveMotor_stop();
 			pl_DriveMotor_standby(OFF);
 			break;
@@ -443,7 +443,7 @@ void AdatiWayReturn(float input_StraightVelocity, float input_TurningVelocity, f
 	maze_display();
 	create_StepCountMap_queue();
 	if(walk_count[0][0] == MAX_WALKCOUNT){
-		error_mode = 1;
+		error_mode = 6;
 	}
 	if (error_mode == 0) {
 		record_in();

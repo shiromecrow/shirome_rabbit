@@ -23,7 +23,7 @@
 #include "math.h"
 
 char no_safty;
-char error_mode;
+unsigned char error_mode;
 char highspeed_mode;
 float encoder_PID_error;
 float gyro_PID_error;
@@ -47,9 +47,9 @@ void init_FailSafe(void){
 	error_count5=0;
 	error_time_count=0;
 	encoder_PID_error=500;
-	gyro_PID_error=4000;
+	gyro_PID_error=500;
 	gyro_x_error=300;
-	encoder_gyro_error=2500;
+	encoder_gyro_error=1000;
 
 	encoder_PID_error_highspeed=500;//3000
 	gyro_PID_error_highspeed=800;
@@ -63,7 +63,7 @@ void interrupt_FailSafe(void){
 	float gyro_PID_error_in;
 	float gyro_x_error_in;
 	float encoder_gyro_error_in;
-	float wallcut_error_in;
+//	float wallcut_error_in;
 
 	if (highspeed_mode == 0) {
 		encoder_PID_error_in=encoder_PID_error;
@@ -76,12 +76,12 @@ void interrupt_FailSafe(void){
 		gyro_x_error_in=gyro_x_error_highspeed;
 		encoder_gyro_error_in=encoder_gyro_error_highspeed;
 	}
-	wallcut_error_in=1000;
+//	wallcut_error_in=1000;
 
 	if (modeacc != 0 && modeacc != 3){
 		if (no_safty == 0 && error_mode == 0) {
 			//ジャイロの誤差が一定以上
-					if (fabs(turning.velocity - angle_speed) >= gyro_PID_error_in && highspeed_mode == 1) {
+					if (fabs(turning.velocity - angle_speed) >= gyro_PID_error_in ) {
 						error_count1++;
 						if(error_count1>=90){
 							pl_FunMotor_stop();
@@ -168,19 +168,8 @@ void interrupt_FailSafe(void){
 	}
 
 	if(error_mode>=1){
-		if(error_mode==1){
-			pl_yellow_LED_count(1);
-		}else if(error_mode==2){
-			pl_yellow_LED_count(2);
-		}else if(error_mode==3){
-			pl_yellow_LED_count(4);
-		}else if(error_mode==4){
-			pl_yellow_LED_count(8);
-		}else if(error_mode==5){
-			pl_yellow_LED_count(16);
-		}else if(error_mode==6){
-			pl_yellow_LED_count(32);
-		}
+
+		pl_yellow_LED_count(error_mode);
 
 		record_mode=0;
 		error_time_count++;

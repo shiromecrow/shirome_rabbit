@@ -15,6 +15,7 @@
 
 
 #include "maze_wall.h"
+#include "fail_safe.h"
 #include"maze_strategy.h"
 #include"define.h"
 #include "stdio.h"
@@ -431,7 +432,7 @@ void create_DijkstraMap(void){
 		//printf("x %d,y %d,C(0)R(1) %d\n",Xcoordinate,Ycoordinate,Row_or_Column);
 		//printf("cost_num %d\n",dis_cost);
 		//printf("x head %d tail %d\n y head %d tail %d\n",stack_x.head,stack_x.tail,stack_y.head,stack_y.tail);
-		if (Xcoordinate == MAX_WALKCOUNT_DIJKSTRA || Ycoordinate == MAX_WALKCOUNT_DIJKSTRA) {
+		if (Xcoordinate == MAX_WALKCOUNT_DIJKSTRA || Ycoordinate == MAX_WALKCOUNT_DIJKSTRA || error_mode >= 1) {
 			//printf("stack_end\n");
 			break;
 		}
@@ -673,7 +674,9 @@ void route_Dijkstra(void){
 
 		if (front_count==MAX_WALKCOUNT_DIJKSTRA && right_count==MAX_WALKCOUNT_DIJKSTRA && left_count==MAX_WALKCOUNT_DIJKSTRA && back_count==MAX_WALKCOUNT_DIJKSTRA){
 			// 迷路破損のため停止(一時停止後に周辺の地図情報を初期化して再探索に変更予定)
-
+			break;
+		}
+		if ( error_mode >= 1 ){
 			break;
 		}
 		if (front_count <= right_count && front_count <= left_count && front_count <= back_count){
@@ -779,7 +782,7 @@ void route_Dijkstra(void){
 			Row_or_Column = popStack_walk(&stack_matrix);
 			//printf("x %d,y %d,C(0)R(1) %d\n",Xcoordinate,Ycoordinate,Row_or_Column);
 			//printf("x head %d tail %d\n y head %d tail %d\n",stack_x.head,stack_x.tail,stack_y.head,stack_y.tail);
-			if (Xcoordinate == MAX_WALKCOUNT_DIJKSTRA || Ycoordinate == MAX_WALKCOUNT_DIJKSTRA) {
+			if (Xcoordinate == MAX_WALKCOUNT_DIJKSTRA || Ycoordinate == MAX_WALKCOUNT_DIJKSTRA || error_mode >= 1) {
 				//printf("stack_end\n");
 				break;
 			}
@@ -829,7 +832,7 @@ void create_StepCountMap_unknown(void){
 			goalY = popStack_walk(&g_Goal_y);
 			//printf("x %d,y %d,C(0)R(1) %d\n",Xcoordinate,Ycoordinate,Row_or_Column);
 			//printf("x head %d tail %d\n y head %d tail %d\n",stack_x.head,stack_x.tail,stack_y.head,stack_y.tail);
-			if (goalX == MAX_WALKCOUNT_DIJKSTRA || goalY == MAX_WALKCOUNT_DIJKSTRA) {
+			if (goalX == MAX_WALKCOUNT_DIJKSTRA || goalY == MAX_WALKCOUNT_DIJKSTRA || error_mode >= 1) {
 				//printf("stack_end\n");
 				break;
 			}
@@ -852,13 +855,13 @@ void create_StepCountMap_unknown(void){
 	uint16_t count_number = 1;
 	unsigned short Xcoordinate,Ycoordinate;
 	uint32_t wall_north=1,wall_south=1,wall_east=1,wall_west=1;
-	while (count_number <= MAZE_SQUARE_NUM*MAZE_SQUARE_NUM-2) {
+	while (1) {
 
 		Xcoordinate = popStack_walk(&stack_x);
 		Ycoordinate = popStack_walk(&stack_y);
 		//printf("x %d,y %d\n",Xcoordinate,Ycoordinate);
 		//printf("x head %d tail %d\n y head %d tail %d\n",stack_x.head,stack_x.tail,stack_y.head,stack_y.tail);
-		if (Xcoordinate == MAX_WALKCOUNT_DIJKSTRA || Ycoordinate == MAX_WALKCOUNT_DIJKSTRA) {
+		if (Xcoordinate == MAX_WALKCOUNT_DIJKSTRA || Ycoordinate == MAX_WALKCOUNT_DIJKSTRA || error_mode >= 1) {
 			//printf("stack_end\n");
 			break;
 		}
@@ -938,7 +941,7 @@ void create_StepCountMap_queue(void){
 		Ycoordinate = popStack_walk(&stack_y);
 		//printf("x %d,y %d\n",Xcoordinate,Ycoordinate);
 		//printf("x head %d tail %d\n y head %d tail %d\n",stack_x.head,stack_x.tail,stack_y.head,stack_y.tail);
-		if (Xcoordinate == MAX_WALKCOUNT_DIJKSTRA || Ycoordinate == MAX_WALKCOUNT_DIJKSTRA) {
+		if (Xcoordinate == MAX_WALKCOUNT_DIJKSTRA || Ycoordinate == MAX_WALKCOUNT_DIJKSTRA || error_mode >= 1) {
 			//printf("stack_end\n");
 			break;
 		}
@@ -1003,13 +1006,13 @@ void create_StepCountMapBack_queue(void){
 	uint16_t count_number = 1;
 	unsigned short Xcoordinate,Ycoordinate;
 	uint32_t wall_north=1,wall_south=1,wall_east=1,wall_west=1;
-	while (count_number <= MAZE_SQUARE_NUM*MAZE_SQUARE_NUM-2) {
+	while (1) {
 
 		Xcoordinate = popStack_walk(&stack_x);
 		Ycoordinate = popStack_walk(&stack_y);
 		//printf("x %d,y %d\n",Xcoordinate,Ycoordinate);
 		//printf("x head %d tail %d\n y head %d tail %d\n",stack_x.head,stack_x.tail,stack_y.head,stack_y.tail);
-		if (Xcoordinate == MAX_WALKCOUNT_DIJKSTRA || Ycoordinate == MAX_WALKCOUNT_DIJKSTRA) {
+		if (Xcoordinate == MAX_WALKCOUNT_DIJKSTRA || Ycoordinate == MAX_WALKCOUNT_DIJKSTRA || error_mode >= 1) {
 			//printf("stack_end\n");
 			break;
 		}
