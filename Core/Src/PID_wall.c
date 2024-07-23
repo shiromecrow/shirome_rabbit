@@ -802,9 +802,7 @@ void interrupt_WallCut(void) {
 /* スラロームで用いる90度センサーの壁切れ */
 		if (g_sensor[SENSOR_LEFT][0] < WALLCUT_THRESHOLD_L90) {
 			NoWallCountL90++;
-			//straight.velocityのほうが良き？
 			NoWallDisplacementL90 += (fusion_speedL + fusion_speedR) / 2 * INTERRUPT_TIME;
-//			straight.velocity*INTERRUPT_TIME - straight.acceleration*INTERRUPT_TIME*INTERRUPT_TIME/2
 		} else {
 			NoWallCountL90 = 0;
 			NoWallDisplacementL90 = 0;
@@ -821,111 +819,66 @@ void interrupt_WallCut(void) {
 /* 大回りターンで用いる45度センサーの壁切れ */
 		//g_sensor_diff_wallcut[SENSOR_FRONT_LEFT] > WALLCUT_THRESHOLD_DIFF_L45 &&
 		if (g_sensor[SENSOR_FRONT_LEFT][0] > WALLCUT_THRESHOLD_L45) {
-			g_sensor_max_fl = 0;			//CENTER_FL;
 			NoWallCountL45++;
 			NoWallCountL45_flag = 0;
-
 			NoWallDisplacementL45 += (fusion_speedL + fusion_speedR) / 2 * INTERRUPT_TIME;
-
 		} else {
-
 			if (NoWallCountL45_flag == 0) {
-//				for (int i = 0; i <= 19; i++) {
-//					if (g_sensor_max_fl
-//							< (float) (g_sensor[SENSOR_FRONT_LEFT][i])) {
-//						g_sensor_max_fl =
-//								(float) (g_sensor[SENSOR_FRONT_LEFT][i]);
-//					}
-//				}
 				NoWallCountL45 = 0;
 				NoWallCountL45_flag = 1;
 				NoWallDisplacementL45 = 0;
-				//NoWallDisplacementL45 = GAIN_WALLCUT * (g_sensor_max_fl - CENTER_FL) / g_sensor_max_fl;
 			} else {
 				NoWallCountL45++;
-//				NoWallDisplacementL45 += straight.velocity*INTERRUPT_TIME;
-				NoWallDisplacementL45 += (fusion_speedL + fusion_speedR)
-						/ 2* INTERRUPT_TIME;
+				NoWallDisplacementL45 += (fusion_speedL + fusion_speedR) / 2* INTERRUPT_TIME;
 			}
 		}
 
- //g_sensor_diff_wallcut[SENSOR_FRONT_RIGHT] > WALLCUT_THRESHOLD_DIFF_R45 &&
+		//g_sensor_diff_wallcut[SENSOR_FRONT_RIGHT] > WALLCUT_THRESHOLD_DIFF_R45 &&
 		if (g_sensor[SENSOR_FRONT_RIGHT][0] > WALLCUT_THRESHOLD_R45) {
-			g_sensor_max_fr = 0;			//CENTER_FR;
 			NoWallCountR45++;
 			NoWallCountR45_flag = 0;
 			NoWallDisplacementR45 += (fusion_speedL + fusion_speedR) / 2 * INTERRUPT_TIME;
-//			}
 		} else {
 			if (NoWallCountR45_flag == 0) {
-//				for (int i = 0; i <= 19; i++) {
-//					if (g_sensor_max_fr
-//							< (float) (g_sensor[SENSOR_FRONT_RIGHT][i])) {
-//						g_sensor_max_fr =
-//								(float) (g_sensor[SENSOR_FRONT_RIGHT][i]);
-//					}
-//				}
 				NoWallCountR45 = 0;
 				NoWallCountR45_flag = 1;
 				NoWallDisplacementR45 = 0;
-				//NoWallDisplacementR45 = GAIN_WALLCUT * (g_sensor_max_fr - CENTER_FR) / g_sensor_max_fr;
 			} else {
 				NoWallCountR45++;
-				//			NoWallDisplacementR45 += straight.velocity*INTERRUPT_TIME;
-				NoWallDisplacementR45 += (fusion_speedL + fusion_speedR)
-						/ 2* INTERRUPT_TIME;
+				NoWallDisplacementR45 += (fusion_speedL + fusion_speedR) / 2* INTERRUPT_TIME;
 			}
-
 		}
 
 		// 大回りターンで用いる45度センサーの壁切れ(斜め)
 		if (g_sensor_diff_wallcut_slant[SENSOR_FRONT_LEFT]
 				> WALLCUT_THRESHOLD_DIFF_L45_SLANT) {
-			g_sensor_max_fl_slant = 0;			//CENTER_FL_SLANT;
 			NoWallCountL45slant++;
 			pl_l_blue_LED(0);
 			NoWallCountL45slant_flag = 0;
-			//			NoWallDisplacementL45slant2 += straight.velocity*INTERRUPT_TIME;
-			NoWallDisplacementL45slant2 += (fusion_speedL + fusion_speedR)
-					/ 2*INTERRUPT_TIME;//壁切れ用
+			NoWallDisplacementL45slant2 += (fusion_speedL + fusion_speedR) / 2*INTERRUPT_TIME;//壁切れ用
 			if (slantWallControlL_flag == 1) {
 				NoWallDisplacementL45slant += straight.velocity*INTERRUPT_TIME;//斜め制御用
-				//NoWallDisplacementL45slant += (E_speedL + E_speedR)
-				//		/ 2*INTERRUPT_TIME;
 			}
 		} else {
 			if (NoWallCountL45slant_flag == 0) {
-//				for (int i = 0; i <= 19; i++) {
-//					if (g_sensor_max_fl_slant
-//							< (float) (g_sensor[SENSOR_FRONT_LEFT][i])) {
-//						g_sensor_max_fl_slant =
-//								(float) (g_sensor[SENSOR_FRONT_LEFT][i]);
-//					}
-//				}
 				NoWallCountL45slant = 0;
 				NoWallCountL45slant_flag = 1;
 				pl_l_blue_LED(1);
-							NoWallDisplacementL45slant = 0;
-							NoWallDisplacementL45slant2 = 0;
+				NoWallDisplacementL45slant = 0;
+				NoWallDisplacementL45slant2 = 0;
 
 			} else {
 				NoWallCountL45slant++;
-				//			NoWallDisplacementL45slant2 += straight.velocity*INTERRUPT_TIME;
-				NoWallDisplacementL45slant2 += (fusion_speedL + fusion_speedR)
-						/ 2*INTERRUPT_TIME;
+				NoWallDisplacementL45slant2 += (fusion_speedL + fusion_speedR) / 2*INTERRUPT_TIME;
 				if (slantWallControlL_flag == 1) {
 					NoWallDisplacementL45slant += straight.velocity*INTERRUPT_TIME;
-//					NoWallDisplacementL45slant += (E_speedL + E_speedR)
-//							/ 2*INTERRUPT_TIME;
 				}
 			}
-
 			slantWallControlL_flag = 1;
 		}
 
 		if (g_sensor_diff_wallcut_slant[SENSOR_FRONT_RIGHT]
 				> WALLCUT_THRESHOLD_DIFF_R45_SLANT) {
-			g_sensor_max_fr_slant = 0;				//CENTER_FR_SLANT;
 			NoWallCountR45slant++;
 			pl_r_blue_LED(0);
 			NoWallCountR45slant_flag = 0;
