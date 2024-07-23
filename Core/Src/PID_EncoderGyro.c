@@ -51,7 +51,7 @@ void clear_Ierror(void) {
 }
 
 
-void EncoderGyro_PID(float *PID_s, float *PID_t,float straight_velocity,float turning_velocity) {
+void EncoderGyro_PID(float *PID_s, float *PID_t,float straight_velocity,float turning_velocity,float turning_displacement) {
 	float PID_stra = 0;
 	float PID_turn = 0;
 	if(highspeed_mode == 1){
@@ -78,6 +78,8 @@ void EncoderGyro_PID(float *PID_s, float *PID_t,float straight_velocity,float tu
 		Ktp = 3.9; //295//P項の制御量旋回
 		Kti = 0.16; //1//.6//I項の制御量旋回
 		Ktd = 0.02; //205//D項の制御量旋回
+		Ktp_angle = 2.5; //P項の制御量旋回
+		Ktd_angle = 0.01; //D項の制御量旋回
 	}
 //	if(straight_velocity>3000){
 //		Ksp = 2.1; //3//P項の制御量直進
@@ -140,7 +142,8 @@ void EncoderGyro_PID(float *PID_s, float *PID_t,float straight_velocity,float tu
 	PID_turn = Ktp * Gyro.error + Kti * Gyro.sigma_error
 			+ Ktd * Gyro.delta_error;
 
-	Gyro_angle.error = -yaw_angle;
+
+	Gyro_angle.error = turning_displacement - yaw_angle;
 	Gyro_angle.delta_error = Gyro_angle.error - Gyro_angle.old_error;
 	Gyro_angle.old_error = Gyro_angle.error;
 	PID_turn += Ktp_angle * Gyro_angle.error + Ktd_angle * Gyro_angle.delta_error;
