@@ -1125,7 +1125,8 @@ void testturning(parameter_speed Howspeed,int turnmode,char shortest_mode,char f
 		control_fun(fun_V);
 		pl_FunMotor_start();
 		HAL_Delay(600);
-		reset_gyro();
+		//reset_gyro();
+		reset_gyro_integral();
 		reset_speed();
 		reset_distance();
 		clear_Ierror();

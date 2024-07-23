@@ -994,7 +994,8 @@ if(pass_mode==1){
 		control_fun(fun_V);
 		pl_FunMotor_start();
 		wait_ms_NoReset(600);
-		reset_gyro();
+		//reset_gyro();
+		reset_gyro_integral();
 		reset_speed();
 		clear_Ierror();
 //		wait_ms_NoReset(1000);

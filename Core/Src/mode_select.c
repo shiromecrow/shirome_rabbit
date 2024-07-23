@@ -702,7 +702,8 @@ void mode_Tuning1(unsigned char main_modeR){
 			control_fun(5.6);
 			pl_FunMotor_start();
 			HAL_Delay(600);
-			reset_gyro();
+			//reset_gyro();
+			reset_gyro_integral();
 			reset_speed();
 			clear_Ierror();
 			record_mode=7;
@@ -729,7 +730,8 @@ void mode_Tuning1(unsigned char main_modeR){
 			control_fun(5.6);
 			pl_FunMotor_start();
 			HAL_Delay(600);
-			reset_gyro();
+			//reset_gyro();
+			reset_gyro_integral();
 			reset_speed();
 			clear_Ierror();
 			record_mode=16;
@@ -753,7 +755,8 @@ void mode_Tuning1(unsigned char main_modeR){
 			control_fun(5.6);
 			pl_FunMotor_start();
 			HAL_Delay(600);
-			reset_gyro();
+			//reset_gyro();
+			reset_gyro_integral();
 			reset_speed();
 			clear_Ierror();
 			record_mode=17;
@@ -814,7 +817,8 @@ void mode_Tuning1(unsigned char main_modeR){
 			control_fun(5.6);
 			pl_FunMotor_start();
 			HAL_Delay(600);
-			reset_gyro();
+			//reset_gyro();
+			reset_gyro_integral();
 			reset_speed();
 			reset_distance();
 			clear_Ierror();
@@ -939,7 +943,8 @@ void mode_Tuning0(unsigned char main_modeR){
 			control_fun(5.6);
 			pl_FunMotor_start();
 			HAL_Delay(600);
-			reset_gyro();
+			//reset_gyro();
+			reset_gyro_integral();
 			reset_speed();
 			reset_distance();
 			clear_Ierror();
@@ -955,7 +960,8 @@ void mode_Tuning0(unsigned char main_modeR){
 			control_fun(5.6);
 			pl_FunMotor_start();
 			HAL_Delay(600);
-			reset_gyro();
+			//reset_gyro();
+			reset_gyro_integral();
 			reset_speed();
 			reset_distance();
 			clear_Ierror();
@@ -1058,7 +1064,8 @@ void mode_Tuning0(unsigned char main_modeR){
 			control_fun(5.6);
 			pl_FunMotor_start();
 			HAL_Delay(600);
-			reset_gyro();
+			//reset_gyro();
+			reset_gyro_integral();
 			reset_speed();
 			reset_distance();
 			clear_Ierror();
@@ -1278,7 +1285,8 @@ void mode_WallSensorTuning_fast(unsigned char main_modeR){
 	control_fun(5.6);
 	pl_FunMotor_start();
 	HAL_Delay(600);
-	reset_gyro();
+	//reset_gyro();
+	reset_gyro_integral();
 	reset_speed();
 	clear_Ierror();
 	yaw_angle=0;
