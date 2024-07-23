@@ -33,7 +33,7 @@ int kitikukan;
 int pass[PASS_NUM]; //1f 2r 3l
 
 
-
+uint8_t flg_backhit=OFF;
 
 
 void get_wallData_sensor(_Bool* front_wall,_Bool* right_wall,_Bool* left_wall){
@@ -105,7 +105,7 @@ void run_movement_continuity(int *direction,unsigned short front_count,unsigned 
 		//backTurn_hitWall(input_TurningVelocity, input_TurningAcceleration, front_wall, left_wall, right_wall);
 		wait_ms_NoReset(200);
 		mode.WallControlMode=0;
-		if(front_wall){
+		if(front_wall && flg_backhit == ON){
 		straight_table2(-BACK_TO_CENTER-10, 0,0,-150,1000, mode);
 		wait_ms_NoReset(400);
 		clear_Ierror();
@@ -195,7 +195,7 @@ if(error_mode==0){
 		//backTurn_hitWall(input_TurningVelocity, input_TurningAcceleration, front_wall, left_wall, right_wall);
 		wait_ms_NoReset(100);
 		mode.WallControlMode=0;
-		if(front_wall){
+		if(front_wall && flg_backhit == ON){
 		straight_table2(-BACK_TO_CENTER-10, 0,0,-150,1000, mode);
 		wait_ms_NoReset(400);
 		clear_Ierror();
@@ -322,7 +322,7 @@ void AdatiWayReturn(float input_StraightVelocity, float input_TurningVelocity, f
 			compress_kitiku(&x,&y,&direction,&kitiku_distance);
 			End_straight(MAZE_SECTION/2-MAZE_OFFSET,mode,1,1);
 			mode.calMazeMode=0;
-			straight_table2((MAZE_SECTION/2 * kitiku_distance),input_StraightVelocity,input_StraightVelocity,900,input_StraightAcceleration, mode);
+			straight_table2((MAZE_SECTION/2 * kitiku_distance),input_StraightVelocity,input_StraightVelocity,1000,input_StraightAcceleration, mode);
 		}
 
 		if (direction >= 5) {direction = direction-4;}

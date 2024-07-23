@@ -85,41 +85,38 @@ void backTurn_controlWall(float input_TurningVelocity,float input_TurningAcceler
 		no_frontwall_straight();
 		pl_R_DriveMotor_mode(MOTOR_BREAK);
 		pl_L_DriveMotor_mode(MOTOR_BREAK);
-		//clear_Ierror();
 		wait_ms_NoReset(50);
 	}
 	if(left_wall){
 		turning_table2(90,0,0,input_TurningVelocity,input_TurningAcceleration);
 		pl_R_DriveMotor_mode(MOTOR_BREAK);
 		pl_L_DriveMotor_mode(MOTOR_BREAK);
-		wait_ms_NoReset(150);
+		wait_ms_NoReset(50);
 		no_frontwall_straight();
 		pl_R_DriveMotor_mode(MOTOR_BREAK);
 		pl_L_DriveMotor_mode(MOTOR_BREAK);
-		//clear_Ierror();
-		wait_ms_NoReset(150);
+		wait_ms_NoReset(50);
 		turning_table2(90,0,0,input_TurningVelocity,input_TurningAcceleration);
 	}else if(left_wall==0 && right_wall){
 		turning_table2(-90,0,0,-input_TurningVelocity,input_TurningAcceleration);
 		pl_R_DriveMotor_mode(MOTOR_BREAK);
 		pl_L_DriveMotor_mode(MOTOR_BREAK);
-		wait_ms_NoReset(150);
+		wait_ms_NoReset(50);
 		no_frontwall_straight();
 		pl_R_DriveMotor_mode(MOTOR_BREAK);
 		pl_L_DriveMotor_mode(MOTOR_BREAK);
-		//clear_Ierror();
-		wait_ms_NoReset(150);
+		wait_ms_NoReset(50);
 		turning_table2(-90,0,0,-input_TurningVelocity,input_TurningAcceleration);
 	}else if(left_wall==0 && right_wall==0){
 		turning_table2(90,0,0,input_TurningVelocity,input_TurningAcceleration);
 		pl_R_DriveMotor_mode(MOTOR_BREAK);
 		pl_L_DriveMotor_mode(MOTOR_BREAK);
-		wait_ms_NoReset(150);
+		wait_ms_NoReset(50);
 		turning_table2(90,0,0,input_TurningVelocity,input_TurningAcceleration);
 	}
 	pl_R_DriveMotor_mode(MOTOR_BREAK);
 	pl_L_DriveMotor_mode(MOTOR_BREAK);
-	wait_ms_NoReset(250);
+	wait_ms_NoReset(100);
 	no_safty = 0;
 }
 

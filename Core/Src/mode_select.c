@@ -488,7 +488,7 @@ void mode_Running(unsigned char main_modeR){
 		break;
 		case 0b0011://ゴミ
 			tic_timer();
-			AdatiWayReturn(300,400,3000,3000,speed300_exploration,1,1);
+			AdatiWayReturn(300,700,4000,8000,speed300_exploration,1,1);
 		break;
 		case 0b0100://ゴミ
 			record_out();
