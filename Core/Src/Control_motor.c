@@ -127,7 +127,7 @@ void interupt_DriveMotor(void){
 		turning.displacement += turning.velocity*INTERRUPT_TIME + turning.acceleration*INTERRUPT_TIME*INTERRUPT_TIME/2;
 		turning.velocity += turning.acceleration*INTERRUPT_TIME;
 		cal_table(Trapezoid_straight,&straight);
-		EncoderGyro_PID(&PID_s,&PID_t,straight.velocity,turning.velocity);
+		EncoderGyro_PID(&PID_s,&PID_t,straight.velocity,turning.velocity,turning.displacement);
 		straight_acceleration_lpf=0.9 * straight_acceleration_lpf + (1 - 0.9) * straight.acceleration;
 		feedforward_const_accel(&feedforward_straight,(E_lpf_speedL+E_lpf_speedR)/2,
 				straight_acceleration_lpf,&feedforward_turning,
@@ -155,7 +155,7 @@ void interupt_DriveMotor(void){
 		turning.displacement += turning.velocity*INTERRUPT_TIME + turning.acceleration*INTERRUPT_TIME*INTERRUPT_TIME/2;
 		turning.velocity += turning.acceleration*INTERRUPT_TIME;
 		cal_table(Trapezoid_turning,&turning);
-		EncoderGyro_PID(&PID_s,&PID_t,straight.velocity,turning.velocity);
+		EncoderGyro_PID(&PID_s,&PID_t,straight.velocity,turning.velocity,turning.displacement);
 		feedforward_const_accel(&feedforward_straight,(E_lpf_speedL+E_lpf_speedR)/2,
 				straight.acceleration,&feedforward_turning,
 					angle_speed,turning.acceleration);
@@ -179,7 +179,7 @@ void interupt_DriveMotor(void){
 		straight.velocity += straight.acceleration*INTERRUPT_TIME;
 		turning.displacement += turning.velocity*INTERRUPT_TIME + turning.acceleration*INTERRUPT_TIME*INTERRUPT_TIME/2;
 		turning.velocity += turning.acceleration*INTERRUPT_TIME;
-		EncoderGyro_PID(&PID_s,&PID_t,straight.velocity,turning.velocity);
+		EncoderGyro_PID(&PID_s,&PID_t,straight.velocity,turning.velocity,turning.displacement);
 		V_L = PID_s-PID_t+feedforward_straight-feedforward_turning;
 		V_R = PID_s+PID_t+feedforward_straight+feedforward_turning;
 		get_duty(V_L, V_R,&duty_L,&duty_R);
@@ -200,7 +200,7 @@ void interupt_DriveMotor(void){
 		straight.velocity += straight.acceleration*INTERRUPT_TIME;
 		turning.displacement += turning.velocity*INTERRUPT_TIME;// + turning.acceleration*INTERRUPT_TIME*INTERRUPT_TIME/2;
 		cal_mollifier_table(Mollifier_turning,&turning);//角速度と角加速度はここで決定
-		EncoderGyro_PID(&PID_s,&PID_t,straight.velocity,turning.velocity);
+		EncoderGyro_PID(&PID_s,&PID_t,straight.velocity,turning.velocity,turning.displacement);
 		feedforward_const_accel(&feedforward_straight,(E_lpf_speedL+E_lpf_speedR)/2,
 				straight.acceleration,&feedforward_turning,
 					angle_speed,turning.acceleration);
@@ -224,7 +224,7 @@ void interupt_DriveMotor(void){
 		turning.displacement += turning.velocity*INTERRUPT_TIME + turning.acceleration*INTERRUPT_TIME*INTERRUPT_TIME/2;
 		turning.velocity += turning.acceleration*INTERRUPT_TIME;
 		cal_table_dis(Trapezoid_straight,&straight);
-		EncoderGyro_PID(&PID_s,&PID_t,straight.velocity,turning.velocity);
+		EncoderGyro_PID(&PID_s,&PID_t,straight.velocity,turning.velocity,turning.displacement);
 		feedforward_const_accel(&feedforward_straight,(E_lpf_speedL+E_lpf_speedR)/2,
 				straight.acceleration,&feedforward_turning,
 					angle_speed,turning.acceleration);
@@ -250,7 +250,7 @@ void interupt_DriveMotor(void){
 		turning.displacement += turning.velocity*INTERRUPT_TIME + turning.acceleration*INTERRUPT_TIME*INTERRUPT_TIME/2;
 		turning.velocity += turning.acceleration*INTERRUPT_TIME;
 		cal_table_max(Trapezoid_straight,&straight);
-		EncoderGyro_PID(&PID_s,&PID_t,straight.velocity,turning.velocity);
+		EncoderGyro_PID(&PID_s,&PID_t,straight.velocity,turning.velocity,turning.displacement);
 		feedforward_const_accel(&feedforward_straight,(E_lpf_speedL+E_lpf_speedR)/2,
 				straight.acceleration,&feedforward_turning,
 					angle_speed,turning.acceleration);
@@ -270,7 +270,7 @@ void interupt_DriveMotor(void){
 	if (modeacc == 100) {
 		straight.velocity = 0;
 		turning.velocity=0;
-		EncoderGyro_PID(&PID_s,&PID_t,straight.velocity,turning.velocity);
+		EncoderGyro_PID(&PID_s,&PID_t,straight.velocity,turning.velocity,turning.displacement);
 		V_L = PID_s-PID_t+feedforward_straight-feedforward_turning;
 		V_R = PID_s+PID_t+feedforward_straight+feedforward_turning;
 		get_duty(V_L, V_R,&duty_L,&duty_R);
@@ -627,6 +627,8 @@ float turning_table2(float input_displacement, float input_start_velocity,
 					)/2/input_acceleration;
 	// 例外処理
 	if (input_acceleration < 0){input_acceleration=-input_acceleration;}//加速が負
+
+	yaw_angle=0;
 
 	Trapezoid_turning.displacement = input_displacement;
 	Trapezoid_turning.start_velocity = input_start_velocity;
