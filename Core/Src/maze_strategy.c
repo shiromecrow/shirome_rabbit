@@ -11,6 +11,7 @@
 #include"maze_Turning.h"
 #include "PID_EncoderGyro.h"
 #include "PID_wall.h"
+#include "stdio.h"
 
 #include"maze_wall.h"
 #include"PL_flash.h"
@@ -513,7 +514,6 @@ void pass_maker(void){
 
 		if (front_count==MAX_WALKCOUNT && right_count==MAX_WALKCOUNT && left_count==MAX_WALKCOUNT && back_count==MAX_WALKCOUNT){
 			// 迷路破損のため停止(一時停止後に周辺の地図情報を初期化して再探索に変更予定)
-			pl_play_oneSound(1);
 			break;
 		}
 		if (front_count <= right_count && front_count <= left_count && front_count <= back_count){

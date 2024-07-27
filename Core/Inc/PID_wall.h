@@ -15,7 +15,6 @@
 //#define CONTROLRIGHTWALL 2
 
 // 壁制御に使用する値
-//#define SENSOR_GAIN 0.16*800/500//0.16横壁制御のゲイン
 #define SENSOR_GAIN_P 1.2//0.16横壁制御のゲイン
 #define SENSOR_GAIN_D 0.006//0.16横壁制御のゲイン
 //#define SENSOR_GAIN_SHORT 0.5*800/1200//0.16横壁制御のゲイン最短用

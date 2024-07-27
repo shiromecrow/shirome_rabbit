@@ -26,6 +26,7 @@ void mode_Running2(unsigned char);
 
 void mode_Tuning0(unsigned char);
 void mode_Tuning1(unsigned char);
+void mode_Tuning2(unsigned char);
 void mode_WallSensorTuning(unsigned char);
 
 void mode_WallSensorTuning_fast(unsigned char);

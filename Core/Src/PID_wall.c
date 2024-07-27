@@ -139,6 +139,7 @@ float calWallConrol(void) {
 		sensor_gain_p = SENSOR_GAIN_P * straight.velocity;
 		sensor_gain_d = SENSOR_GAIN_D * straight.velocity;
 	}
+
 	if (g_sensor[SENSOR_LEFT][0] < SENSOR_L_MIN) {
 		sensorWall_L = SENSOR_L_MIN;
 	} else if (g_sensor[SENSOR_LEFT][0] > SENSOR_L_MAX) {
@@ -153,16 +154,7 @@ float calWallConrol(void) {
 	} else {
 		sensorWall_R = (float) (g_sensor[SENSOR_RIGHT][0]);
 	}
-//	float SensorDistanceL,SensorDistanceR;
-//
-//	//距離の線形補間
-//	SensorDistanceL = -0.0000003162 * g_sensor[1][0] * g_sensor[1][0] * g_sensor[1][0]
-//				+ 0.0006010785 * g_sensor[1][0] * g_sensor[1][0] - 0.4363050788 * g_sensor[1][0]
-//				+ 190.114;
-//
-//	SensorDistanceR = -0.0000001684 * g_sensor[2][0] * g_sensor[2][0] * g_sensor[2][0]
-//				+ 0.0004061427 * g_sensor[2][0] * g_sensor[2][0] - 0.3784837856 * g_sensor[2][0]
-//				+ 197.1162;
+
 
 	PID_wall = 0;
 	PID_w = 0;
@@ -882,36 +874,25 @@ void interrupt_WallCut(void) {
 			NoWallCountR45slant++;
 			pl_r_blue_LED(0);
 			NoWallCountR45slant_flag = 0;
-//	 		NoWallDisplacementR45slant2 += straight.velocity*INTERRUPT_TIME;
-			NoWallDisplacementR45slant2 += (fusion_speedL + fusion_speedR)
-					/ 2*INTERRUPT_TIME;
+			NoWallDisplacementR45slant2 += (fusion_speedL + fusion_speedR) / 2*INTERRUPT_TIME;
 			if (slantWallControlR_flag == 1) {
 				NoWallDisplacementR45slant += straight.velocity*INTERRUPT_TIME;
-//				NoWallDisplacementR45slant += (fusion_speedL + fusion_speedR)
-//						/ 2*INTERRUPT_TIME;
 			}
 		} else {
 			if (NoWallCountR45slant_flag == 0) {
-
 				NoWallCountR45slant = 0;
 				NoWallCountR45slant_flag = 1;
 				pl_r_blue_LED(1);
-			NoWallDisplacementR45slant = 0;
-			NoWallDisplacementR45slant2 = 0;
-
+			    NoWallDisplacementR45slant = 0;
+			    NoWallDisplacementR45slant2 = 0;
 			} else {
 				NoWallCountR45slant++;
-//				NoWallDisplacementR45slant += straight.velocity*INTERRUPT_TIME;
-//				NoWallDisplacementR45slant2 += straight.velocity*INTERRUPT_TIME;
 				NoWallDisplacementR45slant2 += (fusion_speedL + fusion_speedR)
 						/ 2*INTERRUPT_TIME;
 				if (slantWallControlR_flag == 1) {
 					NoWallDisplacementR45slant += straight.velocity*INTERRUPT_TIME;
-//					NoWallDisplacementR45slant += (fusion_speedL + fusion_speedR)
-//							/ 2*INTERRUPT_TIME;
 				}
 			}
-
 			slantWallControlR_flag = 1;
 		}
 
