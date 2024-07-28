@@ -233,7 +233,7 @@ float calWallConrol(void) {
 //				g_WallControlStatus = g_WallControlStatus + 2;
 //			}
 		}
-
+/* 制御量計算 */
 		switch (g_WallControlStatus) {
 		case 0:			//両壁なし
 			if(highspeed_mode==1){
@@ -282,8 +282,6 @@ float calWallConrol(void) {
 			wall_normal.old_error = wall_normal.error;
 			PID_wall = sensor_gain_p * wall_normal.error
 					+ sensor_gain_d * wall_normal.delta_error;
-//			PID_wall = sensor_gain
-//					* (-2 * (float) (g_sensor[SENSOR_LEFT][0] - CENTER_L)/(float) (g_sensor[SENSOR_LEFT][0]));
 			pl_yellow_LED_count(128);
 			break;
 		case 2:			//右壁のみ
@@ -293,8 +291,6 @@ float calWallConrol(void) {
 			wall_normal.old_error = wall_normal.error;
 			PID_wall = sensor_gain_p * wall_normal.error
 					+ sensor_gain_d * wall_normal.delta_error;
-//			PID_wall = sensor_gain
-//					* (2 * (float) (g_sensor[SENSOR_RIGHT][0] - CENTER_R)/(float) (g_sensor[SENSOR_RIGHT][0]));
 			pl_yellow_LED_count(2);
 			break;
 		case 3:			//両壁あり
@@ -306,9 +302,6 @@ float calWallConrol(void) {
 			wall_normal.old_error = wall_normal.error;
 			PID_wall = sensor_gain_p * wall_normal.error
 					+ sensor_gain_d * wall_normal.delta_error;
-//			PID_wall = sensor_gain
-//					* (-(float) (g_sensor[SENSOR_LEFT][0] - CENTER_L)/(float) (g_sensor[SENSOR_LEFT][0])
-//							+ (float) (g_sensor[SENSOR_RIGHT][0] - CENTER_R)/(float) (g_sensor[SENSOR_RIGHT][0]));
 			pl_yellow_LED_count(129);
 			if ((fabs(g_sensor_diff[SENSOR_LEFT]) < 30)
 					&& (fabs(g_sensor_diff[SENSOR_RIGHT]) < 30)) {
