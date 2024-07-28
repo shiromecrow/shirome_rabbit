@@ -10,6 +10,19 @@
 #include "tim.h"
 
 
+uint16_t tim6_log1=0;
+uint16_t tim6_log2=0;
+uint16_t tim6_log3=0;
+uint16_t tim6_log4=0;
+uint16_t tim6_log5=0;
+uint16_t tim6_log6=0;
+uint16_t tim6_log7=0;
+uint16_t tim6_log8=0;
+uint16_t tim6_log9=0;
+uint16_t tim6_log10=0;
+uint16_t tim6_log11=0;
+uint16_t tim6_log12=0;
+
 volatile uint32_t g_timCount;
 float g_timCount_sec;
 uint8_t count_mode;

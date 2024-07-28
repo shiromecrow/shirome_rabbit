@@ -66,6 +66,15 @@ void pl_callback_getSensor(void) {
 
 	switch (AD_step) {
 	case 0:
+		g_sensor_off[0] = g_ADCBuffer[1];
+		g_sensor_off[1] = g_ADCBuffer[2];
+		g_sensor_off[2] = g_ADCBuffer[3];
+		g_sensor_off[3] = g_ADCBuffer[4];
+		g_sensor_off[4] = g_ADCBuffer[5];
+		g_sensor_off[5] = g_ADCBuffer[6];
+		V_battAD = g_ADCBuffer[0];
+		g_V_batt = 3.3 * (float) V_battAD / 4095.0 * (20.0 + 10.0) / 10.0*1.15*3.7/3.86*8.22/7.92;
+
 		HAL_GPIO_WritePin(SENSOR_LED1_GPIO_Port, SENSOR_LED1_Pin, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(SENSOR_LED2_GPIO_Port, SENSOR_LED2_Pin,
 				GPIO_PIN_RESET);
@@ -76,11 +85,11 @@ void pl_callback_getSensor(void) {
 		break;
 	case 1:
 		g_sensor_on[0] = g_ADCBuffer[1];
-		g_sensor_off[1] = g_ADCBuffer[2];
-		g_sensor_off[2] = g_ADCBuffer[3];
-		g_sensor_off[3] = g_ADCBuffer[4];
+		//g_sensor_off[1] = g_ADCBuffer[2];
+		//g_sensor_off[2] = g_ADCBuffer[3];
+		//g_sensor_off[3] = g_ADCBuffer[4];
 		g_sensor_on[4] = g_ADCBuffer[5];
-		g_sensor_off[5] = g_ADCBuffer[6];
+		//g_sensor_off[5] = g_ADCBuffer[6];
 
 		HAL_GPIO_WritePin(SENSOR_LED1_GPIO_Port, SENSOR_LED1_Pin,
 				GPIO_PIN_RESET);
@@ -92,11 +101,11 @@ void pl_callback_getSensor(void) {
 		while (j <= 500) {j++;}
 		break;
 	case 2:
-		g_sensor_off[0] = g_ADCBuffer[1];
+		//g_sensor_off[0] = g_ADCBuffer[1];
 		g_sensor_on[1] = g_ADCBuffer[2];
-		g_sensor_off[2] = g_ADCBuffer[3];
-		g_sensor_off[3] = g_ADCBuffer[4];
-		g_sensor_off[4] = g_ADCBuffer[5];
+		//g_sensor_off[2] = g_ADCBuffer[3];
+		//g_sensor_off[3] = g_ADCBuffer[4];
+		//g_sensor_off[4] = g_ADCBuffer[5];
 		g_sensor_on[5] = g_ADCBuffer[6];
 		HAL_GPIO_WritePin(SENSOR_LED1_GPIO_Port, SENSOR_LED1_Pin,
 				GPIO_PIN_RESET);
@@ -107,12 +116,12 @@ void pl_callback_getSensor(void) {
 		while (j <= 500) {j++;}
 		break;
 	case 3:
-		g_sensor_off[0] = g_ADCBuffer[1];
-		g_sensor_off[1] = g_ADCBuffer[2];
+		//g_sensor_off[0] = g_ADCBuffer[1];
+		//g_sensor_off[1] = g_ADCBuffer[2];
 		g_sensor_on[2] = g_ADCBuffer[3];
 		g_sensor_on[3] = g_ADCBuffer[4];
-		g_sensor_off[4] = g_ADCBuffer[5];
-		g_sensor_off[5] = g_ADCBuffer[6];
+		//g_sensor_off[4] = g_ADCBuffer[5];
+		//g_sensor_off[5] = g_ADCBuffer[6];
 
 
 		HAL_GPIO_WritePin(SENSOR_LED1_GPIO_Port, SENSOR_LED1_Pin,
@@ -124,23 +133,13 @@ void pl_callback_getSensor(void) {
 		j=0;
 		while (j <= 50) {j++;}
 		break;
-	case 4:
-		g_sensor_off[0] = g_ADCBuffer[1];
-		g_sensor_off[1] = g_ADCBuffer[2];
-		g_sensor_off[2] = g_ADCBuffer[3];
-		g_sensor_off[3] = g_ADCBuffer[4];
-		g_sensor_off[4] = g_ADCBuffer[5];
-		g_sensor_off[5] = g_ADCBuffer[6];
-		V_battAD = g_ADCBuffer[0];
-		g_V_batt = 3.3 * (float) V_battAD / 4095.0 * (20.0 + 10.0) / 10.0*1.15*3.7/3.86*8.22/7.92;
 
-		break;
 	}
 
 
 	AD_step++;
 	//for(j=0;j<=2000;j++){}
-	if (AD_step != 5) {
+	if (AD_step != 4) {
 		HAL_ADC_Start_DMA(&hadc1, g_ADCBuffer, sizeof(g_ADCBuffer) / sizeof(uint16_t));
 	} else {
 		AD_step = 0;

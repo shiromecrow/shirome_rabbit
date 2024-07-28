@@ -265,21 +265,20 @@ void mode_PLtest(unsigned char main_modeR) {
 		pl_l_blue_LED(OFF);
 
 		break;
-	case 0b1001://fun
-			control_fun(4.0);
-			pl_FunMotor_start();
-			HAL_Delay(2000);
-			reset_gyro();
-			reset_speed();
-			clear_Ierror();
-			pl_r_blue_LED(ON);
-			pl_l_blue_LED(ON);
-			while (g_sensor[0][0] <= SENSOR_FINGER_0 || g_sensor[2][0] <= SENSOR_FINGER_2 || g_sensor[4][0] <= SENSOR_FINGER_4) {
-				HAL_Delay(1);
-			}
-			pl_r_blue_LED(OFF);
-			pl_l_blue_LED(OFF);
-			pl_FunMotor_stop();
+	case 0b1001://tim6
+		g_wallCut_mode = 1;
+		g_WallControl_mode = 1;
+		highspeed_mode = 1;
+		modeacc = 6;
+		no_safty = 1;
+		record_mode=1;
+		while (1) {
+		  	printf("count=%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
+		  			tim6_log1,tim6_log2,tim6_log3,tim6_log4,tim6_log5,tim6_log6,
+					tim6_log7,tim6_log8,tim6_log9,tim6_log10,tim6_log11,tim6_log12);
+			wait_ms(500);
+		}
+
 		break;
 	case 0b1010://fun
 		    control_fun(5.6);
@@ -826,6 +825,7 @@ void mode_Tuning2(unsigned char main_modeR){
 	wait_ms_NoReset(500);
 	pl_DriveMotor_standby(OFF);
 	record_mode=0;
+	highspeed_mode = 0;
 	//pl_FunMotor_stop();
 	while (g_sensor[0][0] <= SENSOR_FINGER_0 || g_sensor[2][0] <= SENSOR_FINGER_2 || g_sensor[4][0] <= SENSOR_FINGER_4) {
 		HAL_Delay(1);
@@ -926,6 +926,7 @@ void mode_Tuning1(unsigned char main_modeR){
 			testturning(speed300_exploration,1,0,0,0,0);
 		break;
 		case 8://壁切れ(直線最短)1111 1000
+			highspeed_mode = 1;
 			control_fun(5.6);
 			pl_FunMotor_start();
 			HAL_Delay(600);
@@ -933,7 +934,7 @@ void mode_Tuning1(unsigned char main_modeR){
 			reset_gyro_integral();
 			reset_speed();
 			clear_Ierror();
-			record_mode=7;
+			record_mode=8;
 			mode.WallControlMode=1;
 			mode.WallControlStatus=0;
 			mode.WallCutMode=0;
@@ -954,6 +955,7 @@ void mode_Tuning1(unsigned char main_modeR){
 			straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
+			highspeed_mode = 1;
 			control_fun(5.6);
 			pl_FunMotor_start();
 			HAL_Delay(600);
@@ -979,6 +981,7 @@ void mode_Tuning1(unsigned char main_modeR){
 			straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			turning_table2(45, 0, 0, 300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
+			highspeed_mode=1;
 			control_fun(5.6);
 			pl_FunMotor_start();
 			HAL_Delay(600);
@@ -998,7 +1001,7 @@ void mode_Tuning1(unsigned char main_modeR){
 		case 11://斜め直進(90)
 			mode.WallControlMode=0;
 			mode.WallControlStatus=0;mode.WallCutMode=0;mode.calMazeMode=0;
-			straight_table2(BACK_TO_CENTER_FRONT+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
+			straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			record_mode=9;
@@ -1007,7 +1010,7 @@ void mode_Tuning1(unsigned char main_modeR){
 		case 12://斜め直進(45)
 			mode.WallControlMode=0;
 			mode.WallControlStatus=0;mode.WallCutMode=0;mode.calMazeMode=0;
-			straight_table2(BACK_TO_CENTER_FRONT+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
+			straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			record_mode=10;
@@ -1016,7 +1019,7 @@ void mode_Tuning1(unsigned char main_modeR){
 		case 13://斜め直進(90)
 			mode.WallControlMode=3;
 			mode.WallControlStatus=0;mode.WallCutMode=0;mode.calMazeMode=0;
-			straight_table2(BACK_TO_CENTER_FRONT+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
+			straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			record_mode=9;
@@ -1025,7 +1028,7 @@ void mode_Tuning1(unsigned char main_modeR){
 		case 14://斜め直進(45)
 			mode.WallControlMode=3;
 			mode.WallControlStatus=0;mode.WallCutMode=0;mode.calMazeMode=0;
-			straight_table2(BACK_TO_CENTER_FRONT+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
+			straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			record_mode=10;
@@ -1065,6 +1068,7 @@ void mode_Tuning1(unsigned char main_modeR){
 	wait_ms_NoReset(500);
 	pl_DriveMotor_standby(OFF);
 	record_mode=0;
+	highspeed_mode = 0;
 	//pl_FunMotor_stop();
 	while (g_sensor[0][0] <= SENSOR_FINGER_0 || g_sensor[2][0] <= SENSOR_FINGER_2 || g_sensor[4][0] <= SENSOR_FINGER_4) {
 		HAL_Delay(1);

@@ -237,7 +237,7 @@ float calWallConrol(void) {
 		switch (g_WallControlStatus) {
 		case 0:			//両壁なし
 			if(highspeed_mode==1){
-				skewer_gain=0.5;
+				skewer_gain=0.9;
 				Skewer_limit = SKEWER_LIMIT_SHORT;
 			}else{
 				skewer_gain=0.9;
