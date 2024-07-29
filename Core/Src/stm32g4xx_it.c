@@ -267,7 +267,7 @@ void TIM6_DAC_IRQHandler(void)
   tim6_log8=TIM6->CNT;
   interrupt_WallCut();/* 7us */
   tim6_log9=TIM6->CNT;
-  interupt_DriveMotor();/* 1us */
+  interupt_DriveMotor();/* 46us */
   tim6_log10=TIM6->CNT;
   interrupt_FailSafe();/* 1us */
   tim6_log11=TIM6->CNT;

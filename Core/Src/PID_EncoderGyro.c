@@ -6,6 +6,7 @@
  */
 
 #include "PID_EncoderGyro.h"
+#include "PID_wall.h"
 #include "fail_safe.h"
 #include "CL_EnoderGyro.h"
 #include "CL_sensor.h"
@@ -85,8 +86,12 @@ void EncoderGyro_PID(float *PID_s, float *PID_t,float straight_velocity,float tu
 		//Ktp = 3.0; //P項の制御量旋回
 		//Kti = 0.06; //I項の制御量旋回
 		//Ktd = 0.009; //D項の制御量旋回
-		Ktp_angle = 150; //P項の制御量旋回
-		Ktd_angle = 10; //D項の制御量旋回
+		Ktp_angle = 30; //P項の制御量旋回
+		Ktd_angle = 1; //D項の制御量旋回
+		if(g_WallControl_mode >= 1){
+			Ktp_angle = 150; //P項の制御量旋回
+			Ktd_angle = 4; //D項の制御量旋回
+		}
 	}else{
 		Ktp_angle = 0.0; //P項の制御量旋回
 		Ktd_angle = 0.0; //D項の制御量旋回

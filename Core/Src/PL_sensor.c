@@ -123,7 +123,6 @@ void pl_callback_getSensor(void) {
 		//g_sensor_off[4] = g_ADCBuffer[5];
 		//g_sensor_off[5] = g_ADCBuffer[6];
 
-
 		HAL_GPIO_WritePin(SENSOR_LED1_GPIO_Port, SENSOR_LED1_Pin,
 				GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(SENSOR_LED2_GPIO_Port, SENSOR_LED2_Pin,
@@ -131,7 +130,6 @@ void pl_callback_getSensor(void) {
 		HAL_GPIO_WritePin(SENSOR_LED3_GPIO_Port, SENSOR_LED3_Pin,
 				GPIO_PIN_RESET);
 		j=0;
-		while (j <= 50) {j++;}
 		break;
 
 	}

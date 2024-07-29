@@ -592,7 +592,7 @@ void input_parameter(void) {
 
 				speed1400_shortest_mollifier.V90_R.g_speed = 1300;
 				speed1400_shortest_mollifier.V90_R.t_speed = 2600;
-				speed1400_shortest_mollifier.V90_R.f_ofset = 25;
+				speed1400_shortest_mollifier.V90_R.f_ofset = 24;
 				speed1400_shortest_mollifier.V90_R.e_ofset = 37;
 
 				speed1400_shortest_mollifier.V90_L.g_speed = 1300;

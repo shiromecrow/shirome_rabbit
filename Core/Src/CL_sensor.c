@@ -85,6 +85,7 @@ void interupt_calSensor(void){
 		g_sensor_mean[j] = (g_sensor[j][0] + g_sensor[j][1] + g_sensor[j][2]) / 3;
 	}
 
+// 多項式近似
 	g_sensor_distance[SENSOR_LEFT] = LIN_COEFFICIENT_L3*(double)(g_sensor[SENSOR_LEFT][0]*g_sensor[SENSOR_LEFT][0]*g_sensor[SENSOR_LEFT][0])
 									  + LIN_COEFFICIENT_L2*(double)(g_sensor[SENSOR_LEFT][0]*g_sensor[SENSOR_LEFT][0])
 									  + LIN_COEFFICIENT_L1*(double)(g_sensor[SENSOR_LEFT][0]) + LIN_COEFFICIENT_L0;
@@ -92,13 +93,39 @@ void interupt_calSensor(void){
 									  + LIN_COEFFICIENT_R2*(double)(g_sensor[SENSOR_RIGHT][0]*g_sensor[SENSOR_RIGHT][0])
 									  + LIN_COEFFICIENT_R1*(double)(g_sensor[SENSOR_RIGHT][0]) + LIN_COEFFICIENT_R0;
 
+	g_sensor_distance_slant[SENSOR_LEFT] = LIN_SLANT_COEFFICIENT90_L_n3 / ((double)(g_sensor[SENSOR_LEFT][0]*g_sensor[SENSOR_LEFT][0]*g_sensor[SENSOR_LEFT][0])+0.1)
+											+ LIN_SLANT_COEFFICIENT90_L_n2 / ((double)(g_sensor[SENSOR_LEFT][0]*g_sensor[SENSOR_LEFT][0])+0.1)
+											+ LIN_SLANT_COEFFICIENT90_L_n1 / ((double)(g_sensor[SENSOR_LEFT][0])+0.1)
+											+ LIN_SLANT_COEFFICIENT90_L_00
+											+ LIN_SLANT_COEFFICIENT90_L_p1 * (double)(g_sensor[SENSOR_LEFT][0]);
+	g_sensor_distance_slant[SENSOR_RIGHT] = LIN_SLANT_COEFFICIENT90_R_n3 / ((double)(g_sensor[SENSOR_RIGHT][0]*g_sensor[SENSOR_RIGHT][0]*g_sensor[SENSOR_RIGHT][0])+0.1)
+											+ LIN_SLANT_COEFFICIENT90_R_n2 / ((double)(g_sensor[SENSOR_RIGHT][0]*g_sensor[SENSOR_RIGHT][0])+0.1)
+											+ LIN_SLANT_COEFFICIENT90_R_n1 / ((double)(g_sensor[SENSOR_RIGHT][0])+0.1)
+											+ LIN_SLANT_COEFFICIENT90_R_00
+											+ LIN_SLANT_COEFFICIENT90_R_p1 * (double)(g_sensor[SENSOR_RIGHT][0]);
+
+	g_sensor_distance_slant[SENSOR_FRONT_LEFT] = LIN_SLANT_COEFFICIENT45_L_n3 / ((double)(g_sensor[SENSOR_FRONT_LEFT][0]*g_sensor[SENSOR_FRONT_LEFT][0]*g_sensor[SENSOR_FRONT_LEFT][0])+0.1)
+											+ LIN_SLANT_COEFFICIENT45_L_n2 / ((double)(g_sensor[SENSOR_FRONT_LEFT][0]*g_sensor[SENSOR_FRONT_LEFT][0])+0.1)
+											+ LIN_SLANT_COEFFICIENT45_L_n1 / ((double)(g_sensor[SENSOR_FRONT_LEFT][0])+0.1)
+											+ LIN_SLANT_COEFFICIENT45_L_00
+											+ LIN_SLANT_COEFFICIENT45_L_p1 * (double)(g_sensor[SENSOR_FRONT_LEFT][0]);
+	g_sensor_distance_slant[SENSOR_FRONT_RIGHT] = LIN_SLANT_COEFFICIENT45_R_n3 / ((double)(g_sensor[SENSOR_FRONT_RIGHT][0]*g_sensor[SENSOR_FRONT_RIGHT][0]*g_sensor[SENSOR_FRONT_RIGHT][0])+0.1)
+											+ LIN_SLANT_COEFFICIENT45_R_n2 / ((double)(g_sensor[SENSOR_FRONT_RIGHT][0]*g_sensor[SENSOR_FRONT_RIGHT][0])+0.1)
+											+ LIN_SLANT_COEFFICIENT45_R_n1 / ((double)(g_sensor[SENSOR_FRONT_RIGHT][0])+0.1)
+											+ LIN_SLANT_COEFFICIENT45_R_00
+											+ LIN_SLANT_COEFFICIENT45_R_p1 * (double)(g_sensor[SENSOR_FRONT_RIGHT][0]);
 
 
-	g_sensor_distance_slant[SENSOR_LEFT] = LIN_SLANT_COEFFICIENT90_L_a * log(LIN_SLANT_COEFFICIENT90_L_b / fabs((double)g_sensor[SENSOR_LEFT][0]+0.1)) + LIN_SLANT_COEFFICIENT90_L_c;
-	g_sensor_distance_slant[SENSOR_RIGHT] = LIN_SLANT_COEFFICIENT90_R_a * log(LIN_SLANT_COEFFICIENT90_R_b / fabs((double)g_sensor[SENSOR_RIGHT][0]+0.1)) + LIN_SLANT_COEFFICIENT90_R_c;
-	g_sensor_distance_slant[SENSOR_FRONT_LEFT] = LIN_SLANT_COEFFICIENT45_L_a * log(LIN_SLANT_COEFFICIENT45_L_b / fabs((double)g_sensor[SENSOR_FRONT_LEFT][0]+0.1)) + LIN_SLANT_COEFFICIENT45_L_c;
-	g_sensor_distance_slant[SENSOR_FRONT_RIGHT] = LIN_SLANT_COEFFICIENT45_R_a * log(LIN_SLANT_COEFFICIENT45_R_b / fabs((double)g_sensor[SENSOR_FRONT_RIGHT][0]+0.1)) + LIN_SLANT_COEFFICIENT45_R_c;
+/*
+	g_sensor_distance[SENSOR_LEFT] = LIN_COEFFICIENT90_L_a * log(LIN_COEFFICIENT90_L_b / (fabs((double)g_sensor[SENSOR_LEFT][0])+0.1)) + LIN_COEFFICIENT90_L_c;
+	g_sensor_distance[SENSOR_RIGHT] = LIN_COEFFICIENT90_R_a * log(LIN_COEFFICIENT90_R_b / (fabs((double)g_sensor[SENSOR_RIGHT][0])+0.1)) + LIN_COEFFICIENT90_R_c;
 
+
+	g_sensor_distance_slant[SENSOR_LEFT] = LIN_SLANT_COEFFICIENT90_L_a * log(LIN_SLANT_COEFFICIENT90_L_b / (fabs((double)g_sensor[SENSOR_LEFT][0])+0.1)) + LIN_SLANT_COEFFICIENT90_L_c;
+	g_sensor_distance_slant[SENSOR_RIGHT] = LIN_SLANT_COEFFICIENT90_R_a * log(LIN_SLANT_COEFFICIENT90_R_b / (fabs((double)g_sensor[SENSOR_RIGHT][0])+0.1)) + LIN_SLANT_COEFFICIENT90_R_c;
+	g_sensor_distance_slant[SENSOR_FRONT_LEFT] = LIN_SLANT_COEFFICIENT45_L_a * log(LIN_SLANT_COEFFICIENT45_L_b / (fabs((double)g_sensor[SENSOR_FRONT_LEFT][0])+0.1)) + LIN_SLANT_COEFFICIENT45_L_c;
+	g_sensor_distance_slant[SENSOR_FRONT_RIGHT] = LIN_SLANT_COEFFICIENT45_R_a * log(LIN_SLANT_COEFFICIENT45_R_b / (fabs((double)g_sensor[SENSOR_FRONT_RIGHT][0])+0.1)) + LIN_SLANT_COEFFICIENT45_R_c;
+*/
 	//	g_V_battery_mean=0;
 //	for(j = 0;j <= 20-1;j++){
 //	g_V_battery_mean+=g_V_battery[j];
