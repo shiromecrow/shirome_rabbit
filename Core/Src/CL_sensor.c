@@ -68,6 +68,7 @@ void interupt_calSensor(void){
 
 	pl_interupt_getSensor();
 
+
 	for (j = 19; j >= 1; j--) {
 		//g_V_battery[j] = g_V_battery[j - 1];
 		for(int k=0;k < SENSOR_NUM; k++){

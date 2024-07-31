@@ -109,11 +109,11 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_ADC1_Init();
+  MX_DMA_Init();
   MX_SPI1_Init();
   MX_SPI3_Init();
   MX_TIM8_Init();
-  MX_DMA_Init();
+  MX_ADC1_Init();
   MX_USART1_UART_Init();
   MX_TIM16_Init();
   MX_TIM6_Init();
@@ -167,7 +167,7 @@ int main(void)
 
 		mode_execution(main_mode);
 
-// failsafeå¾Œï¿½??ï¿½ï¿½ä¿®?ï¿½ï¿½?
+// failsafeå¾Œï¿½???¿½?¿½ä¿®??¿½?¿½?
 		Control_mode_Init();
 		init_WallControl();
 		init_FailSafe();

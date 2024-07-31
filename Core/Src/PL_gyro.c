@@ -23,41 +23,54 @@ static uint8_t set_flag = 0;
 
 GYRO_DATA gyro;
 
+
+void SPI_Communication(SPI_TypeDef *SPIx ,uint8_t *tx_data, uint8_t *rx_data, uint8_t length, GPIO_TypeDef *GPIOx, uint32_t CS_Pin)
+{
+  uint8_t count = length;
+
+  HAL_GPIO_WritePin( GYRO_CS_GPIO_Port, GYRO_CS_Pin, GPIO_PIN_RESET); //cs = 1;
+
+  if ( LL_SPI_IsActiveFlag_RXNE(SPIx) == SET ) LL_SPI_ReceiveData8(SPIx);
+  if ( LL_SPI_IsEnabled(SPIx) == RESET ) LL_SPI_Enable(SPIx);
+
+  while(count > 0){
+    LL_SPI_TransmitData8(SPIx, *tx_data++);
+    while( LL_SPI_IsActiveFlag_TXE(SPIx) == RESET );
+    while( LL_SPI_IsActiveFlag_RXNE(SPIx) == RESET );
+    *rx_data++ = LL_SPI_ReceiveData8(SPIx);
+    count--;
+  }
+
+  HAL_GPIO_WritePin( GYRO_CS_GPIO_Port, GYRO_CS_Pin, GPIO_PIN_SET); //cs = 1;
+
+}
+
 uint8_t gyro_read_byte(uint8_t reg)
 
 {
 
-	uint8_t ret, val;
+	  uint8_t tx_data[2];
+	  uint8_t rx_data[2];
 
-	HAL_GPIO_WritePin( GYRO_CS_GPIO_Port, GYRO_CS_Pin, GPIO_PIN_RESET); //cs = 0;
+	  tx_data[0] = reg | 0x80;
+	  tx_data[1] = 0x00;
 
-	ret = reg | 0x80;//先頭のbitを1に
+	  SPI_Communication(SPI1, tx_data,rx_data, 2, GYRO_CS_GPIO_Port, GYRO_CS_Pin);
 
-	HAL_SPI_Transmit(&hspi1, &ret, 1, 100);
-
-	HAL_SPI_Receive(&hspi1, &val, 1, 100);
-
-	HAL_GPIO_WritePin( GYRO_CS_GPIO_Port, GYRO_CS_Pin, GPIO_PIN_SET); //cs = 1;
-
-	return val;
+	  return rx_data[1];
 
 }
 
 void gyro_write_byte(uint8_t reg, uint8_t val)
 
 {
+	  uint8_t tx_data[2];
+	  uint8_t rx_data[2];
 
-	uint8_t ret;
+	  tx_data[0] = reg & 0x7F;
+	  tx_data[1] = val;
 
-	ret = reg & 0x7F;//先頭のbitを0に
-
-	HAL_GPIO_WritePin( GYRO_CS_GPIO_Port, GYRO_CS_Pin, GPIO_PIN_RESET);
-
-	HAL_SPI_Transmit(&hspi1, &ret, 1, 100);
-
-	HAL_SPI_Transmit(&hspi1, &val, 1, 100);
-
-	HAL_GPIO_WritePin( GYRO_CS_GPIO_Port, GYRO_CS_Pin, GPIO_PIN_SET);
+	  SPI_Communication(SPI1, tx_data,rx_data, 2, GYRO_CS_GPIO_Port, GYRO_CS_Pin);
 
 }
 
@@ -66,6 +79,8 @@ void pl_gyro_init(void)
 {
 
 	uint8_t who_am_i = 0;
+
+	LL_SPI_Enable(SPI1);
 
 // check WHO_AM_I (0x75)
 
