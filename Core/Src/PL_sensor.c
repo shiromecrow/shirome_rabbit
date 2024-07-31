@@ -10,6 +10,7 @@
 #include "adc.h"
 #include "dma.h"
 #include "gpio.h"
+#include "stm32g4xx_hal_adc.h"
 
 
 
@@ -73,13 +74,14 @@ void pl_callback_getSensor(void) {
 		g_sensor_off[4] = g_ADCBuffer[5];
 		g_sensor_off[5] = g_ADCBuffer[6];
 		V_battAD = g_ADCBuffer[0];
-		g_V_batt = 3.3 * (float) V_battAD / 4095.0 * (20.0 + 10.0) / 10.0*1.15*3.7/3.86*8.22/7.92;
+		g_V_batt = 3.3 * (float) V_battAD / 4095.0 * (20.0 + 10.0) / 10.0*1.144086;
 
 		HAL_GPIO_WritePin(SENSOR_LED1_GPIO_Port, SENSOR_LED1_Pin, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(SENSOR_LED2_GPIO_Port, SENSOR_LED2_Pin,
 				GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(SENSOR_LED3_GPIO_Port, SENSOR_LED3_Pin,
 				GPIO_PIN_RESET);
+
 		j=0;
 		while (j <= 500) {j++;}
 		break;
@@ -96,8 +98,8 @@ void pl_callback_getSensor(void) {
 		HAL_GPIO_WritePin(SENSOR_LED2_GPIO_Port, SENSOR_LED2_Pin, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(SENSOR_LED3_GPIO_Port, SENSOR_LED3_Pin,
 				GPIO_PIN_RESET);
-		j=0;
 
+		j=0;
 		while (j <= 500) {j++;}
 		break;
 	case 2:
@@ -107,8 +109,9 @@ void pl_callback_getSensor(void) {
 		//g_sensor_off[3] = g_ADCBuffer[4];
 		//g_sensor_off[4] = g_ADCBuffer[5];
 		g_sensor_on[5] = g_ADCBuffer[6];
+
 		HAL_GPIO_WritePin(SENSOR_LED1_GPIO_Port, SENSOR_LED1_Pin,
-				GPIO_PIN_RESET);
+						GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(SENSOR_LED2_GPIO_Port, SENSOR_LED2_Pin,
 				GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(SENSOR_LED3_GPIO_Port, SENSOR_LED3_Pin, GPIO_PIN_SET);
@@ -122,26 +125,21 @@ void pl_callback_getSensor(void) {
 		g_sensor_on[3] = g_ADCBuffer[4];
 		//g_sensor_off[4] = g_ADCBuffer[5];
 		//g_sensor_off[5] = g_ADCBuffer[6];
-
 		HAL_GPIO_WritePin(SENSOR_LED1_GPIO_Port, SENSOR_LED1_Pin,
-				GPIO_PIN_RESET);
+						GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(SENSOR_LED2_GPIO_Port, SENSOR_LED2_Pin,
 				GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(SENSOR_LED3_GPIO_Port, SENSOR_LED3_Pin,
 				GPIO_PIN_RESET);
-		j=0;
 		break;
 
 	}
 
 
 	AD_step++;
-	//for(j=0;j<=2000;j++){}
-	if (AD_step != 4) {
-		HAL_ADC_Start_DMA(&hadc1, g_ADCBuffer, sizeof(g_ADCBuffer) / sizeof(uint16_t));
-	} else {
-		AD_step = 0;
 
+	if (AD_step < 4) {
+		HAL_ADC_Start_DMA(&hadc1, (uint32_t *)g_ADCBuffer, sizeof(g_ADCBuffer) / sizeof(uint16_t));
 	}
 
 	/* NOTE : This function Should not be modified, when the callback is needed,
@@ -162,6 +160,9 @@ void pl_callback_getSensor(void) {
 /*******************************************************************/
 void pl_interupt_getSensor(void){
 
-		HAL_ADC_Start_DMA(&hadc1, g_ADCBuffer, sizeof(g_ADCBuffer) / sizeof(uint16_t));
+		HAL_ADC_Start_DMA(&hadc1, (uint32_t *)g_ADCBuffer, sizeof(g_ADCBuffer) / sizeof(uint16_t));
+		while(AD_step == 4){
+			AD_step = 0;
+		}
 
 }
