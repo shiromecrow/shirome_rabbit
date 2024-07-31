@@ -100,11 +100,12 @@ void run_movement_continuity(int *direction,unsigned short front_count,unsigned 
 		mode.WallControlMode=1;
 		mode.calMazeMode=0;
 		mode.WallCutMode=0;
-		straight_table2(MAZE_SECTION/2-MAZE_OFFSET, input_StraightVelocity,0,input_StraightVelocity,input_StraightAcceleration, mode);
+		straight_table2(MAZE_SECTION / 2 - MAZE_OFFSET + (BACK_TO_CENTER - BACK_TO_CENTER_FRONT), input_StraightVelocity, 0, input_StraightVelocity, input_StraightAcceleration, mode);
+
 		create_DijkstraMap();
 		backTurn_controlWall(input_TurningVelocity, input_TurningAcceleration, front_wall, left_wall, right_wall);
 		//backTurn_hitWall(input_TurningVelocity, input_TurningAcceleration, front_wall, left_wall, right_wall);
-		wait_ms_NoReset(200);
+		//wait_ms_NoReset(200);
 		mode.WallControlMode=0;
 		if(front_wall && flg_backhit == ON){
 		straight_table2(-BACK_TO_CENTER-10, 0,0,-150,1000, mode);
@@ -116,7 +117,7 @@ void run_movement_continuity(int *direction,unsigned short front_count,unsigned 
 		straight_table2(BACK_TO_CENTER_FRONT +MAZE_SECTION/2,0,input_StraightVelocity,input_StraightVelocity,input_StraightAcceleration, mode);
 		}else{
 			mode.WallControlMode=1;
-			straight_table2(MAZE_SECTION/2+BACK_TO_CENTER-BACK_TO_CENTER_FRONT,0,input_StraightVelocity,input_StraightVelocity,input_StraightAcceleration, mode);
+			straight_table2(MAZE_SECTION/2-(BACK_TO_CENTER-BACK_TO_CENTER_FRONT),0,input_StraightVelocity,input_StraightVelocity,input_StraightAcceleration, mode);
 		}
 		*direction = *direction + 2;
 	}
@@ -137,7 +138,7 @@ void run_movement_suspension(int *direction, unsigned short front_count,
 	mode.WallControlMode = 1;
 	mode.calMazeMode = 0;
 	mode.WallCutMode = 0;
-	straight_table2(MAZE_SECTION / 2 - MAZE_OFFSET - (BACK_TO_CENTER - BACK_TO_CENTER_FRONT), input_StraightVelocity, 0, input_StraightVelocity, input_StraightAcceleration, mode);
+	straight_table2(MAZE_SECTION / 2 - MAZE_OFFSET + (BACK_TO_CENTER - BACK_TO_CENTER_FRONT), input_StraightVelocity, 0, input_StraightVelocity, input_StraightAcceleration, mode);
 
 	if(MazeRecord_mode==1){
 		if(error_mode==0){
@@ -175,18 +176,18 @@ if(error_mode==0){
 	mode.calMazeMode = 0;
 	if (front_count <= right_count && front_count <= left_count && front_count <= back_count) {
 		// 直進
-		straight_table2(MAZE_SECTION / 2 + (BACK_TO_CENTER - BACK_TO_CENTER_FRONT), 0, input_StraightVelocity, input_StraightVelocity, input_StraightAcceleration, mode);
+		straight_table2(MAZE_SECTION / 2 - (BACK_TO_CENTER - BACK_TO_CENTER_FRONT), 0, input_StraightVelocity, input_StraightVelocity, input_StraightAcceleration, mode);
 	}
 	if (right_count < front_count && right_count <= left_count && right_count <= back_count) {
 		// 右旋回
 		turning_table2(-90, 0, 0, -input_TurningVelocity, input_TurningAcceleration);
-		straight_table2(MAZE_SECTION / 2 + (BACK_TO_CENTER - BACK_TO_CENTER_FRONT), 0, input_StraightVelocity, input_StraightVelocity, input_StraightAcceleration, mode);
+		straight_table2(MAZE_SECTION / 2 - (BACK_TO_CENTER - BACK_TO_CENTER_FRONT), 0, input_StraightVelocity, input_StraightVelocity, input_StraightAcceleration, mode);
 		*direction += 1;
 	}
 	if (left_count < front_count && left_count < right_count && left_count <= back_count) {
 		// 左旋回
 		turning_table2(90, 0, 0, input_TurningVelocity, input_TurningAcceleration);
-		straight_table2(MAZE_SECTION / 2 + (BACK_TO_CENTER - BACK_TO_CENTER_FRONT), 0, input_StraightVelocity, input_StraightVelocity, input_StraightAcceleration, mode);
+		straight_table2(MAZE_SECTION / 2 - (BACK_TO_CENTER - BACK_TO_CENTER_FRONT), 0, input_StraightVelocity, input_StraightVelocity, input_StraightAcceleration, mode);
 		*direction -= 1;
 	}
 	if(back_count < front_count && back_count < right_count
@@ -194,7 +195,7 @@ if(error_mode==0){
 		//180度旋回(前壁がある場合は尻当てを行うことで位置修正)
 		backTurn_controlWall(input_TurningVelocity, input_TurningAcceleration, front_wall, left_wall, right_wall);
 		//backTurn_hitWall(input_TurningVelocity, input_TurningAcceleration, front_wall, left_wall, right_wall);
-		wait_ms_NoReset(100);
+		//wait_ms_NoReset(100);
 		mode.WallControlMode=0;
 		if(front_wall && flg_backhit == ON){
 		straight_table2(-BACK_TO_CENTER-10, 0,0,-150,1000, mode);
@@ -207,7 +208,7 @@ if(error_mode==0){
 		}else{
 			//clear_Ierror();
 			mode.WallControlMode=0;
-			straight_table2(MAZE_SECTION/2+BACK_TO_CENTER-BACK_TO_CENTER_FRONT,0,input_StraightVelocity,input_StraightVelocity,input_StraightAcceleration, mode);
+			straight_table2(MAZE_SECTION/2-(BACK_TO_CENTER-BACK_TO_CENTER_FRONT),0,input_StraightVelocity,input_StraightVelocity,input_StraightAcceleration, mode);
 		}
 		*direction = *direction + 2;
 	}

@@ -686,6 +686,8 @@ float slalom_table2(float input_center_velocity,float input_displacement, float 
 	// 例外処理
 	if (input_acceleration < 0){input_acceleration=-input_acceleration;}//加速が負
 
+	yaw_angle=0;
+
 	Trapezoid_turning.displacement = input_displacement;
 	Trapezoid_turning.start_velocity = input_start_velocity;
 	Trapezoid_turning.end_velocity = input_end_velocity;
@@ -793,7 +795,7 @@ void no_frontwall_straight(void){
 	modeacc = 5;
 
 	pl_DriveMotor_start();
-	wait_ms_NoReset(500);
+	wait_ms_NoReset(300);
 
 	g_FrontWallControl_mode=0;
 	modeacc = 0;
