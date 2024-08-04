@@ -81,7 +81,8 @@ extern int g_sensor_diff_wallcut[SENSOR_NUM];
 extern int g_sensor_diff_wallcut_slant[SENSOR_NUM];
 extern int g_sensor_mean[SENSOR_NUM];
 extern float g_sensor_distance[SENSOR_NUM];
-extern float g_sensor_distance_slant[SENSOR_NUM];
+extern float g_sensor_distance_slant[SENSOR_NUM][12];
+extern float g_sensor_distance_slant_diff[SENSOR_NUM];
 
 extern float g_V_battery[20];
 extern float g_V_battery_mean;

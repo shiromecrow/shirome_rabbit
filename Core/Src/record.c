@@ -225,6 +225,48 @@ void interrupt_record(void) {
 			r_data[3] = (float) NoWallDisplacementL45slant2;
 			record_data(r_data, 4);
 		}
+	if (record_mode == 18) { //90
+			r_data[0] = g_sensor_distance_slant[SENSOR_LEFT][0];
+			r_data[1] = g_sensor_distance_slant[SENSOR_RIGHT][0];
+			r_data[2] = NoWallDisplacementL45slant;
+			r_data[3] = NoWallDisplacementR45slant;
+			record_data(r_data, 4);
+		}
+	if (record_mode == 19) { //90
+			r_data[0] = g_sensor_distance_slant[SENSOR_FRONT_LEFT][0];
+			r_data[1] = g_sensor_distance_slant[SENSOR_FRONT_RIGHT][0];
+			r_data[2] = NoWallDisplacementL45slant;
+			r_data[3] = NoWallDisplacementR45slant;
+			record_data(r_data, 4);
+		}
+	if (record_mode == 20) { //90
+			r_data[0] = g_sensor_distance_slant[SENSOR_LEFT][0];
+			r_data[1] = g_sensor_distance_slant[SENSOR_RIGHT][0];
+			r_data[2] = g_log_CenterSlantL90;
+			r_data[3] = g_log_CenterSlantR90;
+			record_data(r_data, 4);
+		}
+	if (record_mode == 21) { //90
+			r_data[0] = g_sensor_distance_slant[SENSOR_FRONT_LEFT][0];
+			r_data[1] = g_sensor_distance_slant[SENSOR_FRONT_RIGHT][0];
+			r_data[2] = g_log_CenterSlantL45;
+			r_data[3] = g_log_CenterSlantR45;
+			record_data(r_data, 4);
+		}
+	if (record_mode == 22) { //L
+			r_data[0] = (float) g_sensor[SENSOR_LEFT][0];
+			r_data[1] = (fusion_distanceL + fusion_distanceR) / 2 / sqrt(2);
+			r_data[2] = (float) g_sensor[SENSOR_FRONT_LEFT][0];
+			r_data[3] = (fusion_distanceL + fusion_distanceR) / 2 / sqrt(2);
+			record_data(r_data, 4);
+		}
+	if (record_mode == 23) { //R
+			r_data[0] = (float) g_sensor[SENSOR_RIGHT][0];
+			r_data[1] = (fusion_distanceL + fusion_distanceR) / 2 / sqrt(2);
+			r_data[2] = (float) g_sensor[SENSOR_FRONT_RIGHT][0];
+			r_data[3] = (fusion_distanceL + fusion_distanceR) / 2 / sqrt(2);
+			record_data(r_data, 4);
+		}
 /*	if (record_mode == 1) {
 		r_data[0] = straight.velocity;
 		r_data[1] = straight.displacement;

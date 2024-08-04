@@ -52,8 +52,8 @@ void init_FailSafe(void){
 	encoder_gyro_error=1000;
 
 	encoder_PID_error_highspeed=500;//3000
-	gyro_PID_error_highspeed=800;
-	gyro_x_error_highspeed=400;
+	gyro_PID_error_highspeed=500;
+	gyro_x_error_highspeed=200;
 	encoder_gyro_error_highspeed=2500;
 }
 
@@ -83,7 +83,7 @@ void interrupt_FailSafe(void){
 			//ジャイロの誤差が一定以上
 					if (fabs(turning.velocity - angle_speed) >= gyro_PID_error_in ) {
 						error_count1++;
-						if(error_count1>=90){
+						if(error_count1>=100){
 							pl_FunMotor_stop();
 							g_WallControl_mode =0;
 							pl_yellow_LED_count(1);
