@@ -1,0 +1,11 @@
+{
+    "files.watcherExclude": {
+        "**/Debug/**": true,
+        "**/Drivers/**": true
+    },
+    "files.associations": {
+        "matrix_calculation.h": "c",
+        "stdlib.h": "c",
+        "stm32g4xx_hal_adc.h": "c"
+    }
+}

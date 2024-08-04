@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"name": "shirome_rabbit",
+			"path": ".."
+		}
+	],
+	"settings": {
+		"files.watcherExclude": {
+			"**/Debug/**": true,
+			"**/Drivers/**": true
+		}
+	}
+}

@@ -1,0 +1,106 @@
+{
+    "version": "2.0.0",
+    "windows": {
+        "options": {
+            "shell": {
+                "executable": "cmd.exe",
+                "args": ["/d", "/c"]
+            }
+        }
+    },
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "CubeProg: Flash project (SWD)",
+            "command": "STM32_Programmer_CLI",
+            "args": [
+                "--connect",
+                "port=swd",
+                "--download",
+                "${command:cmake.launchTargetPath}",
+                "-hardRst",
+                "-rst",
+                "--start"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Build + Flash",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "CMake: clean rebuild",
+                "CubeProg: Flash project (SWD)"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "type": "cmake",
+            "label": "CMake: clean rebuild",
+            "command": "cleanRebuild",
+            "targets": [
+                "all"
+            ],
+            "preset": "${command:cmake.activeBuildPresetName}",
+            "group": "build",
+            "problemMatcher": [],
+            "detail": "CMake template clean rebuild task"
+        },
+        {
+            "type": "shell",
+            "label": "CubeProg: List all available communication interfaces",
+            "command": "STM32_Programmer_CLI",
+            "args": [
+                "--list"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Build",
+            "type": "process",
+            "command": "make",
+            "problemMatcher": "$gcc",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "args": [
+                "-j16",
+                "all"
+            ],
+            "options": {
+                "cwd": "Debug",
+                "env": {
+                    "PATH": "C:/ST/STM32CubeIDE_1.13.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.11.3.rel1.win32_1.1.0.202305231506/tools/bin;C:/ST/STM32CubeIDE_1.13.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.make.win32_2.1.0.202305091550/tools/bin;C:/ST/STM32CubeIDE_1.13.0/STM32CubeIDE//plugins/com.st.stm32cube.ide.jre.win64_3.0.0.202305091045/jre/bin/server;C:/ST/STM32CubeIDE_1.13.0/STM32CubeIDE//plugins/com.st.stm32cube.ide.jre.win64_3.0.0.202305091045/jre/bin;C:/ST/STM32CubeCLT_1.16.0;C:/ST/STM32CubeCLT_1.16.0/CMake/bin;C:/ST/STM32CubeCLT_1.16.0/Ninja/bin;C:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin;C:/ST/STM32CubeCLT_1.16.0/STLink-gdb-server/bin;C:/ST/STM32CubeCLT_1.16.0/STM32CubeProgrammer/bin;C:/Windows/system32;C:/Windows;C:/Windows/System32/Wbem;C:/Windows/System32/WindowsPowerShell/v1.0/;C:/Windows/System32/OpenSSH/;C:/Program Files/Git/cmd;C:/Program Files/MATLAB/R2024a/runtime/win64;C:/Program Files/MATLAB/R2024a/bin;C:/ST/STM32CubeCLT;C:/ST/STM32CubeCLT/STM32CubeProgrammer/bin;C:/ST/STM32CubeCLT/STLink-gdb-server/bin;C:/ST/STM32CubeCLT/GNU-tools-for-STM32/bin;C:/Program Files (x86)/STMicroelectronics/stlink_server;C:/Users/sf199/AppData/Local/Microsoft/WindowsApps;C:/Users/sf199/AppData/Local/Programs/Microsoft VS Code/bin;C:/ST/STM32CubeIDE_1.13.0/STM32CubeIDE",
+                    "compiler_prefix": "arm-none-eabi-"
+                }
+            }
+        },
+        {
+            "label": "Clean",
+            "type": "process",
+            "command": "make",
+            "problemMatcher": "$gcc",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "args": [
+                "-j16",
+                "clean"
+            ],
+            "options": {
+                "cwd": "Debug",
+                "env": {
+                    "PATH": "C:/ST/STM32CubeIDE_1.13.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.11.3.rel1.win32_1.1.0.202305231506/tools/bin;C:/ST/STM32CubeIDE_1.13.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.make.win32_2.1.0.202305091550/tools/bin;C:/ST/STM32CubeIDE_1.13.0/STM32CubeIDE//plugins/com.st.stm32cube.ide.jre.win64_3.0.0.202305091045/jre/bin/server;C:/ST/STM32CubeIDE_1.13.0/STM32CubeIDE//plugins/com.st.stm32cube.ide.jre.win64_3.0.0.202305091045/jre/bin;C:/ST/STM32CubeCLT_1.16.0;C:/ST/STM32CubeCLT_1.16.0/CMake/bin;C:/ST/STM32CubeCLT_1.16.0/Ninja/bin;C:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin;C:/ST/STM32CubeCLT_1.16.0/STLink-gdb-server/bin;C:/ST/STM32CubeCLT_1.16.0/STM32CubeProgrammer/bin;C:/Windows/system32;C:/Windows;C:/Windows/System32/Wbem;C:/Windows/System32/WindowsPowerShell/v1.0/;C:/Windows/System32/OpenSSH/;C:/Program Files/Git/cmd;C:/Program Files/MATLAB/R2024a/runtime/win64;C:/Program Files/MATLAB/R2024a/bin;C:/ST/STM32CubeCLT;C:/ST/STM32CubeCLT/STM32CubeProgrammer/bin;C:/ST/STM32CubeCLT/STLink-gdb-server/bin;C:/ST/STM32CubeCLT/GNU-tools-for-STM32/bin;C:/Program Files (x86)/STMicroelectronics/stlink_server;C:/Users/sf199/AppData/Local/Microsoft/WindowsApps;C:/Users/sf199/AppData/Local/Programs/Microsoft VS Code/bin;C:/ST/STM32CubeIDE_1.13.0/STM32CubeIDE",
+                    "compiler_prefix": "arm-none-eabi-"
+                }
+            }
+        }
+    ]
+}
