@@ -51,7 +51,7 @@ void init_FailSafe(void){
 	gyro_x_error=300;
 	encoder_gyro_error=1000;
 
-	encoder_PID_error_highspeed=500;//3000
+	encoder_PID_error_highspeed=800;//3000
 	gyro_PID_error_highspeed=500;
 	gyro_x_error_highspeed=200;
 	encoder_gyro_error_highspeed=2500;
@@ -62,19 +62,19 @@ void interrupt_FailSafe(void){
 	float encoder_PID_error_in;
 	float gyro_PID_error_in;
 	float gyro_x_error_in;
-	float encoder_gyro_error_in;
+//	float encoder_gyro_error_in;
 //	float wallcut_error_in;
 
 	if (highspeed_mode == 0) {
 		encoder_PID_error_in=encoder_PID_error;
 		gyro_PID_error_in=gyro_PID_error;
 		gyro_x_error_in=gyro_x_error;
-		encoder_gyro_error_in=encoder_gyro_error;
+//		encoder_gyro_error_in=encoder_gyro_error;
 	}else{
 		encoder_PID_error_in=encoder_PID_error_highspeed;
 		gyro_PID_error_in=gyro_PID_error_highspeed;
 		gyro_x_error_in=gyro_x_error_highspeed;
-		encoder_gyro_error_in=encoder_gyro_error_highspeed;
+//		encoder_gyro_error_in=encoder_gyro_error_highspeed;
 	}
 //	wallcut_error_in=1000;
 
@@ -86,9 +86,9 @@ void interrupt_FailSafe(void){
 						if(error_count1>=100){
 							pl_FunMotor_stop();
 							g_WallControl_mode =0;
-							pl_yellow_LED_count(1);
-							main_mode=1;
 							error_mode = 1;
+							pl_yellow_LED_count(error_mode);
+							main_mode=error_mode;
 							clear_Ierror();
 						}
 					}else{
@@ -99,55 +99,61 @@ void interrupt_FailSafe(void){
 						if(error_count2>=40){
 							pl_FunMotor_stop();
 							g_WallControl_mode =0;
-							pl_yellow_LED_count(2);
 							error_mode = 2;
-							main_mode=2;
+							pl_yellow_LED_count(error_mode);
+							main_mode=error_mode;
 							clear_Ierror();
 						}
 					}else{
 						error_count2=0;
 					}
+/*					
 					if(fabs(straight.velocity - gf_speed) >= encoder_gyro_error_in && modeacc==1){
 						error_count3++;
 						if(error_count3>=500){
 							pl_FunMotor_stop();
 							g_WallControl_mode =0;
-							pl_yellow_LED_count(4);
-							main_mode=4;
 							error_mode = 3;
+							pl_yellow_LED_count(error_mode);
+							main_mode=error_mode;
 							clear_Ierror();
 						}
 					}else{
 						error_count3=0;
 					}
+*/
 
-					if(fabs(straight.velocity - (E_speedR+E_speedL)/2) >= encoder_PID_error_in && modeacc==1){
+					if((fabs(straight.velocity - (E_speedR+E_speedL)/2) >= encoder_PID_error_in && modeacc==1 && highspeed_mode == 0) ||
+					(fabs(straight.velocity - kalman_speed) >= encoder_PID_error_in && modeacc==1 && highspeed_mode == 1)
+					){
 						error_count4++;
-						if(error_count4>=40){
+						if(error_count4>=80){
 							pl_FunMotor_stop();
 							g_WallControl_mode =0;
-							pl_yellow_LED_count(8);
-							main_mode=8;
 							error_mode = 4;
+							pl_yellow_LED_count(error_mode);
+							main_mode=error_mode;
 							clear_Ierror();
 						}
 					}else{
 						error_count4=0;
 					}
 
+/*
 					if(fabs(gf_speed - (E_speedR+E_speedL)/2) >= encoder_gyro_error_in && modeacc==1){
 						error_count5++;
 						if(error_count5>=400){
 							pl_FunMotor_stop();
 							g_WallControl_mode =0;
-							pl_yellow_LED_count(16);
-							main_mode=16;
 							error_mode = 5;
+							pl_yellow_LED_count(error_mode);
+							main_mode=error_mode;
 							clear_Ierror();
 						}
 					}else{
 						error_count5=0;
 					}
+*/
 
 //					if(NoWallDisplacementL45>wallcut_error_in || NoWallDisplacementR45>wallcut_error_in || NoWallDisplacementL90>wallcut_error_in || NoWallDisplacementR90>wallcut_error_in || NoWallDisplacementL45slant>wallcut_error_in || NoWallDisplacementR45slant>wallcut_error_in){
 //						error_count5++;
@@ -194,10 +200,10 @@ void interrupt_FailSafe(void){
 					NoWallDisplacementR90 = 50;
 					NoWallDisplacementL45 = 20;
 					NoWallDisplacementR45 = 20;
-					NoWallDisplacementL45slant = 35;
-					NoWallDisplacementR45slant = 35;
-					NoWallDisplacementL45slant2 = 35;
-					NoWallDisplacementR45slant2 = 35;
+					NoWallDisplacementL45slant = 30;
+					NoWallDisplacementR45slant = 30;
+					NoWallDisplacementL45slant2 = 30;
+					NoWallDisplacementR45slant2 = 30;
 					g_acc_flag=4;
 					g_wallCut_mode = 0;
 					//maze_mode=0;
