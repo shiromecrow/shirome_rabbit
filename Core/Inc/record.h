@@ -12,6 +12,8 @@
 #define max_record_num 4
 #define max_record_time 3000
 
+#define record_point -1
+
 extern char record_mode;
 extern int record_time;
 extern char record_rupe_flag;

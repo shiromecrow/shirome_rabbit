@@ -118,10 +118,10 @@ void reset_EncoderGyro_MeanVariance(void){
     //get data
     float omegaZ_array[sample_num];
     float omegaZ_mean;
-    float omegaZ_variance;
+    //float omegaZ_variance;
     float omegaX_array[sample_num];
     float omegaX_mean;
-    float omegaX_variance;
+    //float omegaX_variance;
     float accelY_array[sample_num];
     float accelY_mean;
     float accelY_variance;
@@ -237,7 +237,6 @@ void reset_speed(void){
 
 void interupt_calEncoder(void) {
 	float angle_R,angle_L;
-	float angle_R_mean,angle_L_mean;
 	angle_R=encoder_R-encoder_R0;
 	if(angle_R>180){angle_R=angle_R-360;}
 	if(angle_R<-180){angle_R=angle_R+360;}

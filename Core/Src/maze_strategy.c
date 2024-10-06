@@ -701,7 +701,7 @@ void run_shortest(float inspeed, float inacc, float indec, char pass_mode, char 
 		char slant_mode, parameter_speed howspeed,float fun_V,char mollifier_mode,char max_mode) {
 	unsigned char slant_count;
 	int slant_direction;
-	float first_v,last_v;
+	float first_v;//,last_v
 	float end_velocity;
 
 //	unsigned short front_count, right_count, back_count, left_count;
@@ -1109,7 +1109,7 @@ if(pass_mode==1){
 		}
 		else if (pass[pass_count] >= 1) {
 			first_v = howspeed.TurnCentervelocity;
-			last_v = howspeed.TurnCentervelocity;
+			//last_v = howspeed.TurnCentervelocity;
 			if (pass_count >= 1) {
 
 				if (pass[pass_count - 1] == -2 || pass[pass_count - 1] == -3) {
@@ -1117,7 +1117,7 @@ if(pass_mode==1){
 				}
 			}
 			if (pass[pass_count + 1] == -2 || pass[pass_count + 1] == -3) {
-				last_v = howspeed.SlalomCentervelocity;
+				//last_v = howspeed.SlalomCentervelocity;
 			}
 			if (pass[pass_count] >= SLANT_PASS_COUNT) {
 				mode.WallControlMode=3;

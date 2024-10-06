@@ -154,7 +154,7 @@ int main(void)
 		battcheak();
 		printf("BATT=%f\n",g_V_battery_mean);
     printf("%d\n", rand());
-    printf("%d\n", 1);
+    printf("%d\n", 4);
 
   /* USER CODE END 2 */
 

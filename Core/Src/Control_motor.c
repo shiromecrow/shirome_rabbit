@@ -106,7 +106,7 @@ void get_duty(float V_L, float V_R,int *duty_L,int *duty_R) {
 void interupt_DriveMotor(void){
 	int duty_L=0, duty_R=0;
 	float V_L=0, V_R=0;
-	float PID_all_L,PID_all_R,PID_s,PID_t;
+	float PID_s,PID_t;
 	float PID_w=0;
 	float feedforward_straight=0,feedforward_turning=0;
 
