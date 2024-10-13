@@ -172,8 +172,8 @@ void cal_table_dis(TRAPEZOID input,TARGET *target){
 float time_over;
 float acc_distance;//初速度から現在の速度に達するまでに使った距離
 float dec_distance;//現在の速度から終端速度になるのに必要なた距離
-float velocity=(fusion_speedL+fusion_speedR)/2;
-float distance=(fusion_distanceL+fusion_distanceL)/2;
+//float velocity=(fusion_speedL+fusion_speedR)/2;
+//float distance=(fusion_distanceL+fusion_distanceL)/2;
 if (input.displacement>=0){
 	switch (g_acc_flag) {
 	case 0:
