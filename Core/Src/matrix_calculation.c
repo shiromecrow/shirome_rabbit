@@ -139,7 +139,7 @@ void mat_inv(float *m, float *sol, int column, int row)
         //division
         for(int j=0; j<2*row; j++)
         {
-            temp[i*(2*row) + j] /= pivot;
+            temp[i*(2*row) + j] /= (pivot+1e-10);
         }
 
         //sweep
