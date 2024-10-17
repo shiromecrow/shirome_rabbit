@@ -22,7 +22,7 @@ float kbT;//Vs/rad 逆起電力定数 deg->rad->m変換sitenai
 if(highspeed_mode == 1){
 	Im = 0.00000073*2;
 	ImT = 0.00000047;
-	kbT = 0.00003;
+	kbT = 0.00001;
 }else{
 	Im = 0.00000038;
 	ImT = 0.00000055;

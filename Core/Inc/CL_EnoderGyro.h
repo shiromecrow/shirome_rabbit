@@ -17,24 +17,40 @@
 #define pi 3.1415926535
 
 
-#define	THETA_COMP_R0	1808.996514
-#define	THETA_COMP_R1	31.39056836
-#define	THETA_COMP_R2	19.22887379
-#define	THETA_COMP_R3	-8.05E+01
-#define	THETA_COMP_R4	-93.67762412
-#define	THETA_COMP_L0	1938.681712
-#define	THETA_COMP_L1	28.8371333
-#define	THETA_COMP_L2	-46.53140134
-#define	THETA_COMP_L3	-7.824077518
-#define	THETA_COMP_L4	236.6062566
+#define	THETA_COMP_R0	2564.837768
+#define	THETA_COMP_R1	11.82979488
+#define	THETA_COMP_R2	-2.956838084
+#define	THETA_COMP_R3	96.37295627
+#define	THETA_COMP_R4	1.603213614
+#define	THETA_COMP_R5	73.77879908
+#define	THETA_COMP_R6	-1.025437286
+#define	THETA_COMP_L0	2570.812559
+#define	THETA_COMP_L1	145.8933517
+#define	THETA_COMP_L2	-1.870551198
+#define	THETA_COMP_L3	384.9012757
+#define	THETA_COMP_L4	1.654901804
+#define	THETA_COMP_L5	49.57485561
+#define	THETA_COMP_L6	-1.158422058
+
+
+
 
 
 #define	ANGLE_MEAN_SIZE 200
 
 #define GYRO_COEFFICIENT 0.998358079323549*3607/3600
-#define ACCEL_COEFFICIENT 0.966332120340700
+#define ACCEL_COEFFICIENT 0.966332120340700*3837/3020*3428/4021
 
+	//encY_variance = 20.961668;	
+	//accelY_mean=-38.457546;
+	//accelY_variance=276.637299;
 
+	//encY_variance = 25.358568;
+	//accelY_mean=333.726196;
+	//accelY_variance=710167296;
+#define	ENCY_VAR 25.358568
+#define	ACCY_MEAN 333.726196
+#define	ACCY_VAR 443236.6891442692
 
 extern float yaw_angle,angle_speed;
 extern float anglex,angle_speedx,angle_speedx_set;
@@ -59,6 +75,8 @@ extern float theta_comp_gain;//角度伝達誤差の補償
 
 extern float kalman_speed,kalman_distance,kalman_distance2;
 
+extern float g_omegaZ_mean,g_accelY_mean;
+extern float g_encY_variance,g_accelY_variance;
 
 void init_EncoderGyro();
 

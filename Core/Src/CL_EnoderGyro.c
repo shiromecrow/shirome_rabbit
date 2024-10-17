@@ -70,6 +70,9 @@ float K_G_1[2][2];
 
 float kalman_speed,kalman_distance,kalman_distance2;
 
+float g_omegaZ_mean,g_accelY_mean;
+float g_encY_variance,g_accelY_variance;
+
 
 void init_EncoderGyro(void){
 	straight_alpha=0.65;
@@ -168,6 +171,15 @@ void reset_EncoderGyro_MeanVariance(void){
     }
     accelY_variance /= sample_num;
     encY_variance /= sample_num;
+	
+	g_omegaZ_mean = omegaZ_mean;
+	g_accelY_mean = accelY_mean;
+	g_encY_variance=encY_variance;
+	g_accelY_variance=accelY_variance;
+
+	encY_variance = ENCY_VAR;
+	//accelY_mean = ACCY_MEAN;
+	accelY_variance = ACCY_VAR;
 
 
     //measurement noise matrix
@@ -244,20 +256,12 @@ void interupt_calEncoder(void) {
 	if(angle_L>180){angle_L=angle_L-360;}
 	if(angle_L<-180){angle_L=angle_L+360;}
 
-	E_speedL = (angle_L) * pi / 180 * TIRE_DIAMETER /2 * 1000  / INTERRUPT_TIME;
-	E_speedR = (angle_R) * pi / 180 * TIRE_DIAMETER /2 * 1000 / INTERRUPT_TIME;
-/*
-
-*THETA_COMP_L0
-			/(THETA_COMP_L0 + theta_comp_gain*(THETA_COMP_L1*sin(encoder_L*pi/180)+THETA_COMP_L2*cos(encoder_L*pi/180)
-	+THETA_COMP_L3*sin(2*encoder_L*pi/180)+THETA_COMP_L4*cos(2*encoder_L*pi/180)));
-
-*THETA_COMP_R0
-			/ (THETA_COMP_R0 + theta_comp_gain*(THETA_COMP_R1*sin(encoder_R*pi/180)+THETA_COMP_R2*cos(encoder_R*pi/180)
-							  +THETA_COMP_R3*sin(2*encoder_R*pi/180)+THETA_COMP_R4*cos(2*encoder_R*pi/180)));
-
-
-*/
+	E_speedL = (angle_L) * pi / 180 * TIRE_DIAMETER /2 * 1000  / INTERRUPT_TIME*THETA_COMP_L0
+			/(THETA_COMP_L0 + theta_comp_gain*(THETA_COMP_L1*sinf(encoder_L*pi/180+THETA_COMP_L2)
+	+THETA_COMP_L3*sinf(2*encoder_L*pi/180+THETA_COMP_L4)+THETA_COMP_L5*sinf(3*encoder_L*pi/180+THETA_COMP_L6)));
+	E_speedR = (angle_R) * pi / 180 * TIRE_DIAMETER /2 * 1000 / INTERRUPT_TIME*THETA_COMP_R0
+			/ (THETA_COMP_R0 + theta_comp_gain*(THETA_COMP_R1*sinf(encoder_R*pi/180+THETA_COMP_R2)
+	+THETA_COMP_R3*sinf(2*encoder_R*pi/180+THETA_COMP_R4)+THETA_COMP_R5*sinf(3*encoder_R*pi/180+THETA_COMP_R6)));
 
 
 
