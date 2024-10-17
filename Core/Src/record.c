@@ -23,6 +23,7 @@
 #include "PID_wall.h"
 #include "stdio.h"
 #include "define.h"
+#include "math.h"
 
 
 //#include "motor_control.h"
@@ -103,7 +104,7 @@ void record_print(void) {
 void interrupt_record(void) {
 
 	float r_data[4];
-
+	
 	if (record_mode == 1) {
 			r_data[0] = E_speedR;
 			r_data[1] = E_speedL;
@@ -115,7 +116,7 @@ void interrupt_record(void) {
 		r_data[0] = turning.velocity;
 		r_data[1] = angle_speed;
 		r_data[2] = straight.velocity;
-		r_data[3] = (fusion_speedR + fusion_speedL) / 2;
+		r_data[3] = kalman_speed;
 				record_data(r_data, 4);
 		}
 	if (record_mode == 3) {
@@ -134,9 +135,9 @@ void interrupt_record(void) {
 		}
 	if (record_mode == 5) { //距離の比較
 			r_data[0] = straight.velocity;
-			r_data[1] = kalman_distance;
-			r_data[2] = kalman_distance2;
-			r_data[3] = kalman_speed;
+			r_data[1] = (E_speedL + E_speedR)/2;
+			r_data[2] = gf_speed;
+			r_data[3] = (fusion_speedL + fusion_speedR) / 2;//kalman_speed;
 			record_data(r_data, 4);
 		}
 	if (record_mode == 6) { //距離の比較
@@ -267,116 +268,22 @@ void interrupt_record(void) {
 			r_data[3] = (fusion_distanceL + fusion_distanceR) / 2 / sqrt(2);
 			record_data(r_data, 4);
 		}
-/*	if (record_mode == 1) {
-		r_data[0] = straight.velocity;
-		r_data[1] = straight.displacement;
-		r_data[2] = (E_speedR + E_speedL) / 2;
-		r_data[3] = (E_distanceR + E_distanceL) / 2;
-		record_data(r_data, 4);
-	} else if (record_mode == 2) {
-		r_data[0] = turning.velocity;
-		r_data[1] = turning.acceleration;
-		r_data[2] = angle_speed;
-		r_data[3] = angle; //g_V_R;
-		record_data(r_data, 4);
-	} else if (record_mode == 3) {
-		r_data[0] = (float) g_sensor[0][0];
-		r_data[1] = (float) g_sensor[1][0];
-		r_data[2] = (float) g_sensor[3][0];
-		r_data[3] = (float) g_sensor[4][0];
-		record_data(r_data, 4);
-	} else if (record_mode == 4) {
-		r_data[0] = (float) g_sensor[0][0];
-		r_data[1] = (float) g_sensor_diff[0];
-		r_data[2] = (float) g_sensor[4][0];
-		r_data[3] = (float) g_sensor_diff[4];
-		record_data(r_data, 4);
-	} else if (record_mode == 5) {
-		r_data[0] = (E_speedR + E_speedL) / 2;
-		r_data[1] = enc.error;
-		r_data[2] = enc.sigma_error;
-		r_data[3] = enc.delta_error;
-		record_data(r_data, 4);
-	} else if (record_mode == 6) {
-		r_data[0] = angle_speed;
-		r_data[1] = Gyro.error;
-		r_data[2] = Gyro.sigma_error;
-		r_data[3] = Gyro.delta_error;
-		record_data(r_data, 4);
-	} else if (record_mode == 7) { //90
-		r_data[0] = (float) g_sensor[0][0];
-		r_data[1] = (float) g_sensor[4][0];
-		r_data[2] = NoWallDisplacementR45slant;
-		r_data[3] = NoWallDisplacementL45slant;
-		record_data(r_data, 4);
-	} else if (record_mode == 8) {
-		r_data[0] = (float) g_sensor_diff[1];
-		r_data[1] = (float) g_sensor_diff[3];
-		r_data[2] = NoWallDisplacementR45slant2;
-		r_data[3] = NoWallDisplacementL45slant2;
-		record_data(r_data, 4);
-	} else if (record_mode == 9) { //45
-		r_data[0] = (float) g_sensor[1][0];
-		r_data[1] = (float) g_sensor[3][0];
-		r_data[2] = NoWallDisplacementR45slant;
-		r_data[3] = NoWallDisplacementL45slant;
-		record_data(r_data, 4);
-	} else if (record_mode == 10) { //45
-		r_data[0] = NoWallDisplacementR45slant;
-		r_data[1] = NoWallDisplacementL45slant;
-		r_data[2] = wall_slant90.error;
-		r_data[3] = wall_slant45.error;
-		record_data(r_data, 4);
-	} else if (record_mode == 11) { //90
-		r_data[0] = g_log_CenterSlantR90;
-		r_data[1] = g_sensor[SENSOR_RIGHT][0];
-		r_data[2] = g_log_CenterSlantL90;
-		r_data[3] = g_sensor[SENSOR_LEFT][0];
-		record_data(r_data, 4);
-	} else if (record_mode == 12) { //45
-		r_data[0] = g_log_CenterSlantR45;
-		r_data[1] = g_sensor[SENSOR_FRONT_RIGHT][0];
-		r_data[2] = g_log_CenterSlantL45;
-		r_data[3] = g_sensor[SENSOR_FRONT_LEFT][0];
-		record_data(r_data, 4);
-	} else if (record_mode == 13) {
-		r_data[0] = (float) g_sensor[1][0];
-		r_data[1] = (float) g_sensor_diff_wallcut[1];
-		r_data[2] = (float) g_sensor[3][0];
-		r_data[3] = (float) g_sensor_diff_wallcut[3];
-		record_data(r_data, 4);
-	} else if (record_mode == 14) {
-		r_data[0] = straight.velocity;
-		r_data[1] = (g_V_R + g_V_L) / 2;
-		r_data[2] = (E_speedR + E_speedL) / 2;
-		r_data[3] = (E_distanceR + E_distanceL) / 2;
-		record_data(r_data, 4);
-	} else if (record_mode == 15) { //速度の比較
-		r_data[0] = straight.velocity;
-		r_data[1] = (E_speedR + E_speedL) / 2;
-		r_data[2] = gf_speed;
-		r_data[3] = (fusion_speedR + fusion_speedL) / 2;
-		record_data(r_data, 4);
-	} else if (record_mode == 16) { //速度の比較
-		r_data[0] = straight.displacement;
-		r_data[1] = (E_distanceR + E_distanceL) / 2;
-		r_data[2] = gf_distance;
-		r_data[3] = (fusion_distanceR + fusion_distanceL) / 2;
-		record_data(r_data, 4);
-	} else if (record_mode == 17) { //速度の比較
-		r_data[0] = straight.velocity;
-		r_data[1] = (E_speedR + E_speedL) / 2;
-		r_data[2] = gf_accel;
-		r_data[3] = angle_speed;
-		record_data(r_data, 4);
-	} else if (record_mode == 18) { //速度の比較
-		r_data[0] = straight.velocity;
-		r_data[1] = (fusion_speedR + fusion_speedL) / 2;
-		r_data[2] = g_V_R;
-		r_data[3] = g_V_L;
-		record_data(r_data, 4);
+	if (record_mode == 24) { //距離の比較
+			r_data[0] = (E_speedL + E_speedR)/2;
+			r_data[1] = (fusion_speedL + fusion_speedR) / 2;
+			r_data[2] = gf_speed;
+			r_data[3] = kalman_speed;
+			record_data(r_data, 4);
+		}
+	if (record_mode == 100) {
+			r_data[0] = record_point;
+			r_data[1] = record_point;
+			r_data[2] = record_point;
+			r_data[3] = record_point;
+			record_data(r_data, 4);
+			record_mode=0;
 	}
-*/
+
 
 }
 

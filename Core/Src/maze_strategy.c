@@ -238,6 +238,7 @@ void AdatiWayReturn(float input_StraightVelocity, float input_TurningVelocity, f
 	mode.WallControlStatus=0;
 	mode.WallCutMode=0;
 	mode.calMazeMode=0;
+	highspeed_mode = 0;
 
 	//モータenable
 	pl_DriveMotor_standby(ON);
