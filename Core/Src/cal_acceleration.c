@@ -18,6 +18,7 @@ float mollifier_timer;
 
 volatile char g_acc_flag;
 volatile char g_MotorEnd_flag;
+float mollifier_accGain=1;
 
 
 void cal_table(TRAPEZOID input,TARGET *target){
@@ -483,15 +484,44 @@ float OverShot=0;
 		if (mollifier_timer>-mollifier_T/2 && mollifier_timer<mollifier_T/2){
 			old_velocity=target->velocity;
 			target->velocity = cal_mollifier_velocity(mollifier_timer,mollifier_T,input.displacement);
+			
+			if( mollifier_timer < -mollifier_T / 2 / 1.316 ){
+				mollifier_accGain = 1;
+				target->acceleration = mollifier_accGain*cal_mollifier_acceleration(-mollifier_T/2/1.316,mollifier_T,input.displacement);
+			}else if( mollifier_timer < 0 ){
+				mollifier_accGain = 0.9 * mollifier_accGain + 0.1 * 0.95;
+				target->acceleration = mollifier_accGain*cal_mollifier_acceleration(mollifier_timer,mollifier_T,input.displacement);
+			}else if( mollifier_timer < mollifier_T / 4 ){
+				mollifier_accGain = 0.9 * mollifier_accGain + 0.1 * 0.85;
+				target->acceleration = mollifier_accGain*cal_mollifier_acceleration(mollifier_timer,mollifier_T,input.displacement);
+			}else{
+				mollifier_accGain = 0.9 * mollifier_accGain + 0.1 * 0.3;
+				target->acceleration = mollifier_accGain*cal_mollifier_acceleration(mollifier_timer,mollifier_T,input.displacement);
+			}
+/*
+			if( mollifier_timer < -mollifier_T / 2 / 1.316 ){
+				mollifier_accGain = 1;
+				target->acceleration = mollifier_accGain*cal_mollifier_acceleration(-mollifier_T/2/1.316,mollifier_T,input.displacement);
+			}else if( mollifier_timer < 0 ){
+				mollifier_accGain = 0.7 * mollifier_accGain + 0.3 * 0.8;
+				target->acceleration = mollifier_accGain*cal_mollifier_acceleration(mollifier_timer,mollifier_T,input.displacement);
+			}else if( mollifier_timer < mollifier_T / 2 / 1.316 ){
+				mollifier_accGain = 0.7 * mollifier_accGain + 0.3 * 1;
+				target->acceleration = mollifier_accGain*cal_mollifier_acceleration(mollifier_timer,mollifier_T,input.displacement);
+			}else{
+				mollifier_accGain = 0.7 * mollifier_accGain + 0.3 * 0.3;
+				target->acceleration = mollifier_accGain*cal_mollifier_acceleration(mollifier_timer,mollifier_T,input.displacement);
+			}
+*/
 
+/*
 			if(mollifier_timer<-mollifier_T/2/1.316+time_delay*INTERRUPT_TIME){
 				target->acceleration = cal_mollifier_acceleration(-mollifier_T/2/1.316,mollifier_T,input.displacement);
 			}else if(mollifier_timer<0){
-				target->acceleration = cal_mollifier_acceleration(mollifier_timer-INTERRUPT_TIME*time_delay,mollifier_T,input.displacement);
+				target->acceleration = cal_mollifier_acceleration(mollifier_timer+mollifier_T/100,mollifier_T,input.displacement);
 			}else if(mollifier_timer<mollifier_T/2/1.316+time_delay2*INTERRUPT_TIME){
 				target->acceleration = cal_mollifier_acceleration(mollifier_timer-INTERRUPT_TIME*time_delay,mollifier_T,input.displacement);
 			}else if(mollifier_timer<mollifier_T/2+time_delay2*INTERRUPT_TIME){
-				time_delay=0;
 				target->acceleration = cal_mollifier_acceleration(mollifier_T/2/1.316,mollifier_T,input.displacement);
 			}else{
 				target->acceleration = cal_mollifier_acceleration(mollifier_T/2-INTERRUPT_TIME,mollifier_T,input.displacement);
@@ -501,7 +531,7 @@ float OverShot=0;
 			if(mollifier_timer>mollifier_T/2-INTERRUPT_TIME*time_delay4){
 				target->acceleration = OverShot*cal_mollifier_acceleration(mollifier_timer,mollifier_T,input.displacement);
 			}
-
+*/
 
 			//			if(mollifier_timer>-mollifier_T/2*0.35 && mollifier_timer<mollifier_T/2*0.45){
 //							target->acceleration = 0.7*target->acceleration;
@@ -517,7 +547,7 @@ float OverShot=0;
 			target->velocity=0;
 			target->acceleration = -target->velocity+old_velocity;
 			g_acc_flag=4;
-
+			mollifier_accGain=1;
 		}
 
 }
