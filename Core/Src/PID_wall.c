@@ -798,7 +798,7 @@ void interrupt_WallCut(void) {
 		if (g_sensor[SENSOR_FRONT_LEFT][0] > WALLCUT_THRESHOLD_L45) {
 			NoWallCountL45++;
 			NoWallCountL45_flag = 0;
-			NoWallDisplacementL45 += (fusion_speedL + fusion_speedR) / 2 * INTERRUPT_TIME;
+			NoWallDisplacementL45 += kalman_speed * INTERRUPT_TIME;
 		} else {
 			if (NoWallCountL45_flag == 0) {
 				NoWallCountL45 = 0;
@@ -806,7 +806,7 @@ void interrupt_WallCut(void) {
 				NoWallDisplacementL45 = 0;
 			} else {
 				NoWallCountL45++;
-				NoWallDisplacementL45 += (fusion_speedL + fusion_speedR) / 2* INTERRUPT_TIME;
+				NoWallDisplacementL45 += kalman_speed* INTERRUPT_TIME;
 			}
 		}
 
@@ -814,7 +814,7 @@ void interrupt_WallCut(void) {
 		if (g_sensor[SENSOR_FRONT_RIGHT][0] > WALLCUT_THRESHOLD_R45) {
 			NoWallCountR45++;
 			NoWallCountR45_flag = 0;
-			NoWallDisplacementR45 += (fusion_speedL + fusion_speedR) / 2 * INTERRUPT_TIME;
+			NoWallDisplacementR45 += kalman_speed * INTERRUPT_TIME;
 		} else {
 			if (NoWallCountR45_flag == 0) {
 				NoWallCountR45 = 0;
@@ -822,7 +822,7 @@ void interrupt_WallCut(void) {
 				NoWallDisplacementR45 = 0;
 			} else {
 				NoWallCountR45++;
-				NoWallDisplacementR45 += (fusion_speedL + fusion_speedR) / 2* INTERRUPT_TIME;
+				NoWallDisplacementR45 += kalman_speed* INTERRUPT_TIME;
 			}
 		}
 
@@ -832,7 +832,7 @@ void interrupt_WallCut(void) {
 			NoWallCountL45slant++;
 			pl_l_blue_LED(0);
 			NoWallCountL45slant_flag = 0;
-			NoWallDisplacementL45slant2 += (fusion_speedL + fusion_speedR) / 2*INTERRUPT_TIME;//壁切れ用
+			NoWallDisplacementL45slant2 += kalman_speed*INTERRUPT_TIME;//壁切れ用
 			if (slantWallControlL_flag == 1) {
 				NoWallDisplacementL45slant += straight.velocity*INTERRUPT_TIME;//斜め制御用
 			}
@@ -846,7 +846,7 @@ void interrupt_WallCut(void) {
 
 			} else {
 				NoWallCountL45slant++;
-				NoWallDisplacementL45slant2 += (fusion_speedL + fusion_speedR) / 2*INTERRUPT_TIME;
+				NoWallDisplacementL45slant2 += kalman_speed*INTERRUPT_TIME;
 				if (slantWallControlL_flag == 1) {
 					NoWallDisplacementL45slant += straight.velocity*INTERRUPT_TIME;
 				}
@@ -859,7 +859,7 @@ void interrupt_WallCut(void) {
 			NoWallCountR45slant++;
 			pl_r_blue_LED(0);
 			NoWallCountR45slant_flag = 0;
-			NoWallDisplacementR45slant2 += (fusion_speedL + fusion_speedR) / 2*INTERRUPT_TIME;
+			NoWallDisplacementR45slant2 += kalman_speed*INTERRUPT_TIME;
 			if (slantWallControlR_flag == 1) {
 				NoWallDisplacementR45slant += straight.velocity*INTERRUPT_TIME;
 			}
@@ -872,8 +872,7 @@ void interrupt_WallCut(void) {
 			    NoWallDisplacementR45slant2 = 0;
 			} else {
 				NoWallCountR45slant++;
-				NoWallDisplacementR45slant2 += (fusion_speedL + fusion_speedR)
-						/ 2*INTERRUPT_TIME;
+				NoWallDisplacementR45slant2 += kalman_speed*INTERRUPT_TIME;
 				if (slantWallControlR_flag == 1) {
 					NoWallDisplacementR45slant += straight.velocity*INTERRUPT_TIME;
 				}
