@@ -255,7 +255,10 @@ void interupt_calEncoder(void) {
 	angle_L=-(encoder_L-encoder_L0);
 	if(angle_L>180){angle_L=angle_L-360;}
 	if(angle_L<-180){angle_L=angle_L+360;}
-
+/*
+	E_speedL = (angle_L) * pi / 180 * TIRE_DIAMETER /2 * 1000  / INTERRUPT_TIME;
+	E_speedR = (angle_R) * pi / 180 * TIRE_DIAMETER /2 * 1000 / INTERRUPT_TIME;
+*/
 	E_speedL = (angle_L) * pi / 180 * TIRE_DIAMETER /2 * 1000  / INTERRUPT_TIME*THETA_COMP_L0
 			/(THETA_COMP_L0 + theta_comp_gain*(THETA_COMP_L1*sinf(encoder_L*pi/180+THETA_COMP_L2)
 	+THETA_COMP_L3*sinf(2*encoder_L*pi/180+THETA_COMP_L4)+THETA_COMP_L5*sinf(3*encoder_L*pi/180+THETA_COMP_L6)));

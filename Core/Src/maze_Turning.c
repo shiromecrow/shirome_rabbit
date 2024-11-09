@@ -1106,14 +1106,18 @@ void testturning(parameter_speed Howspeed,int turnmode,char shortest_mode,char f
 	reset_distance();
 	clear_Ierror();
 	if(turnmode==10 || turnmode==12 || turnmode==14){
+		highspeed_mode=0;
 		straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, wallmode);
 		turning_table2(45, 0, 0, 300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
 		straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, wallmode);
+		highspeed_mode=1;
 	}
 	if(turnmode==11 || turnmode==13 || turnmode==15){
+		highspeed_mode=0;
 		straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, wallmode);
 		turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
 		straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, wallmode);
+		highspeed_mode=1;
 	}
 
 	if(funmode==ON){
@@ -1137,7 +1141,8 @@ void testturning(parameter_speed Howspeed,int turnmode,char shortest_mode,char f
 		clear_Ierror();
 
 	}
-	record_mode=2;
+	//record_mode = 2;
+	record_mode = 25;
 //	if(turnmode==0){test_mollifier_slalomR(Howspeed.slalom_R);}
 	if(turnmode==0){slalomR(Howspeed.slalom_R,ON,shortest_mode,mollifier_mode,-100);}
 	if(turnmode==1){slalomL(Howspeed.slalom_L,ON,shortest_mode,mollifier_mode,-100);}
