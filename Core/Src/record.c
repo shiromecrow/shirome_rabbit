@@ -24,6 +24,7 @@
 #include "stdio.h"
 #include "define.h"
 #include "math.h"
+#include "cal_acceleration.h"
 
 
 //#include "motor_control.h"
@@ -39,6 +40,8 @@ int sample_count;/* サンプリング観測用のカウント値 */
 int record_time;
 int record_end_point;
 char record_rupe_flag;
+
+float record_buf;
 
 //int SEN_record[5][15];
 //int SEN_recordD[5][15];
@@ -274,6 +277,22 @@ void interrupt_record(void) {
 			r_data[2] = gf_speed;
 			r_data[3] = kalman_speed;
 			record_data(r_data, 4);
+		}
+	if (record_mode == 25) {// 旋回加速度FFの確認
+		
+		r_data[0] = turning.velocity;
+		r_data[1] = angle_speed;
+		r_data[2] = turning.acceleration / 50;
+		r_data[3] = (turning.velocity - record_buf)/INTERRUPT_TIME / 50;
+		record_buf = turning.velocity;
+		record_data(r_data, 4);
+		}
+	if (record_mode == 26) { //ターン調整用
+		r_data[0] = turning.velocity;
+		r_data[1] = angle_speed;
+		r_data[2] = straight.velocity;
+		r_data[3] = (fusion_speedL + fusion_speedR) / 2;
+				record_data(r_data, 4);
 		}
 	if (record_mode == 100) {
 			r_data[0] = record_point;
