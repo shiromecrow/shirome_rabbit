@@ -478,22 +478,24 @@ float time_delay=12;
 float time_delay2=-10;
 float time_delay3=3;
 float time_delay4=5;
+float time_delay5;
 float OverShot=0;
 	mollifier_timer+=INTERRUPT_TIME;
 		mollifier_T=2*fabs(input.displacement)/MOLLIFIER_INTEGRAL*exp(-1)/input.max_turning_velocity;
+		time_delay5 = mollifier_T/35;
 		if (mollifier_timer>-mollifier_T/2 && mollifier_timer<mollifier_T/2){
 			old_velocity=target->velocity;
 			target->velocity = cal_mollifier_velocity(mollifier_timer,mollifier_T,input.displacement);
 			
-			if( mollifier_timer < -mollifier_T / 2 / 1.316 ){
+			if( mollifier_timer < -mollifier_T / 2 / 1.316 - time_delay5 ){
 				mollifier_accGain = 1;
 				target->acceleration = mollifier_accGain*cal_mollifier_acceleration(-mollifier_T/2/1.316,mollifier_T,input.displacement);
 			}else if( mollifier_timer < 0 ){
 				mollifier_accGain = 0.9 * mollifier_accGain + 0.1 * 0.95;
-				target->acceleration = mollifier_accGain*cal_mollifier_acceleration(mollifier_timer,mollifier_T,input.displacement);
-			}else if( mollifier_timer < mollifier_T / 4 ){
-				mollifier_accGain = 0.9 * mollifier_accGain + 0.1 * 0.85;
-				target->acceleration = mollifier_accGain*cal_mollifier_acceleration(mollifier_timer,mollifier_T,input.displacement);
+				target->acceleration = mollifier_accGain*cal_mollifier_acceleration(mollifier_timer+time_delay5,mollifier_T,input.displacement);
+			}else if( mollifier_timer < mollifier_T / 2 / 1.316 ){
+				mollifier_accGain = 0.9 * mollifier_accGain + 0.1 * 0.95;
+				target->acceleration = mollifier_accGain*cal_mollifier_acceleration(mollifier_timer+time_delay5,mollifier_T,input.displacement);
 			}else{
 				mollifier_accGain = 0.9 * mollifier_accGain + 0.1 * 0.3;
 				target->acceleration = mollifier_accGain*cal_mollifier_acceleration(mollifier_timer,mollifier_T,input.displacement);

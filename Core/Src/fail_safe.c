@@ -83,7 +83,7 @@ void interrupt_FailSafe(void){
 			//ジャイロの誤差が一定以上
 					if (fabs(turning.velocity - angle_speed) >= gyro_PID_error_in ) {
 						error_count1++;
-						if(error_count1>=100){
+						if(error_count1>=20){
 							pl_FunMotor_stop();
 							g_WallControl_mode =0;
 							error_mode = 1;
@@ -96,7 +96,7 @@ void interrupt_FailSafe(void){
 					}
 					if (angle_speedx_set >= gyro_x_error_in) {
 						error_count2++;
-						if(error_count2>=40){
+						if(error_count2>=30){
 							pl_FunMotor_stop();
 							g_WallControl_mode =0;
 							error_mode = 2;
@@ -127,7 +127,7 @@ void interrupt_FailSafe(void){
 					(fabs(straight.velocity - kalman_speed) >= encoder_PID_error_in && modeacc==1 && highspeed_mode == 1)
 					){
 						error_count4++;
-						if(error_count4>=80){
+						if(error_count4>=20){
 							pl_FunMotor_stop();
 							g_WallControl_mode =0;
 							error_mode = 4;
