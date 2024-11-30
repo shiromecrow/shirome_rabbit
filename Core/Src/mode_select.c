@@ -716,29 +716,32 @@ void mode_Tuning2(unsigned char main_modeR){
 		break;
 		break;
 		case 6://斜め直進(90)
-			mode.WallControlMode=3;
+			mode.WallControlMode=0;
 			mode.WallControlStatus=0;mode.WallCutMode=0;mode.calMazeMode=0;
 			straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
+			mode.WallControlMode=3;
 			record_mode=18;
 			straight_table2(90*5*sqrt(2), 0, 0, 1000, 9000,mode);
 		break;
 		case 7://斜め直進(45)
-			mode.WallControlMode=3;
+			mode.WallControlMode=0;
 			mode.WallControlStatus=0;mode.WallCutMode=0;mode.calMazeMode=0;
 			straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
+			mode.WallControlMode=3;
 			record_mode=19;
 			straight_table2(90*5*sqrt(2), 0, 0, 1000, 9000,mode);
 		break;
 		case 8://斜め直進(90)
-			mode.WallControlMode=3;
+			mode.WallControlMode=0;
 			mode.WallControlStatus=0;mode.WallCutMode=0;mode.calMazeMode=0;
 			straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			turning_table2(45, 0, 0, 300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
+			mode.WallControlMode=3;
 			highspeed_mode = 1;
 			control_fun(5.86);
 			reset_gyro();
@@ -751,11 +754,12 @@ void mode_Tuning2(unsigned char main_modeR){
 			straight_table2(90*7*sqrt(2), 0, 0, 4000, 22000,mode);
 		break;
 		case 9://斜め直進(45)
-			mode.WallControlMode=3;
+			mode.WallControlMode=0;
 			mode.WallControlStatus=0;mode.WallCutMode=0;mode.calMazeMode=0;
 			straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
+			mode.WallControlMode=3;
 			highspeed_mode = 1;
 			control_fun(5.86);
 			reset_gyro();
@@ -811,20 +815,22 @@ void mode_Tuning2(unsigned char main_modeR){
 			straight_table2(90*3*sqrt(2), 0, 0, 300, 3000,mode);
 		break;
 		case 13://斜め直進(90)
-			mode.WallControlMode=3;
+			mode.WallControlMode=0;
 			mode.WallControlStatus=0;mode.WallCutMode=0;mode.calMazeMode=0;
 			straight_table2(BACK_TO_CENTER_FRONT+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
+			mode.WallControlMode=3;
 			record_mode=9;
 			straight_table2(90*3*sqrt(2), 0, 0, 300, 3000,mode);
 		break;
 		case 14://斜め直進(45)
-			mode.WallControlMode=3;
+			mode.WallControlMode=0;
 			mode.WallControlStatus=0;mode.WallCutMode=0;mode.calMazeMode=0;
 			straight_table2(BACK_TO_CENTER_FRONT+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
+			mode.WallControlMode=3;
 			record_mode=10;
 			highspeed_mode = 1;
 			control_fun(5.86);
@@ -997,6 +1003,7 @@ void mode_Tuning1(unsigned char main_modeR){
 			get_duty(1, 1,&duty_L,&duty_R);
 			pl_DriveMotor_duty(duty_L,duty_R);
 			pl_DriveMotor_start();
+			theta_comp_gain=1;
 			wait_ms(3000);
 			record_mode=11;
 			wait_ms(2000);
@@ -1105,20 +1112,22 @@ void mode_Tuning1(unsigned char main_modeR){
 			straight_table2(90*3*sqrt(2), 0, 0, 300, 3000,mode);
 		break;
 		case 13://斜め直進(90)
-			mode.WallControlMode=3;
+			mode.WallControlMode=0;
 			mode.WallControlStatus=0;mode.WallCutMode=0;mode.calMazeMode=0;
 			straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
+			mode.WallControlMode=3;
 			record_mode=9;
 			straight_table2(90*3*sqrt(2), 0, 0, 300, 3000,mode);
 		break;
 		case 14://斜め直進(45)
-			mode.WallControlMode=3;
+			mode.WallControlMode=0;
 			mode.WallControlStatus=0;mode.WallCutMode=0;mode.calMazeMode=0;
 			straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
+			mode.WallControlMode=3;
 			record_mode=10;
 			highspeed_mode = 1;
 			control_fun(5.86);
@@ -1144,7 +1153,7 @@ void mode_Tuning1(unsigned char main_modeR){
 			record_mode=2;
 //			mode.WallControlMode=0;
 //			straight_table2(90*32, 0, 0, 4000, 17000,mode);
-			mode.WallControlMode=0;
+			mode.WallControlMode=1;
 //			straight_table2(BACK_TO_CENTER_FRONT,0,1000,1000,1000*1000/ BACK_TO_CENTER_FRONT/2, mode);
 			straight_table2(90*8, 0, 0, 4000, 30000,mode);
 			//straight_table_dis(90*8, 0, 0, 4000,30000,11000,mode);

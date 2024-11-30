@@ -13,6 +13,11 @@
 #define MOTOR_BACK 2
 #define MOTOR_BREAK 3
 
+#define L_MOTOR_FRONT 1
+#define L_MOTOR_BACK 0
+#define R_MOTOR_FRONT 0
+#define R_MOTOR_BACK 1
+
 #define FUN_MAX_DUTY 200
 
 void pl_motor_init();
