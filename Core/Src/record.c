@@ -140,7 +140,7 @@ void interrupt_record(void) {
 			r_data[0] = straight.velocity;
 			r_data[1] = (E_speedL + E_speedR)/2;
 			r_data[2] = gf_speed;
-			r_data[3] = (fusion_speedL + fusion_speedR) / 2;//kalman_speed;
+			r_data[3] = kalman_speed;//kalman_speed;
 			record_data(r_data, 4);
 		}
 	if (record_mode == 6) { //距離の比較
@@ -294,6 +294,14 @@ void interrupt_record(void) {
 		r_data[3] = (fusion_speedL + fusion_speedR) / 2;
 				record_data(r_data, 4);
 		}
+	if (record_mode == 27) { //前壁制御
+			r_data[0] = (float) g_sensor[SENSOR_FRONT_L][0];
+			r_data[1] = (float) g_sensor[SENSOR_FRONT_R][0];;
+			r_data[2] = 0;
+			r_data[3] = 0;
+			record_data(r_data, 4);
+		}
+
 	if (record_mode == 100) {
 			r_data[0] = record_point;
 			r_data[1] = record_point;
