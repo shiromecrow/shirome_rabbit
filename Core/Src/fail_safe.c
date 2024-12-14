@@ -33,8 +33,9 @@ float encoder_PID_error_highspeed;
 float gyro_PID_error_highspeed;
 float gyro_x_error_highspeed;
 float encoder_gyro_error_highspeed;
-int error_count1,error_count2,error_count3,error_count4,error_count5;//エラー回数
+int error_count1,error_count2,error_count3,error_count4,error_count5,error_count6;//エラー番号
 int error_time_count;//エラ後のやつ
+float wallcut_error;
 
 void init_FailSafe(void){
 	error_mode=0;
@@ -45,6 +46,7 @@ void init_FailSafe(void){
 	error_count3=0;
 	error_count4=0;
 	error_count5=0;
+	error_count6=0;
 	error_time_count=0;
 	encoder_PID_error=500;
 	gyro_PID_error=500;
@@ -55,6 +57,7 @@ void init_FailSafe(void){
 	gyro_PID_error_highspeed=500;
 	gyro_x_error_highspeed=200;
 	encoder_gyro_error_highspeed=2500;
+	wallcut_error=10;
 }
 
 
@@ -83,7 +86,7 @@ void interrupt_FailSafe(void){
 			//ジャイロの誤差が一定以上
 					if (fabs(turning.velocity - angle_speed) >= gyro_PID_error_in ) {
 						error_count1++;
-						if(error_count1>=20){
+						if(error_count1>=17){
 							pl_FunMotor_stop();
 							g_WallControl_mode =0;
 							error_mode = 1;
@@ -154,20 +157,27 @@ void interrupt_FailSafe(void){
 						error_count5=0;
 					}
 */
+/* 壁切れ永続エラー */
+					if( (( NoWallDisplacementL90 > 90*wallcut_error || 
+					NoWallDisplacementR90 > 90*wallcut_error ) && highspeed_mode == 0) ||
+					 (( NoWallDisplacementL45 > 90*wallcut_error || 
+					 NoWallDisplacementR45 > 90*wallcut_error || 
+					 NoWallDisplacementL45slant > 90*sqrt(2)*wallcut_error || 
+					 NoWallDisplacementR45slant > 90*sqrt(2)*wallcut_error ) && highspeed_mode == 1)){
+						error_count6++;
+						if(error_count6>=10){
+							pl_FunMotor_stop();
+							g_WallControl_mode =0;
+							error_mode = 6;
+							pl_yellow_LED_count(error_mode);
+							main_mode=error_mode;
+							clear_Ierror();
+						}
+					}else{
+						error_count6=0;
+					}
 
-//					if(NoWallDisplacementL45>wallcut_error_in || NoWallDisplacementR45>wallcut_error_in || NoWallDisplacementL90>wallcut_error_in || NoWallDisplacementR90>wallcut_error_in || NoWallDisplacementL45slant>wallcut_error_in || NoWallDisplacementR45slant>wallcut_error_in){
-//						error_count5++;
-//						if(error_count5>=50){
-//							pl_FunMotor_stop();
-//							g_WallControl_mode =0;
-//							pl_yellow_LED_count(16);
-//							main_mode=16;
-//							error_mode = 5;
-//							clear_Ierror();
-//						}
-//					}else{
-//						error_count5=0;
-//					}
+
 
 				}
 
