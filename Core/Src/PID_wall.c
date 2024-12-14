@@ -24,6 +24,8 @@
 PIDW wall_normal;
 PIDW wall_slant90;
 PIDW wall_slant45;
+PIDW wall_front_l;
+PIDW wall_front_r;
 
 uint8_t g_WallControl_mode; //0で壁制御なし、1で通常の壁制御、2で斜めの制御
 uint8_t g_FrontWallControl_mode;
@@ -240,7 +242,7 @@ float calWallConrol(void) {
 				skewer_gain=0.9;
 				Skewer_limit = SKEWER_LIMIT_SHORT;
 			}else{
-				skewer_gain=0.9;
+				skewer_gain=0.4;
 				Skewer_limit = SKEWER_LIMIT*straight.velocity/300;
 			}
 
@@ -718,7 +720,7 @@ void calFrontWallConrol_one(float *PID_s) {
 	} else if (g_FrontWallControl_mode == 1) {
 		if (g_sensor[SENSOR_FRONT_L][0] > F_PRESENCE2 && g_sensor[SENSOR_FRONT_R][0] > F_PRESENCE2) {
 			*PID_s =
-					SENSOR_FRONT_GAIN
+					SENSOR_FRONT_GAIN_P
 							* ((float) (-g_sensor[SENSOR_FRONT_L][0]-g_sensor[SENSOR_FRONT_R][0])/2 + CENTER_FRONT_S);///??だめ
 
 		} else {
@@ -733,14 +735,30 @@ void calFrontWallConrol(float *PID_frontwall_l, float *PID_frontwall_r) {
 	if (g_FrontWallControl_mode == 0) {
 		*PID_frontwall_l = 0;
 		*PID_frontwall_r = 0;
+		wall_front_l.old_error = 0;
+		wall_front_r.old_error = 0;
+		wall_front_l.sigma_error = 0;
+		wall_front_r.sigma_error = 0;
 	} else if (g_FrontWallControl_mode == 1) {
-			*PID_frontwall_l =
-					SENSOR_FRONT_GAIN
-							* (-(float) (g_sensor[SENSOR_FRONT_L][0]
-									- CENTER_FRONT_L))/(float) g_sensor[SENSOR_FRONT_L][0];
-			*PID_frontwall_r = SENSOR_FRONT_GAIN
-					* (-(float) (g_sensor[SENSOR_FRONT_R][0]
-							- CENTER_FRONT_R))/(float) g_sensor[SENSOR_FRONT_R][0];
+		wall_front_l.error = (-(float) (g_sensor[SENSOR_FRONT_L][0] - CENTER_FRONT_L))/(float) g_sensor[SENSOR_FRONT_L][0];
+		wall_front_r.error = (-(float) (g_sensor[SENSOR_FRONT_R][0] - CENTER_FRONT_R))/(float) g_sensor[SENSOR_FRONT_R][0];
+		wall_front_l.delta_error = wall_front_l.error - wall_front_l.old_error;
+		wall_front_r.delta_error = wall_front_r.error - wall_front_r.old_error;
+		wall_front_l.old_error = wall_front_l.error;
+		wall_front_r.old_error = wall_front_r.error;
+		wall_front_l.sigma_error += wall_front_l.error;
+		wall_front_r.sigma_error += wall_front_r.error;
+
+		if( g_sensor[SENSOR_FRONT_L][0] > F_PRESENCE2 && g_sensor[SENSOR_FRONT_R][0] > F_PRESENCE2 ){
+		*PID_frontwall_l =
+				SENSOR_FRONT_GAIN_P * wall_front_l.error + SENSOR_FRONT_GAIN_I * wall_front_l.sigma_error + SENSOR_FRONT_GAIN_D * wall_front_l.delta_error; 
+		*PID_frontwall_r =
+				SENSOR_FRONT_GAIN_P * wall_front_r.error + SENSOR_FRONT_GAIN_I * wall_front_r.sigma_error + SENSOR_FRONT_GAIN_D * wall_front_r.delta_error; 
+		}else{
+			*PID_frontwall_l=0;
+			*PID_frontwall_r=0;
+		}
+
 
 	}
 }
