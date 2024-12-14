@@ -193,7 +193,7 @@ void interupt_DriveMotor(void){
 		//V_R = PID_s+PID_t+feedforward_straight+feedforward_turning;
 		get_duty(V_L, V_R,&duty_L,&duty_R);
 		pl_DriveMotor_duty(duty_L,duty_R);
-	}if (modeacc == 6) {//ネイピア加速
+	}if (modeacc == 6 || modeacc == 9) {//ネイピア加速
 		g_WallControl_mode=0;
 				g_wallCut_mode=0;
 		straight.displacement += straight.velocity*INTERRUPT_TIME + straight.acceleration*INTERRUPT_TIME*INTERRUPT_TIME/2;
@@ -493,8 +493,6 @@ float straight_table2(float input_displacement, float input_start_velocity,
 //				(NoWallDisplacementL90<=0 ||
 //			  NoWallDisplacementL90>CUTPLACE_THRESHOLD_END_L45) &&
 //			  front_wall_break_90==0){}
-		enc.sigma_error=0;
-		straight.displacement=0;
 		if (input_count_velocity>=0){straight.acceleration = input_acceleration;
 			}else{straight.acceleration = -input_acceleration;}
 		g_acc_flag=1;
@@ -511,8 +509,6 @@ float straight_table2(float input_displacement, float input_start_velocity,
 		while((NoWallDisplacementR45slant2<CUTPLACE_TO_CENTER_R45_SLANT ||
 				NoWallDisplacementR45slant2>CUTPLACE_THRESHOLD_END_R45_SLANT) &&
 				  front_wall_break_45slant==0){}
-		enc.sigma_error=0;
-		straight.displacement=0;
 		if (input_count_velocity>=0){straight.acceleration = input_acceleration;
 			}else{straight.acceleration = -input_acceleration;}
 		g_acc_flag=1;
@@ -529,8 +525,6 @@ float straight_table2(float input_displacement, float input_start_velocity,
 		while((NoWallDisplacementL45slant2<CUTPLACE_TO_CENTER_L45_SLANT ||
 			  NoWallDisplacementL45slant2>CUTPLACE_THRESHOLD_END_L45_SLANT) &&
 				  front_wall_break_45slant==0){}
-		enc.sigma_error=0;
-		straight.displacement=0;
 		if (input_count_velocity>=0){straight.acceleration = input_acceleration;
 			}else{straight.acceleration = -input_acceleration;}
 		g_acc_flag=1;
@@ -686,7 +680,7 @@ float slalom_table2(float input_center_velocity,float input_displacement, float 
 	// 例外処理
 	if (input_acceleration < 0){input_acceleration=-input_acceleration;}//加速が負
 
-	yaw_angle=0;
+	//yaw_angle=0;
 
 	Trapezoid_turning.displacement = input_displacement;
 	Trapezoid_turning.start_velocity = input_start_velocity;
@@ -749,6 +743,49 @@ void no_angle(void){
 
 }
 
+void mollifier_turning_table(float input_displacement, float input_max_turning_velocity) {
+
+	// 例外処理
+
+	Mollifier_turning.center_velocity = 0;
+	Mollifier_turning.displacement = input_displacement;
+	Mollifier_turning.max_turning_velocity = input_max_turning_velocity;
+
+	turning.velocity = 0;
+	turning.displacement = 0;
+	straight.velocity = 0;
+	straight.acceleration = 0;
+	straight.displacement = 0;
+	g_MotorEnd_flag=0;
+	g_acc_flag=1;
+	mollifier_timer=-fabs(input_displacement)/MOLLIFIER_INTEGRAL*exp(-1)/input_max_turning_velocity;
+	modeacc = 9;
+
+	pl_DriveMotor_start();
+	while (g_acc_flag!=4){
+
+	}
+
+	wait_ms_NoReset(100);
+	modeacc = 0;
+	pl_R_DriveMotor_mode(MOTOR_BREAK);
+	pl_L_DriveMotor_mode(MOTOR_BREAK);
+	wait_ms_NoReset(50);
+
+
+	
+
+//	modeacc = 0;
+
+	enc.sigma_error=0;
+	yaw_angle = yaw_angle - input_displacement;
+	fusion_speedL = E_speedL;
+	fusion_speedR = E_speedR;
+	gf_speed=0;
+
+
+	pl_DriveMotor_stop();
+}
 
 void mollifier_slalom_table(float input_center_velocity,float input_displacement, float input_max_turning_velocity) {
 
@@ -773,6 +810,17 @@ void mollifier_slalom_table(float input_center_velocity,float input_displacement
 	while (g_acc_flag!=4){
 
 	}
+	if(input_center_velocity==0){//BREAK
+		wait_ms_NoReset(300);
+		modeacc = 0;
+		pl_R_DriveMotor_mode(MOTOR_BREAK);
+		pl_L_DriveMotor_mode(MOTOR_BREAK);
+		wait_ms_NoReset(100);
+	}
+
+	if(input_center_velocity<=500){//BREAK
+		enc.sigma_error=0;
+	}
 //	modeacc = 0;
 
 
@@ -796,6 +844,12 @@ void no_frontwall_straight(void){
 
 	pl_DriveMotor_start();
 	wait_ms_NoReset(300);
+	// int count=0;
+	// while((fabsf(g_sensor[SENSOR_FRONT_L][0] - CENTER_FRONT_L)<50 && fabsf(g_sensor[SENSOR_FRONT_R][0] - CENTER_FRONT_R)<50) || count>1000)
+	// {
+	// 	count++;
+	// 	wait_ms_NoReset(1);
+	// }
 
 	g_FrontWallControl_mode=0;
 	modeacc = 0;
@@ -804,7 +858,8 @@ void no_frontwall_straight(void){
 	fusion_speedL = E_speedL;
 	fusion_speedR = E_speedR;
 	gf_speed=0;
-	clear_Ierror();
+	//yaw_angle=0;
+	//clear_Ierror();
 
 }
 

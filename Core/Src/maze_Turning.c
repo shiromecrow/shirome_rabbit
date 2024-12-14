@@ -88,7 +88,8 @@ void backTurn_controlWall(float input_TurningVelocity,float input_TurningAcceler
 		wait_ms_NoReset(50);
 	}
 	if(left_wall){
-		turning_table2(90,0,0,input_TurningVelocity,input_TurningAcceleration);
+		//turning_table2(90,0,0,input_TurningVelocity,input_TurningAcceleration);
+		mollifier_turning_table(90,input_TurningVelocity);
 		pl_R_DriveMotor_mode(MOTOR_BREAK);
 		pl_L_DriveMotor_mode(MOTOR_BREAK);
 		wait_ms_NoReset(50);
@@ -96,9 +97,11 @@ void backTurn_controlWall(float input_TurningVelocity,float input_TurningAcceler
 		pl_R_DriveMotor_mode(MOTOR_BREAK);
 		pl_L_DriveMotor_mode(MOTOR_BREAK);
 		wait_ms_NoReset(50);
-		turning_table2(90,0,0,input_TurningVelocity,input_TurningAcceleration);
+		//turning_table2(90,0,0,input_TurningVelocity,input_TurningAcceleration);
+		mollifier_turning_table(90,input_TurningVelocity);
 	}else if(left_wall==0 && right_wall){
-		turning_table2(-90,0,0,-input_TurningVelocity,input_TurningAcceleration);
+		//turning_table2(-90,0,0,-input_TurningVelocity,input_TurningAcceleration);
+		mollifier_turning_table(-90,input_TurningVelocity);
 		pl_R_DriveMotor_mode(MOTOR_BREAK);
 		pl_L_DriveMotor_mode(MOTOR_BREAK);
 		wait_ms_NoReset(50);
@@ -106,13 +109,16 @@ void backTurn_controlWall(float input_TurningVelocity,float input_TurningAcceler
 		pl_R_DriveMotor_mode(MOTOR_BREAK);
 		pl_L_DriveMotor_mode(MOTOR_BREAK);
 		wait_ms_NoReset(50);
-		turning_table2(-90,0,0,-input_TurningVelocity,input_TurningAcceleration);
+		//turning_table2(-90,0,0,-input_TurningVelocity,input_TurningAcceleration);
+		mollifier_turning_table(-90,input_TurningVelocity);
 	}else if(left_wall==0 && right_wall==0){
-		turning_table2(90,0,0,input_TurningVelocity,input_TurningAcceleration);
+		//turning_table2(90,0,0,input_TurningVelocity,input_TurningAcceleration);
+		mollifier_turning_table(90,input_TurningVelocity);
 		pl_R_DriveMotor_mode(MOTOR_BREAK);
 		pl_L_DriveMotor_mode(MOTOR_BREAK);
 		wait_ms_NoReset(50);
-		turning_table2(90,0,0,input_TurningVelocity,input_TurningAcceleration);
+		//turning_table2(90,0,0,input_TurningVelocity,input_TurningAcceleration);
+		mollifier_turning_table(90,input_TurningVelocity);
 	}
 	pl_R_DriveMotor_mode(MOTOR_BREAK);
 	pl_L_DriveMotor_mode(MOTOR_BREAK);
@@ -1141,8 +1147,8 @@ void testturning(parameter_speed Howspeed,int turnmode,char shortest_mode,char f
 		clear_Ierror();
 
 	}
-	//record_mode = 2;
-	record_mode = 25;
+	record_mode = 2;
+	//record_mode = 25;
 //	if(turnmode==0){test_mollifier_slalomR(Howspeed.slalom_R);}
 	if(turnmode==0){slalomR(Howspeed.slalom_R,ON,shortest_mode,mollifier_mode,-100);}
 	if(turnmode==1){slalomL(Howspeed.slalom_L,ON,shortest_mode,mollifier_mode,-100);}

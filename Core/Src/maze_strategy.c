@@ -86,12 +86,12 @@ void run_movement_continuity(int *direction,unsigned short front_count,unsigned 
 	}
 	if(right_count < front_count && right_count <= left_count && right_count <= back_count){
 		// 右旋回
-		slalomR(howspeed.slalom_R, OFF,EXPLORATION,0,input_StraightVelocity);
+		slalomR(howspeed.slalom_R, OFF,EXPLORATION,OFF,input_StraightVelocity);
 		*direction += 1;
 	}
 	if(left_count < front_count && left_count < right_count && left_count <= back_count){
 		// 左旋回
-		slalomL(howspeed.slalom_L, OFF,EXPLORATION,0,input_StraightVelocity);
+		slalomL(howspeed.slalom_L, OFF,EXPLORATION,OFF,input_StraightVelocity);
 		*direction -= 1;
 	}
 	if(back_count < front_count && back_count < right_count
@@ -180,13 +180,15 @@ if(error_mode==0){
 	}
 	if (right_count < front_count && right_count <= left_count && right_count <= back_count) {
 		// 右旋回
-		turning_table2(-90, 0, 0, -input_TurningVelocity, input_TurningAcceleration);
+		//turning_table2(-90, 0, 0, -input_TurningVelocity, input_TurningAcceleration);
+		mollifier_turning_table(-90,input_TurningVelocity);
 		straight_table2(MAZE_SECTION / 2 - (BACK_TO_CENTER - BACK_TO_CENTER_FRONT), 0, input_StraightVelocity, input_StraightVelocity, input_StraightAcceleration, mode);
 		*direction += 1;
 	}
 	if (left_count < front_count && left_count < right_count && left_count <= back_count) {
 		// 左旋回
-		turning_table2(90, 0, 0, input_TurningVelocity, input_TurningAcceleration);
+		//turning_table2(90, 0, 0, input_TurningVelocity, input_TurningAcceleration);
+		mollifier_turning_table(90,input_TurningVelocity);
 		straight_table2(MAZE_SECTION / 2 - (BACK_TO_CENTER - BACK_TO_CENTER_FRONT), 0, input_StraightVelocity, input_StraightVelocity, input_StraightAcceleration, mode);
 		*direction -= 1;
 	}
@@ -401,7 +403,7 @@ void AdatiWayReturn(float input_StraightVelocity, float input_TurningVelocity, f
 			mode.WallControlMode=0;
 			mode.calMazeMode=0;
 			mode.WallCutMode=0;
-			straight_table2(MAZE_SECTION/2-MAZE_OFFSET, input_StraightVelocity,0,input_StraightVelocity,input_StraightAcceleration, mode);
+			straight_table2(MAZE_SECTION/2-MAZE_OFFSET+(BACK_TO_CENTER - BACK_TO_CENTER_FRONT), input_StraightVelocity,0,input_StraightVelocity,input_StraightAcceleration, mode);
 			turning_table2(180,0,0,input_TurningVelocity,input_TurningAcceleration);
 			break;
 		}

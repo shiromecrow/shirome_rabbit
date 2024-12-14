@@ -159,12 +159,13 @@ switch (main_modeL) {
 		testturning(speed1000_shortest_mollifier,main_modeR,1,ON,4.0,1);
 	break;
 	case 0b1000:
-		testturning(speed1200_shortest_mollifier,main_modeR,1,ON,5.86,1);
+		testturning(speed1200_shortest_mollifier,main_modeR,1,ON,5.98,1);
 	break;
 	case 0b1001:
-		testturning(speed1400_shortest_mollifier,main_modeR,1,ON,5.86,1);
+		testturning(speed1400_shortest_mollifier,main_modeR,1,ON,5.98,1);
 	break;
 	case 0b1010:
+		testturning(speed1600_shortest_mollifier,main_modeR,1,ON,6.2,1);
 	break;
 	case 0b1011:
 	break;
@@ -266,7 +267,7 @@ void mode_PLtest(unsigned char main_modeR) {
 
 		break;
 	case 0b0111:
-			control_fun(5.86);
+			control_fun(5.98);
 			pl_FunMotor_start();
 			HAL_Delay(600);
 			reset_gyro();
@@ -300,7 +301,7 @@ void mode_PLtest(unsigned char main_modeR) {
 
 		break;
 	case 0b1010://fun
-		    control_fun(5.86);
+		    control_fun(5.98);
 			pl_FunMotor_start();
 			HAL_Delay(2000);
 			reset_gyro();
@@ -317,7 +318,7 @@ void mode_PLtest(unsigned char main_modeR) {
 		break;
 	case 0b1011://fun
 			reset_gyro();
-		    control_fun(5.86);
+		    control_fun(5.98);
 			pl_FunMotor_start();
 			HAL_Delay(2000);
 			reset_speed();
@@ -529,11 +530,11 @@ void mode_Running(unsigned char main_modeR){
 		break;
 		case 0b0101://
 			record_out();
-			run_shortest(1000,3000,3000,TURN_ON,FUN_OFF,SLANT_OFF,speed600_shortest_mollifier,5.86,1,0);
+			run_shortest(1000,3000,3000,TURN_ON,FUN_OFF,SLANT_OFF,speed600_shortest_mollifier,5.98,1,0);
 		break;
 		case 0b0110://吸引なしで斜め走行
 			record_out();
-			run_shortest(1000,3000,3000,TURN_ON,FUN_OFF,SLANT_ON,speed600_shortest_mollifier,5.86,1,0);
+			run_shortest(1000,3000,3000,TURN_ON,FUN_OFF,SLANT_ON,speed600_shortest_mollifier,5.98,1,0);
 		break;
 		case 0b0111://吸引ありで斜め走行
 			record_out();
@@ -545,27 +546,27 @@ void mode_Running(unsigned char main_modeR){
 		break;
 		case 0b1001:
 			record_out();
-			run_shortest(4000,18000,18000,TURN_ON,FUN_ON,SLANT_ON,speed1400_shortest_mollifier,5.86,1,0);
+			run_shortest(4000,18000,18000,TURN_ON,FUN_ON,SLANT_ON,speed1400_shortest_mollifier,5.98,1,0);
 		break;
 		case 0b1010:
 			record_out();
-			run_shortest(4000,22000,22000,TURN_ON,FUN_ON,SLANT_ON,speed1400_shortest_mollifier,5.86,1,0);
+			run_shortest(4000,22000,22000,TURN_ON,FUN_ON,SLANT_ON,speed1400_shortest_mollifier,5.98,1,0);
 		break;
 		case 0b1011:
 			record_out();
-			run_shortest(5000,25000,25000,TURN_ON,FUN_ON,SLANT_ON,speed1400_shortest_mollifier,5.86,1,0);
+			run_shortest(5000,25000,25000,TURN_ON,FUN_ON,SLANT_ON,speed1400_shortest_mollifier,5.98,1,0);
 		break;
 		case 0b1100:
 			record_out();
-			run_shortest(3000,12000,12000,TURN_ON,FUN_ON,SLANT_ON,speed1400_shortest_mollifier,5.86,1,0);
+			run_shortest(3000,12000,12000,TURN_ON,FUN_ON,SLANT_ON,speed1400_shortest_mollifier,5.98,1,0);
 		break;
 		case 0b1101:
 			record_out();
-			run_shortest(4000,13000,14000,TURN_ON,FUN_ON,SLANT_ON,speed1200_shortest_mollifier,5.86,1,2);
+			run_shortest(4000,13000,14000,TURN_ON,FUN_ON,SLANT_ON,speed1200_shortest_mollifier,5.98,1,2);
 		break;
 		case 0b1110:
 			record_out();
-			run_shortest(4000,17000,20000,TURN_ON,FUN_ON,SLANT_ON,speed1200_shortest_mollifier,5.86,1,2);
+			run_shortest(4000,17000,20000,TURN_ON,FUN_ON,SLANT_ON,speed1200_shortest_mollifier,5.98,1,2);
 //			run_shortest(3100,11000,11000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,0.99,1,0);
 		break;
 		case 0b1111:
@@ -598,11 +599,11 @@ void mode_Running2(unsigned char main_modeR){
 		break;
 		case 0b0010:
 			record_out();
-			run_shortest(4000,13000,14000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,5.86,1,2);
+			run_shortest(4000,13000,14000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,6.2,1,2);
 		break;
 		case 0b0011:
 			record_out();
-			run_shortest(4000,17000,20000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,5.86,1,2);
+			run_shortest(4000,17000,20000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,6.2,1,2);
 		break;
 		case 0b0100:
 
@@ -743,7 +744,7 @@ void mode_Tuning2(unsigned char main_modeR){
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			mode.WallControlMode=3;
 			highspeed_mode = 1;
-			control_fun(5.86);
+			control_fun(5.98);
 			reset_gyro();
 			reset_speed();
 			reset_distance();
@@ -761,7 +762,7 @@ void mode_Tuning2(unsigned char main_modeR){
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			mode.WallControlMode=3;
 			highspeed_mode = 1;
-			control_fun(5.86);
+			control_fun(5.98);
 			reset_gyro();
 			reset_speed();
 			reset_distance();
@@ -774,17 +775,34 @@ void mode_Tuning2(unsigned char main_modeR){
 		case 10://前壁制御調整
 			mode.WallControlMode=0;
 			mode.WallControlStatus=0;mode.WallCutMode=0;mode.calMazeMode=0;
-			straight_table2(BACK_TO_CENTER2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
+			straight_table2(BACK_TO_CENTER,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			record_mode=27;
 			HAL_Delay(300);
-			record_mode=0;
-			for(int i=0;i<8;i++){
-			turning_table2(90, 0, 0, 400, 3000);
+			record_mode=100;
+			mollifier_turning_table(90,400);
+			record_mode=27;
+			HAL_Delay(300);
+			record_mode=100;
+			for(int i=0;i<7;i++){
+			mollifier_turning_table(90,400);
 			}
 
 
 		break;
-		case 11://斜め直進(90)
+		case 11://初手ターン確認
+			highspeed_mode = 1;
+			control_fun(5.98);
+			pl_FunMotor_start();
+			HAL_Delay(600);
+			//reset_gyro();
+			reset_gyro_integral();
+			reset_speed();
+			reset_distance();
+			clear_Ierror();
+			record_mode=2;
+			straight_table2(BACK_TO_CENTER_FRONT,0,1400,1400,1400*1400/ BACK_TO_CENTER_FRONT/2, mode);
+			turn45inR(speed1400_shortest_mollifier.turn45in_R, OFF,ON,1400);
+			straight_table2(90*sqrt(2) ,1400,0,1400,1400*1400/ 45/2, mode);
 
 		break;
 		case 12://斜め直進(45)
@@ -798,7 +816,7 @@ void mode_Tuning2(unsigned char main_modeR){
 		break;
 		case 15://直線
 			highspeed_mode = 1;
-			control_fun(5.86);
+			control_fun(5.98);
 			pl_FunMotor_start();
 			HAL_Delay(600);
 			//reset_gyro();
@@ -883,7 +901,7 @@ void mode_Tuning1(unsigned char main_modeR){
 			reset_distance();
 			clear_Ierror();
 			highspeed_mode = 1;
-			control_fun(5.86);
+			control_fun(5.98);
 			pl_FunMotor_start();
 			HAL_Delay(600);
 			//reset_gyro();
@@ -902,7 +920,7 @@ void mode_Tuning1(unsigned char main_modeR){
 		case 2://ジャイロ係数調整＋探索用のゲイン調整(旋回)
 			highspeed_mode = 0;
 			reset_gyro();
-			control_fun(5.86);
+			control_fun(5.98);
 			pl_FunMotor_start();
 			HAL_Delay(600);
 			reset_gyro_integral();
@@ -921,7 +939,7 @@ void mode_Tuning1(unsigned char main_modeR){
 			while (MODE_SENSER_DEC) {HAL_Delay(1);}
 			pl_r_blue_LED(OFF);pl_l_blue_LED(OFF);
 			reset_gyro();
-			control_fun(5.86);
+			control_fun(5.98);
 			pl_FunMotor_start();
 			HAL_Delay(600);
 			reset_gyro_integral();
@@ -954,28 +972,31 @@ void mode_Tuning1(unsigned char main_modeR){
 		case 5://角度伝達誤差補償の確認
 			pl_r_blue_LED(ON);
 			pl_l_blue_LED(ON);
-			get_duty(1, 1,&duty_L,&duty_R);
-			pl_DriveMotor_duty(duty_L,duty_R);
+			theta_comp_gain=0;
+			//get_duty(1, 1,&duty_L,&duty_R);
+			//pl_DriveMotor_duty(duty_L,duty_R);
 			pl_DriveMotor_start();
-			wait_ms(3000);
+			//wait_ms(3000);
 			record_mode=11;
-			wait_ms(2000);
+			//wait_ms(2000);
+			straight_table2(90*8, 0, 0, 300, 6000,mode);
 			record_mode=0;
 			//reset_EncoderGyro_MeanVariance();
 			pl_DriveMotor_stop();
 			//printf("%f\n",g_encY_variance);
 			pl_r_blue_LED(OFF);
 			pl_l_blue_LED(OFF);
+			theta_comp_gain=1;
 		break;
 		case 6://右スラローム(探索)
-			testturning(speed300_exploration,0,0,0,0,0);
+			testturning(speed300_exploration,0,0,0,0,1);
 		break;
 		case 7://左スラローム(探索)
-			testturning(speed300_exploration,1,0,0,0,0);
+			testturning(speed300_exploration,1,0,0,0,1);
 		break;
 		case 8://壁切れ(直線最短)1111 1000
 			highspeed_mode = 1;
-			control_fun(5.86);
+			control_fun(5.98);
 			pl_FunMotor_start();
 			HAL_Delay(600);
 			//reset_gyro();
@@ -1004,7 +1025,7 @@ void mode_Tuning1(unsigned char main_modeR){
 			turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			highspeed_mode = 1;
-			control_fun(5.86);
+			control_fun(5.98);
 			pl_FunMotor_start();
 			HAL_Delay(600);
 			//reset_gyro();
@@ -1030,7 +1051,7 @@ void mode_Tuning1(unsigned char main_modeR){
 			turning_table2(45, 0, 0, 300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			highspeed_mode=1;
-			control_fun(5.86);
+			control_fun(5.98);
 			pl_FunMotor_start();
 			HAL_Delay(600);
 			//reset_gyro();
@@ -1083,7 +1104,7 @@ void mode_Tuning1(unsigned char main_modeR){
 			mode.WallControlMode=3;
 			record_mode=10;
 			highspeed_mode = 1;
-			control_fun(5.86);
+			control_fun(5.98);
 			reset_gyro();
 			reset_speed();
 			reset_distance();
@@ -1094,7 +1115,7 @@ void mode_Tuning1(unsigned char main_modeR){
 		break;
 		case 15://直線
 			highspeed_mode = 1;
-			control_fun(5.86);
+			control_fun(5.98);
 			pl_FunMotor_start();
 			HAL_Delay(600);
 			//reset_gyro();
@@ -1223,7 +1244,7 @@ void mode_Tuning0(unsigned char main_modeR){
 		break;
 		case 6://斜め直進(制御あり)
 			highspeed_mode = 1;
-			control_fun(5.86);
+			control_fun(5.98);
 			pl_FunMotor_start();
 			HAL_Delay(600);
 			//reset_gyro();
@@ -1240,7 +1261,7 @@ void mode_Tuning0(unsigned char main_modeR){
 		break;
 		case 7://斜め直進(平松さん式制御あり)
 			highspeed_mode = 1;
-			control_fun(5.86);
+			control_fun(5.98);
 			pl_FunMotor_start();
 			HAL_Delay(600);
 			//reset_gyro();
@@ -1315,7 +1336,8 @@ void mode_Tuning0(unsigned char main_modeR){
 		case 12:
 		record_mode=2;
 		for(int i=0;i<40;i++){
-		turning_table2(90, 0, 0, 400, 3000);
+		//turning_table2(90, 0, 0, 400, 3000);
+		mollifier_turning_table(90,600);
 		}
 		break;
 		case 13:
@@ -1344,7 +1366,7 @@ void mode_Tuning0(unsigned char main_modeR){
 //			turning_table2(90, 0, 0, 930, 11000);
 //			}
 			highspeed_mode = 1;
-			control_fun(5.86);
+			control_fun(5.98);
 			pl_FunMotor_start();
 			HAL_Delay(600);
 			//reset_gyro();
@@ -1362,7 +1384,7 @@ void mode_Tuning0(unsigned char main_modeR){
 		break;
 		case 15:
 			highspeed_mode = 1;
-			control_fun(5.86);
+			control_fun(5.98);
 			reset_gyro();
 			reset_speed();
 			reset_distance();
@@ -1565,7 +1587,7 @@ void mode_WallSensorTuning_fast(unsigned char main_modeR){
 	pl_DriveMotor_standby(ON);
 	pl_L_DriveMotor_mode(MOTOR_BREAK);
 	pl_R_DriveMotor_mode(MOTOR_BREAK);
-	control_fun(5.86);
+	control_fun(5.98);
 	pl_FunMotor_start();
 	HAL_Delay(600);
 	//reset_gyro();
