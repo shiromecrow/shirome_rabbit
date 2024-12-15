@@ -988,8 +988,6 @@ if(pass_mode==1){
 	pl_R_DriveMotor_mode(MOTOR_BREAK);
 	pl_L_DriveMotor_mode(MOTOR_BREAK);
 	wait_ms_NoReset(500);
-	no_safty = 1;
-	no_safty = 0;
 	clear_Ierror();
 	reset_gyro();
 	reset_speed();

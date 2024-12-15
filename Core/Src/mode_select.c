@@ -290,7 +290,7 @@ void mode_PLtest(unsigned char main_modeR) {
 		g_WallControl_mode = 1;
 		highspeed_mode = 1;
 		modeacc = 6;
-		no_safty = 1;
+		no_safty = 0;
 		record_mode=1;
 		while (1) {
 		  	printf("count=%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
