@@ -32,6 +32,10 @@ DIJKSTRA Dijkstra;
 STACK_T g_Goal_x;
 STACK_T g_Goal_y;
 
+int16_t discount_v[V_NUM_MAX]={129,74,61,53,45};
+int16_t discount_d[D_NUM_MAX]={91,58,49,43,32};
+
+
 void maze_out_matlab(void){
 
 	int tt=0;
@@ -389,8 +393,6 @@ void create_DijkstraMap(void){
 	STACK_T stack_cost;//引かれるコスト
 	int16_t VerticalCost=VERTICALCOST;
 	int16_t DiagonalCost=DIAGONALCOST;
-	int16_t discount_v[V_NUM_MAX]={180,118,100,91,90};
-	int16_t discount_d[D_NUM_MAX]={127,91,79,71,65,64};
 	int16_t dis_cost_in;
 	//printf("%d,%d,%d,%d,%d\n",discount_v[0],discount_v[1],discount_v[2],discount_v[3],discount_v[4]);
 	//printf("%d,%d,%d,%d,%d,%d\n",discount_d[0],discount_d[1],discount_d[2],discount_d[3],discount_d[4],discount_d[5]);

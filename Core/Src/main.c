@@ -129,6 +129,7 @@ int main(void)
   Control_mode_Init();
   init_FailSafe();
   input_parameter();
+  maze_clear();
 
   		printf("ON_SEN1=%d,SEN2=%d,SEN3=%d,SEN4=%d,SEN5=%d,SEN6=%d\n",
   				g_sensor_on[0], g_sensor_on[1], g_sensor_on[2], g_sensor_on[3],

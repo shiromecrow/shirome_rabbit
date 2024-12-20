@@ -26,7 +26,7 @@
 #define DISCOUNTCOST_V 1//絶対1
 #define DISCOUNTCOST_D 1//絶対1
 #define V_NUM_MAX 5
-#define D_NUM_MAX 6
+#define D_NUM_MAX 5
 
 #define SLANT_NORTH 0
 #define SLANT_NORTH_EAST 1
