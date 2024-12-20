@@ -39,8 +39,8 @@
 #define BACK_TO_CENTER_FRONT_SLANT 34.5
 
 
-#define GOAL_X 7
-#define GOAL_Y 3
+#define GOAL_X 6
+#define GOAL_Y 9
 #define GOAL_ALL ((x == GOAL_X || x == GOAL_X + 1) && (y == GOAL_Y || y == GOAL_Y + 1))
 #define MAZE_TIMER 8
 

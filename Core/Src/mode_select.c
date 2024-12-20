@@ -805,7 +805,20 @@ void mode_Tuning2(unsigned char main_modeR){
 			straight_table2(90*sqrt(2) ,1400,0,1400,1400*1400/ 45/2, mode);
 
 		break;
-		case 12://斜め直進(45)
+		case 12://初手ターン確認
+			highspeed_mode = 1;
+			control_fun(5.98);
+			pl_FunMotor_start();
+			HAL_Delay(600);
+			//reset_gyro();
+			reset_gyro_integral();
+			reset_speed();
+			reset_distance();
+			clear_Ierror();
+			record_mode=2;
+			straight_table2(BACK_TO_CENTER_FRONT,0,1400,1400,1400*1400/ BACK_TO_CENTER_FRONT/2, mode);
+			turn135inR(speed1400_shortest_mollifier.turn135in_R, OFF,ON,1400);
+			straight_table2(90*sqrt(2) ,1400,0,1400,1400*1400/ 45/2, mode);
 
 		break;
 		case 13://斜め直進(90)

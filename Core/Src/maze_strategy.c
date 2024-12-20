@@ -1026,7 +1026,7 @@ if(pass_mode==1){
 		pass_count2++;
 	}
 	end_velocity=get_center_velocity(howspeed,pass[pass_count2]);
-	straight_acceleration_lpf=end_velocity*end_velocity/ BACK_TO_CENTER_FRONT;
+	straight_acceleration_lpf=end_velocity*end_velocity/ BACK_TO_CENTER_FRONT;/* 加速度追従性向上のため2倍の加速度代入 */
 	straight_table2(BACK_TO_CENTER_FRONT,0,end_velocity,end_velocity,end_velocity*end_velocity/ BACK_TO_CENTER_FRONT/2, mode);
 
 
