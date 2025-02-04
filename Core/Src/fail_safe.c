@@ -57,7 +57,7 @@ void init_FailSafe(void){
 	gyro_PID_error_highspeed=500;
 	gyro_x_error_highspeed=200;
 	encoder_gyro_error_highspeed=2500;
-	wallcut_error=10;
+	wallcut_error=3;
 }
 
 
@@ -86,7 +86,7 @@ void interrupt_FailSafe(void){
 			//ジャイロの誤差が一定以上
 					if (fabs(turning.velocity - angle_speed) >= gyro_PID_error_in ) {
 						error_count1++;
-						if(error_count1>=17){
+						if(error_count1>=25){
 							pl_FunMotor_stop();
 							g_WallControl_mode =0;
 							error_mode = 1;
@@ -157,13 +157,8 @@ void interrupt_FailSafe(void){
 						error_count5=0;
 					}
 */
-/* 壁切れ永続エラー */
-					if( (( NoWallDisplacementL90 > 90*wallcut_error || 
-					NoWallDisplacementR90 > 90*wallcut_error ) && highspeed_mode == 0) ||
-					 (( NoWallDisplacementL45 > 90*wallcut_error || 
-					 NoWallDisplacementR45 > 90*wallcut_error || 
-					 NoWallDisplacementL45slant > 90*sqrt(2)*wallcut_error || 
-					 NoWallDisplacementR45slant > 90*sqrt(2)*wallcut_error ) && highspeed_mode == 1)){
+/* 壁切れ永続エラー(最短のみ) */
+					if( NoWallDisplacementL_safe > 90*wallcut_error || NoWallDisplacementR_safe > 90*wallcut_error ){
 						error_count6++;
 						if(error_count6>=10){
 							pl_FunMotor_stop();

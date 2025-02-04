@@ -78,7 +78,7 @@ void init_EncoderGyro(void){
 	straight_alpha=0.65;
 	theta_comp_gain=1;
 	reset_Kalman();
-	reset_gyro_integral();
+	reset_gyro();
 	reset_distance();
 	reset_speed();
 }
@@ -87,7 +87,7 @@ void init_EncoderGyro(void){
 
 void reset_Kalman(void){
 
-	reset_EncoderGyro_MeanVariance();
+	//reset_EncoderGyro_MeanVariance();
 
     //initial value of x_data_predict
     for(int i=0; i<2; i++)

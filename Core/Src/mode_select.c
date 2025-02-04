@@ -127,11 +127,11 @@ main_modeR=now_mode & 0x0F;
 main_modeL=now_mode >> 4;
 
 
-reset_Kalman();
 reset_gyro_integral();
 reset_distance();
 reset_speed();
 clear_Ierror();
+reset_Kalman();
 
 switch (main_modeL) {
 	case 0b0000://PLテストモード1
@@ -467,31 +467,33 @@ void mode_Running(unsigned char main_modeR){
 	reset_speed();
 	reset_distance();
 	clear_Ierror();
+	reset_Kalman();
 
 	switch (main_modeR) {
 		case 0b0000://迷路表示
 			//maze_maker2(1, 0, 0, 0, 7, 7);
+			maze_display(&error_wall);
 			record_out();
 			//wall.row[8]=(1<<8);
 		//	maze_clear();
 			maze_out_matlab();
 
 			create_StepCountMap_queue();
-			maze_display();
+			maze_display(&wall);
 
 			create_DijkstraMap();
 			maze_display_Dijkstra();
 
 			route_Dijkstra();
 			create_StepCountMap_unknown();
-			maze_display();
+			maze_display(&wall);
 
 			tic_timer();
 			for(int j=0;j<1000;j++){
 			create_StepCountMap_queue();
 			}
 			float tim2 = toc_timer();
-			maze_display();
+			maze_display(&wall);
 			printf("tim2=%f\n", tim2);
 			tic_timer();
 			create_DijkstraMap();
@@ -504,21 +506,21 @@ void mode_Running(unsigned char main_modeR){
 
 			}
 			float tim1 = toc_timer();
-			maze_display();
+			maze_display(&wall);
 			maze_display_Dijkstra();
 			printf("tim1=%f,tim2=%f\n", tim1, tim2);
 		break;
 		case 0b0001://足立法(遅い)
 			record_out();
 			create_StepCountMap_queue();
-			maze_display();
+			maze_display(&wall);
 		break;
 		case 0b0010://Flashから
 			//maze_clear();
 			//record_in();
 			record_out();
 			//create_StepCountMap_queue();
-			//maze_display();
+			//maze_display(&wall);
 		break;
 		case 0b0011://ゴミ
 			tic_timer();
@@ -570,7 +572,8 @@ void mode_Running(unsigned char main_modeR){
 //			run_shortest(3100,11000,11000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,0.99,1,0);
 		break;
 		case 0b1111:
-			AdatiWayReturn(250,400,2000,3000,speed250_exploration,1,0);
+			maze_display(&error_wall);
+			// AdatiWayReturn(250,400,2000,3000,speed250_exploration,1,0);
 		break;
 	}
 
@@ -606,9 +609,13 @@ void mode_Running2(unsigned char main_modeR){
 			run_shortest(4000,17000,20000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,6.2,1,2);
 		break;
 		case 0b0100:
+					tic_timer();
+			AdatiWayReturn(300,700,4000,8000,speed300_exploration,1,0);
 
 		break;
 		case 0b0101:
+					tic_timer();
+			AdatiWayReturn(300,700,4000,8000,speed300_exploration,0,1);
 
 		break;
 		case 0b0110:
@@ -640,7 +647,7 @@ void mode_Running2(unsigned char main_modeR){
 		break;
 		case 0b1111:
 			create_StepCountMap_queue();
-			maze_display();
+			maze_display(&wall);
 		break;
 	}
 
@@ -928,7 +935,7 @@ void mode_Tuning1(unsigned char main_modeR){
 		case 1://タイヤ径調整+壁制御ゲイン確認＋探索用のゲイン調整(直線)
 			record_mode = 5;
 			mode.WallControlMode=1;
-			straight_table2(90*8, 0, 0, 300, 6000,mode);
+			straight_table2(90*8, 0, 0, 600, 4000,mode);
 		break;
 		case 2://ジャイロ係数調整＋探索用のゲイン調整(旋回)
 			highspeed_mode = 0;
@@ -1137,12 +1144,13 @@ void mode_Tuning1(unsigned char main_modeR){
 			reset_distance();
 			clear_Ierror();
 			// record_mode=13;
-			record_mode=2;
+			// record_mode=2;
+			record_mode=7;
 //			mode.WallControlMode=0;
 //			straight_table2(90*32, 0, 0, 4000, 17000,mode);
 			mode.WallControlMode=1;
 //			straight_table2(BACK_TO_CENTER_FRONT,0,1000,1000,1000*1000/ BACK_TO_CENTER_FRONT/2, mode);
-			straight_table2(90*8, 0, 0, 4000, 30000,mode);
+			straight_table2(90*8, 0, 0, 4000, 50000,mode);
 			//straight_table_dis(90*8, 0, 0, 4000,30000,11000,mode);
 		break;
 	}

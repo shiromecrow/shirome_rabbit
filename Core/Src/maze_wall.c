@@ -22,6 +22,7 @@
 
 WALL wall;
 WALL record;
+WALL error_wall;
 
 char Dijkstra_maker_flag;
 
@@ -1140,7 +1141,7 @@ void maze_makerback(int direction, int front_SEN, int left_SEN, int right_SEN,
 		int x, int y) {}
 
 
-void maze_display(void) {
+void maze_display(WALL *wall_tmp) {
 
 	int tt = MAZE_SQUARE_NUM-2;
 	int ss = 0;
@@ -1153,7 +1154,7 @@ void maze_display(void) {
 
 		printf("|%5d", walk_count[0][tt + 1]);
 		for(ss = 0;ss < MAZE_SQUARE_NUM-1;ss++){
-			if ((wall.column[ss] & (1 << (tt + 1))) == (1 << (tt + 1))){
+			if ((wall_tmp->column[ss] & (1 << (tt + 1))) == (1 << (tt + 1))){
 				printf("|%5d", walk_count[ss + 1][tt + 1]);
 			}else{
 				printf(" %5d", walk_count[ss + 1][tt + 1]);
@@ -1164,7 +1165,7 @@ void maze_display(void) {
 			break;
 		}
 		for(ss = 0;ss <= MAZE_SQUARE_NUM-1;ss++){
-			if ((wall.row[tt] & (1 << ss)) == (1 << ss)){
+			if ((wall_tmp->row[tt] & (1 << ss)) == (1 << ss)){
 				printf("+-----");
 			}else{
 				printf("+     ");
@@ -1187,7 +1188,7 @@ void maze_display(void) {
 	for (tt = MAZE_SQUARE_NUM-2;tt >= -1;tt--){
 		printf("|%5d", walk_count[0][tt + 1]);
 		for(ss = 0;ss < MAZE_SQUARE_NUM-1;ss++){
-			if ((wall.column_look[ss] & (1 << (tt + 1))) == (1 << (tt + 1))){
+			if ((wall_tmp->column_look[ss] & (1 << (tt + 1))) == (1 << (tt + 1))){
 				printf("|%5d", walk_count[ss + 1][tt + 1]);
 			}else{
 				printf(" %5d", walk_count[ss + 1][tt + 1]);
@@ -1198,7 +1199,7 @@ void maze_display(void) {
 			break;
 		}
 		for(ss = 0;ss <= MAZE_SQUARE_NUM-1;ss++){
-			if ((wall.row_look[tt] & (1 << ss)) == (1 << ss)){
+			if ((wall_tmp->row_look[tt] & (1 << ss)) == (1 << ss)){
 				printf("+-----");
 			}else{
 				printf("+     ");

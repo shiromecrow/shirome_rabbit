@@ -52,6 +52,9 @@ volatile float NoWallDisplacementR90, NoWallDisplacementL90,
 volatile float NoWallDisplacementR45slant, NoWallDisplacementL45slant;
 volatile float NoWallDisplacementR45slant2, NoWallDisplacementL45slant2;
 
+uint8_t Nowall_safe_flg =0;
+float NoWallDisplacementR_safe, NoWallDisplacementL_safe;//fail_safe用、壁切れ処理が異様に長い場合に静止
+
 uint8_t NoWallCountL45_flag, NoWallCountR45_flag, NoWallCountL45slant_flag,
 		NoWallCountR45slant_flag, slantWallControlL_flag,
 		slantWallControlR_flag;
@@ -112,6 +115,8 @@ void init_WallControl(void) {
 	g_sensor_max_fr = 0;
 	g_sensor_max_fl_slant = 0;
 	g_sensor_max_fr_slant = 0;
+
+	Nowall_safe_flg = 0;
 
 }
 
@@ -239,10 +244,10 @@ float calWallConrol(void) {
 		switch (g_WallControlStatus) {
 		case 0:			//両壁なし
 			if(highspeed_mode==1){
-				skewer_gain=0.9;
+				skewer_gain=0.5;
 				Skewer_limit = SKEWER_LIMIT_SHORT;
 			}else{
-				skewer_gain=0.4;
+				skewer_gain=0.2;
 				Skewer_limit = SKEWER_LIMIT*straight.velocity/300;
 			}
 
@@ -777,6 +782,11 @@ void interrupt_WallCut(void) {
 
 
 	if (g_wallCut_mode == 1) {
+/* 安全機能：壁切れ距離計測オーバーの確認 */
+		if(Nowall_safe_flg == 1){
+			NoWallDisplacementR_safe+=kalman_speed * INTERRUPT_TIME;
+			NoWallDisplacementL_safe+=kalman_speed * INTERRUPT_TIME;
+		}
 /* 前壁により強制オフセット除去(ほぼ未使用) */
 		if (g_sensor[SENSOR_FRONT_L][0] > F_BREAK_THRESHOLD_L_90 && g_sensor[SENSOR_FRONT_R][0] > F_BREAK_THRESHOLD_R_90) {
 			front_wall_break_90 = 1;

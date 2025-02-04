@@ -301,6 +301,20 @@ void interrupt_record(void) {
 			r_data[3] = 0;
 			record_data(r_data, 4);
 		}
+		if (record_mode == 28) { //壁切れ計測
+			r_data[0] = g_sensor[SENSOR_FRONT_LEFT][0];
+			r_data[1] = g_sensor[SENSOR_FRONT_RIGHT][0];
+			r_data[2] = NoWallDisplacementL45;
+			r_data[3] = NoWallDisplacementR45;
+			record_data(r_data, 4);
+		}
+		if (record_mode == 29) { //壁切れ計測
+			r_data[0] = g_sensor_diff_wallcut_slant[SENSOR_FRONT_LEFT];
+			r_data[1] = g_sensor_diff_wallcut_slant[SENSOR_FRONT_RIGHT];
+			r_data[2] = NoWallDisplacementL45slant2;
+			r_data[3] = NoWallDisplacementR45slant2;
+			record_data(r_data, 4);
+		}
 
 	if (record_mode == 100) {
 			r_data[0] = record_point;

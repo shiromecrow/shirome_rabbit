@@ -20,6 +20,7 @@
 #include <stdint.h>
 #include "stdio.h"
 #include "define.h"
+#include "maze_wall.h"
 
 
 
@@ -29,7 +30,7 @@ const uint32_t end_adress = 0x807FFFF; // bank1 page last end address
 
 void test_flash(void){
 		  record_out();
-		  maze_display();
+		  maze_display(&wall);
 		  flash_record_init();
 		  record_in();
 }

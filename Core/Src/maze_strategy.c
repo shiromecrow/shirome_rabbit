@@ -160,9 +160,9 @@ void run_movement_suspension(int *direction, unsigned short front_count,
 		if (left_wall) {left_count = MAX_WALKCOUNT;}
 		if (front_count == MAX_WALKCOUNT && right_count == MAX_WALKCOUNT && left_count == MAX_WALKCOUNT && back_count == MAX_WALKCOUNT) {
 			// 迷路破損のため停止(一時停止後に周辺の地図情報を初期化して再探索に変更予定)
-			error_mode = 6;
+			error_mode = 21;
 			g_WallControl_mode = 0;
-			pl_yellow_LED_count(6);
+			pl_yellow_LED_count(error_mode);
 			pl_DriveMotor_stop();
 			pl_DriveMotor_standby(OFF);
 			//break;
@@ -249,6 +249,8 @@ void AdatiWayReturn(float input_StraightVelocity, float input_TurningVelocity, f
 	reset_speed();
 	reset_distance();
 	clear_Ierror();
+	reset_Kalman();
+	
 	//初期位置のセンサー確認
 	get_wallData_sensor(&front_wall,&right_wall,&left_wall);
 	//初期位置での壁更新
@@ -282,15 +284,16 @@ void AdatiWayReturn(float input_StraightVelocity, float input_TurningVelocity, f
 
 		//異常終了
 		if (x == 0 && y == 0) {
-			error_mode=6;
+			error_mode=16;
+			pl_yellow_LED_count(error_mode);
 			pl_DriveMotor_stop();
 			pl_DriveMotor_standby(OFF);
 			break;
 		}
 		if (front_count==MAX_WALKCOUNT && right_count==MAX_WALKCOUNT && left_count==MAX_WALKCOUNT && back_count==MAX_WALKCOUNT){
 			// 迷路破損のため停止(一時停止後に周辺の地図情報を初期化して再探索に変更予定)
-			error_mode=6;
-			record_in();
+			error_mode=17;
+			pl_yellow_LED_count(error_mode);
 			pl_DriveMotor_stop();
 			pl_DriveMotor_standby(OFF);
 			break;
@@ -323,11 +326,11 @@ void AdatiWayReturn(float input_StraightVelocity, float input_TurningVelocity, f
 			mode.WallControlMode=1;
 			mode.calMazeMode=1;
 			mode.WallCutMode=0;
-			straight_table2(MAZE_SECTION/2-MAZE_OFFSET, input_StraightVelocity,input_StraightVelocity,input_StraightVelocity,input_StraightAcceleration, mode);
+			straight_table2(MAZE_SECTION-MAZE_OFFSET, input_StraightVelocity,input_StraightVelocity,input_StraightVelocity,input_StraightAcceleration, mode);
 			compress_kitiku(&x,&y,&direction,&kitiku_distance);
-			End_straight(MAZE_SECTION/2-MAZE_OFFSET,mode,1,1);
+			End_straight(MAZE_SECTION-MAZE_OFFSET,mode,1,1);
 			mode.calMazeMode=0;
-			straight_table2((MAZE_SECTION/2 * kitiku_distance),input_StraightVelocity,input_StraightVelocity,1000,input_StraightAcceleration, mode);
+			straight_table2((MAZE_SECTION/2 * kitiku_distance),input_StraightVelocity,input_StraightVelocity,600,input_StraightAcceleration, mode);
 		}
 
 		if (direction >= 5) {direction = direction-4;}
@@ -384,9 +387,9 @@ void AdatiWayReturn(float input_StraightVelocity, float input_TurningVelocity, f
 		}
 		if (x<0 || y<0 || x>MAZE_SQUARE_NUM-1 || y>MAZE_SQUARE_NUM-1){
 			// 自己位置の破損
-			error_mode=7;
+			error_mode=18;
 			g_WallControl_mode=0;
-			pl_yellow_LED_count(7);
+			pl_yellow_LED_count(error_mode);
 			pl_DriveMotor_stop();
 			pl_DriveMotor_standby(OFF);
 			break;
@@ -424,11 +427,11 @@ void AdatiWayReturn(float input_StraightVelocity, float input_TurningVelocity, f
 				mode.WallControlMode=1;
 				mode.calMazeMode=1;
 				mode.WallCutMode=0;
-				straight_table2(MAZE_SECTION/2-MAZE_OFFSET, input_StraightVelocity,input_StraightVelocity,input_StraightVelocity,input_StraightAcceleration, mode);
+				straight_table2(MAZE_SECTION-MAZE_OFFSET, input_StraightVelocity,input_StraightVelocity,input_StraightVelocity,input_StraightAcceleration, mode);
 				compress_kitiku(&x,&y,&direction,&kitiku_distance);
-				End_straight(MAZE_SECTION/2-MAZE_OFFSET,mode,1,1);
+				End_straight(MAZE_SECTION-MAZE_OFFSET,mode,1,1);
 				mode.calMazeMode=0;
-				straight_table2((MAZE_SECTION/2 * kitiku_distance),input_StraightVelocity,input_StraightVelocity,1000,input_StraightAcceleration, mode);
+				straight_table2((MAZE_SECTION/2 * kitiku_distance),input_StraightVelocity,input_StraightVelocity,600,input_StraightAcceleration, mode);
 			}
 
 		}
@@ -445,14 +448,29 @@ void AdatiWayReturn(float input_StraightVelocity, float input_TurningVelocity, f
 	pl_DriveMotor_standby(OFF); //MTU2.TSTR.BIT.CST0 = 0;
 	maze_mode = 0;
 	wait_ms_NoReset(100);
-	maze_display();
+	maze_display(&wall);
 	create_StepCountMap_queue();
 	if(walk_count[0][0] == MAX_WALKCOUNT){
-		error_mode = 6;
+		error_mode = 19;
+		pl_yellow_LED_count(error_mode);
 	}
 	if (error_mode == 0) {
 		record_in();
 	} else if(timer_end_mode==0) {
+		int t = 0;
+		while (t <= MAZE_SQUARE_NUM-2) {
+			error_wall.row[t] = wall.row[t];
+			error_wall.column[t] = wall.column[t];
+			t++;
+		}
+		t = 0;
+		while (t <= MAZE_SQUARE_NUM-2) {
+			error_wall.row_look[t] = wall.row_look[t];
+			error_wall.column_look[t] = wall.column_look[t];
+			t++;
+		}
+
+		t = 0;
 		record_out();
 	}else{
 		record_in();
@@ -476,7 +494,7 @@ void pass_maker(void){
 	pass_count = 0;
 	create_StepCountMap_queue();
 	//maze_makerST(stmass);
-	maze_display();
+	maze_display(&wall);
 	pass[0] = 1;
 	while (1) {
 //		if (mode_safty == 1) {break;}
@@ -490,7 +508,7 @@ void pass_maker(void){
 					}
 					pass[pass_count] = pass[pass_count] + 1;
 		//			wait(10);
-		//			maze_display();
+		//			maze_display(&wall);
 		//			x = 0;
 		//			y = 0;
 					direction = direction + 2;
@@ -1223,7 +1241,7 @@ void decision_kitiku(int x,int y,int direction,unsigned short front_count,unsign
 }
 
 void compress_kitiku(int *x,int *y,int *direction,int *kitiku_distance) {
-	*kitiku_distance = 1;
+	*kitiku_distance = 0;
 	int kitiku = 1;
 	_Bool front_wall;
 	_Bool right_wall;
@@ -1271,7 +1289,7 @@ void compress_kitiku(int *x,int *y,int *direction,int *kitiku_distance) {
 		if (direction_now==4 && x_now<=1) {break;}
 		if (front_count==MAX_WALKCOUNT && right_count==MAX_WALKCOUNT && left_count==MAX_WALKCOUNT && back_count==MAX_WALKCOUNT){
 		// 迷路破損のため停止(一時停止後に周辺の地図情報を初期化して再探索に変更予定)
-			error_mode=6;
+			error_mode=20;
 			record_in();
 		break;
 		}
