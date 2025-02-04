@@ -65,6 +65,7 @@ typedef struct{
 
 extern WALL wall;
 extern WALL record;
+extern WALL error_wall;
 
 
 extern char Dijkstra_maker_flag;
@@ -103,7 +104,7 @@ void maze_makerRun(int,int,int,int,int,int);
 void maze_makeronly(int,int,int,int,int,int);
 void maze_makerback(int,int,int,int,int,int);
 
-void maze_display();
+void maze_display(WALL *);
 void maze_display_Dijkstra();
 
 #endif /* INC_MAZE_WALL_H_ */

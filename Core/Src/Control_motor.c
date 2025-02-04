@@ -439,6 +439,10 @@ float straight_table2(float input_displacement, float input_start_velocity,
 	Trapezoid_straight.count_velocity = input_count_velocity;
 	Trapezoid_straight.acceleration = input_acceleration;
 
+	NoWallDisplacementR_safe = 0;//壁切れ安全機能
+	NoWallDisplacementL_safe = 0;//壁切れ安全機能
+	Nowall_safe_flg = 1;
+
 	if (input_count_velocity>=0){straight.acceleration = input_acceleration;
 	}else{straight.acceleration = -input_acceleration;}
 	straight.velocity = input_start_velocity;
@@ -533,6 +537,10 @@ float straight_table2(float input_displacement, float input_start_velocity,
 		if (input_displacement<0 && MinRequired_displacement>-input_displacement){g_acc_flag=5;straight.acceleration = -input_acceleration;}
 		if (input_displacement<0 && MinRequired_displacement<input_displacement){g_acc_flag=6;straight.acceleration = input_acceleration;}
 	}
+
+	Nowall_safe_flg = 0;//壁切れ距離カウントOFF
+	NoWallDisplacementR_safe = 0;//壁切れ安全機能
+	NoWallDisplacementL_safe = 0;//壁切れ安全機能
 
 	if(motor_mode.calMazeMode==0){
 	while (g_acc_flag!=4){

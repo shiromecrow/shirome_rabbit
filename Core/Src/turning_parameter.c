@@ -542,12 +542,12 @@ void input_parameter(void) {
 
 				speed1400_shortest_mollifier.turn180_R.g_speed =1400;
 				speed1400_shortest_mollifier.turn180_R.t_speed = 1860;
-				speed1400_shortest_mollifier.turn180_R.f_ofset = 8;
-				speed1400_shortest_mollifier.turn180_R.e_ofset = 22;
+				speed1400_shortest_mollifier.turn180_R.f_ofset = 5;
+				speed1400_shortest_mollifier.turn180_R.e_ofset = 26;
 
 				speed1400_shortest_mollifier.turn180_L.g_speed = 1400;
-				speed1400_shortest_mollifier.turn180_L.t_speed = 1920;
-				speed1400_shortest_mollifier.turn180_L.f_ofset = 8;
+				speed1400_shortest_mollifier.turn180_L.t_speed = 1912;
+				speed1400_shortest_mollifier.turn180_L.f_ofset = 9;
 				speed1400_shortest_mollifier.turn180_L.e_ofset = 19;
 
 				speed1400_shortest_mollifier.turn45in_R.g_speed = 1400;
