@@ -40,12 +40,12 @@
 
 
 #define GOAL_X 7
-#define GOAL_Y 3
+#define GOAL_Y 7
 #define GOAL_ALL ((x == GOAL_X || x == GOAL_X + 1) && (y == GOAL_Y || y == GOAL_Y + 1))
 #define MAZE_TIMER 8
 
 //#define GOAL_X 5
-//#define GOAL_Y 24
+//#define GOAL_Y 25
 //#define GOAL_ALL ((x == GOAL_X || x == GOAL_X + 1 || x == GOAL_X + 2) && (y == GOAL_Y || y == GOAL_Y + 1 || y == GOAL_Y + 2))
 //#define MAZE_TIMER 8
 
