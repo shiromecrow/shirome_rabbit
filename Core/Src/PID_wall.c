@@ -244,10 +244,10 @@ float calWallConrol(void) {
 		switch (g_WallControlStatus) {
 		case 0:			//両壁なし
 			if(highspeed_mode==1){
-				skewer_gain=0.5;
+				skewer_gain=SKEWER_GAIN_SHORT;
 				Skewer_limit = SKEWER_LIMIT_SHORT;
 			}else{
-				skewer_gain=0.2;
+				skewer_gain=SKEWER_GAIN;
 				Skewer_limit = SKEWER_LIMIT*straight.velocity/300;
 			}
 
@@ -269,8 +269,7 @@ float calWallConrol(void) {
 				skewer_gain=0;
 			}
 			if (g_skewer_displacement < Skewer_limit) {
-
-				wall_normal.error = skewer_gain
+				wall_normal.error = 0.9 * wall_normal.error + (1 - 0.9) * skewer_gain
 						* (-(g_sensor_max_l - CENTER_L_PILLAR) / g_sensor_max_l
 								+ (g_sensor_max_r - CENTER_R_PILLAR) / g_sensor_max_r);
 			} else {
