@@ -38,6 +38,10 @@
 #define BACK_TO_CENTER_SLANT 42.5
 #define BACK_TO_CENTER_FRONT_SLANT 34.5
 
+#define FIRST_MOVE_R90 16
+#define FIRST_MOVE_R45 16
+#define FIRST_MOVE_R135 18
+
 
 #define GOAL_X 7
 #define GOAL_Y 4

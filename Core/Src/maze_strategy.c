@@ -1033,7 +1033,7 @@ if(pass_mode==1){
 //	encoder_PID_error=2500;
 //	gyro_PID_error=1800;
 	pass_count = 0;
-
+	float first_move_displacement = 0;
 
 	mode.WallControlMode=1;
 	mode.WallControlStatus=0;
@@ -1045,8 +1045,14 @@ if(pass_mode==1){
 	}
 	end_velocity=get_center_velocity(howspeed,pass[pass_count2]);
 	straight_acceleration_lpf=end_velocity*end_velocity/ BACK_TO_CENTER_FRONT;/* 加速度追従性向上のため2倍の加速度代入 */
-	straight_table2(BACK_TO_CENTER_FRONT,0,end_velocity,end_velocity,end_velocity*end_velocity/ BACK_TO_CENTER_FRONT/2, mode);
-
+	if ( pass[pass_count2] == -4 ){
+		first_move_displacement = FIRST_MOVE_R90;
+	}else if( pass[pass_count2] == -8 ){
+		first_move_displacement = FIRST_MOVE_R45;
+	}else if( pass[pass_count2] == -10 ){
+		first_move_displacement = FIRST_MOVE_R135;
+	}
+	straight_table2(BACK_TO_CENTER_FRONT+first_move_displacement,0,end_velocity,end_velocity,end_velocity*end_velocity/ BACK_TO_CENTER_FRONT/2, mode);
 
 	while (pass_count <= PASS_NUM) {
 		pass_count2=pass_count+1;

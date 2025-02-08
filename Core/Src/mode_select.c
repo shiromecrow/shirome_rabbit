@@ -722,7 +722,6 @@ void mode_Tuning2(unsigned char main_modeR){
 			record_mode=19;
 			straight_table2(90*3*sqrt(2), 0, 0, 300, 3000,mode);
 		break;
-		break;
 		case 6://斜め直進(90)
 			mode.WallControlMode=0;
 			mode.WallControlStatus=0;mode.WallCutMode=0;mode.calMazeMode=0;
@@ -796,7 +795,7 @@ void mode_Tuning2(unsigned char main_modeR){
 
 
 		break;
-		case 11://初手ターン確認
+		case 11://初手ターン確認90
 			highspeed_mode = 1;
 			control_fun(6.12);
 			pl_FunMotor_start();
@@ -807,12 +806,30 @@ void mode_Tuning2(unsigned char main_modeR){
 			reset_distance();
 			clear_Ierror();
 			record_mode=2;
-			straight_table2(BACK_TO_CENTER_FRONT,0,1400,1400,1400*1400/ BACK_TO_CENTER_FRONT/2, mode);
+			straight_acceleration_lpf=1400*1400/ BACK_TO_CENTER_FRONT;
+			straight_table2(BACK_TO_CENTER_FRONT+FIRST_MOVE_R90,0,1400,1400,1400*1400/ BACK_TO_CENTER_FRONT/2, mode);
+			turn90R(speed1400_shortest_mollifier.turn90_R, OFF,ON,1400);
+			straight_table2(90*sqrt(2) ,1400,0,1400,1400*1400/ 45/2, mode);
+
+		break;
+		case 12://初手ターン確認45
+			highspeed_mode = 1;
+			control_fun(6.12);
+			pl_FunMotor_start();
+			HAL_Delay(600);
+			//reset_gyro();
+			reset_gyro_integral();
+			reset_speed();
+			reset_distance();
+			clear_Ierror();
+			record_mode=2;
+			straight_acceleration_lpf=1400*1400/ BACK_TO_CENTER_FRONT;
+			straight_table2(BACK_TO_CENTER_FRONT+FIRST_MOVE_R45,0,1400,1400,1400*1400/ BACK_TO_CENTER_FRONT/2, mode);
 			turn45inR(speed1400_shortest_mollifier.turn45in_R, OFF,ON,1400);
 			straight_table2(90*sqrt(2) ,1400,0,1400,1400*1400/ 45/2, mode);
 
 		break;
-		case 12://初手ターン確認
+		case 13://初手ターン確認135
 			highspeed_mode = 1;
 			control_fun(6.12);
 			pl_FunMotor_start();
@@ -823,13 +840,10 @@ void mode_Tuning2(unsigned char main_modeR){
 			reset_distance();
 			clear_Ierror();
 			record_mode=2;
-			straight_table2(BACK_TO_CENTER_FRONT,0,1400,1400,1400*1400/ BACK_TO_CENTER_FRONT/2, mode);
+			straight_acceleration_lpf=1400*1400/ BACK_TO_CENTER_FRONT;
+			straight_table2(BACK_TO_CENTER_FRONT+FIRST_MOVE_R135,0,1400,1400,1400*1400/ BACK_TO_CENTER_FRONT/2, mode);
 			turn135inR(speed1400_shortest_mollifier.turn135in_R, OFF,ON,1400);
 			straight_table2(90*sqrt(2) ,1400,0,1400,1400*1400/ 45/2, mode);
-
-		break;
-		case 13://斜め直進(90)
-
 		break;
 		case 14://斜め直進(45)
 
