@@ -935,7 +935,7 @@ void mode_Tuning1(unsigned char main_modeR){
 		case 1://タイヤ径調整+壁制御ゲイン確認＋探索用のゲイン調整(直線)
 			record_mode = 5;
 			mode.WallControlMode=1;
-			straight_table2(90*8, 0, 0, 600, 4000,mode);
+			straight_table2(90*8, 0, 0, 300, 6000,mode);
 		break;
 		case 2://ジャイロ係数調整＋探索用のゲイン調整(旋回)
 			highspeed_mode = 0;
@@ -976,7 +976,7 @@ void mode_Tuning1(unsigned char main_modeR){
 			straight_table2(BACK_TO_CENTER_FRONT, 0, 0, 300, 6000,mode);
 		break;
 		case 4://探索用壁切れの確認
-			record_mode = 7;
+			record_mode=7;
 			mode.WallControlMode=0;
 			mode.WallControlStatus=0;
 			mode.WallCutMode=0;
@@ -1150,7 +1150,8 @@ void mode_Tuning1(unsigned char main_modeR){
 //			straight_table2(90*32, 0, 0, 4000, 17000,mode);
 			mode.WallControlMode=1;
 //			straight_table2(BACK_TO_CENTER_FRONT,0,1000,1000,1000*1000/ BACK_TO_CENTER_FRONT/2, mode);
-			straight_table2(90*8, 0, 0, 4000, 50000,mode);
+			// straight_table2(90*8, 0, 0, 4000, 50000,mode);
+			straight_table2(90*8, 0, 0, 4000, 17000,mode);
 			//straight_table_dis(90*8, 0, 0, 4000,30000,11000,mode);
 		break;
 	}
@@ -1469,7 +1470,7 @@ void mode_WallSensorTuning(unsigned char main_modeR){
 			}
 		break;
 		case 2://壁切れ90度
-			record_mode = 7;
+			record_mode=7;
 			mode.WallControlMode=0;
 			mode.WallControlStatus=0;
 			mode.WallCutMode=0;
