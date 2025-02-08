@@ -66,19 +66,19 @@ void EncoderGyro_PID(float *PID_s, float *PID_t,float straight_velocity,float tu
 		Ksi = 0.08; //80//5//43//I項の制御量直進
 		Ksd = 0.00; //D項の制御量直進
 		Ktp = 2.6; //295//P項の制御量旋回
-		Kti = 0.1; //1//.6//I項の制御量旋回
+		Kti = 0.11; //1//.6//I項の制御量旋回
 		Ktd = 0.001; //205//D項の制御量旋回
-		Ktp_angle = 0.0; //P項の制御量旋回
-		Ktd_angle = 0.0; //D項の制御量旋回
+		Ktp_angle = 150.0; //P項の制御量旋回
+		Ktd_angle = 0.6; //D項の制御量旋回
 		if(modeacc == 2 || modeacc == 9){//旋回
 			Ktp = 2.4; //295//P項の制御量旋回
-			Kti = 0.1; //1//.6//I項の制御量旋回
+			Kti = 0.11; //1//.6//I項の制御量旋回
 			Ktd = 0.0; //205//D項の制御量旋回
 			Ktp_angle = 220; //P項の制御量旋回
 			Ktd_angle = 1; //D項の制御量旋回
 		}else if(modeacc == 4 || modeacc == 6){//スラローム
-			Ktp_angle = 50; //P項の制御量旋回
-			Ktd_angle = 0; //D項の制御量旋回
+			Ktp_angle = 150; //P項の制御量旋回
+			Ktd_angle = 0.6; //D項の制御量旋回
 		}
 		if (straight_velocity < 200){
 			obs_vel_str = (fusion_speedR + fusion_speedL) / 2;
