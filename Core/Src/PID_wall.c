@@ -34,6 +34,7 @@ uint8_t g_WallControlStatus;
 uint8_t g_WallControlStatus45;
 uint8_t StabilityCount_reset;
 uint8_t StabilityCount_L, StabilityCount_R;
+float Stabilitydisplacement_L, Stabilitydisplacement_R;
 
 float g_sensor_max_l;
 float g_sensor_max_r;
@@ -80,6 +81,8 @@ void init_WallControl(void) {
 	StabilityCount_reset = 0;
 	StabilityCount_L = 0;
 	StabilityCount_R = 0;
+	Stabilitydisplacement_L = 0;
+	Stabilitydisplacement_R = 0;
 	g_sensor_max_l = CENTER_L_PILLAR;
 	g_sensor_max_r = CENTER_R_PILLAR;
 	g_skewer_displacement = SKEWER_LIMIT;
@@ -128,6 +131,8 @@ float calWallConrol(void) {
 	float wallcut_threshold_L, wallcut_threshold_R;
 	float skewer_gain;
 	float Skewer_limit;
+	float skewer_lpf;
+	float Stability_limit;
 
 	if (highspeed_mode == 1) {
 		wallcut_threshold_L = CONTROLWALLCUT_THRESHOLD_SHORT_L;
@@ -140,11 +145,13 @@ float calWallConrol(void) {
 			sensor_gain_p = SENSOR_GAIN_SHORT_P * straight.velocity;
 			sensor_gain_d = SENSOR_GAIN_SHORT_D * straight.velocity;
 		}
+		Stability_limit = STABILITY_LIMIT_SHORT;
 	} else {
 		wallcut_threshold_L = CONTROLWALLCUT_THRESHOLD_L;
 		wallcut_threshold_R = CONTROLWALLCUT_THRESHOLD_R;
 		sensor_gain_p = SENSOR_GAIN_P * straight.velocity;
 		sensor_gain_d = SENSOR_GAIN_D * straight.velocity;
+		Stability_limit = STABILITY_LIMIT;
 	}
 
 	if (g_sensor[SENSOR_LEFT][0] < SENSOR_L_MIN) {
@@ -170,6 +177,8 @@ float calWallConrol(void) {
 		StabilityCount_reset = 0;
 		StabilityCount_L = 0;
 		StabilityCount_R = 0;
+		Stabilitydisplacement_L = 0;
+		Stabilitydisplacement_R = 0;
 		g_sensor_max_l = CENTER_L_PILLAR;
 		g_sensor_max_r = CENTER_R_PILLAR;
 		g_skewer_displacement = SKEWER_LIMIT;
@@ -194,19 +203,22 @@ float calWallConrol(void) {
 				g_skewer_displacement = 0;
 			}
 			StabilityCount_L = 0;
+			Stabilitydisplacement_L = 0;
 		} else {
 			//前回左壁なし
 			//閾値を上回る　and 変化量が落ち着く　+ その安定な状態が数回続く
 			if (g_sensor[SENSOR_LEFT][0] > CONTROLWALL_THRESHOLD_L
 					&& fabs(g_sensor_diff[SENSOR_LEFT]) < wallcut_threshold_L) {
-				g_WallControlStatus = g_WallControlStatus + 1;
-//				StabilityCount_L++;
+				// g_WallControlStatus = g_WallControlStatus + 1;
+				StabilityCount_L++;
+				Stabilitydisplacement_L += straight.velocity * INTERRUPT_TIME;
 			} else {
-//				StabilityCount_L = 0;
+				StabilityCount_L = 0;
+				Stabilitydisplacement_L = 0;
 			}
-//			if (StabilityCount_L >= 10) {
-//				g_WallControlStatus = g_WallControlStatus + 1;
-//			}
+			if ( Stabilitydisplacement_L >= Stability_limit ) {
+				g_WallControlStatus = g_WallControlStatus + 1;
+			}
 		}
 		// 右壁の有無の判定
 		if (((g_WallControlStatus >> 1) & 1) == 1) {
@@ -225,20 +237,23 @@ float calWallConrol(void) {
 				g_skewer_displacement = 0;
 			}
 			StabilityCount_R = 0;
+			Stabilitydisplacement_R = 0;
 		} else {
 			//前回右壁なし
 			//閾値を上回る　and 変化量が落ち着く　+ その安定な状態が数回続く
 			if (g_sensor[SENSOR_RIGHT][0] > CONTROLWALL_THRESHOLD_R
 					&& fabs(g_sensor_diff[SENSOR_RIGHT])
 							< wallcut_threshold_R) {
-				//StabilityCount_R++;
-				g_WallControlStatus = g_WallControlStatus + 2;			//安定消す
+				StabilityCount_R++;
+				Stabilitydisplacement_R += straight.velocity * INTERRUPT_TIME;
+				// g_WallControlStatus = g_WallControlStatus + 2;			//安定消す
 			} else {
-				//StabilityCount_R = 0;
+				StabilityCount_R = 0;
+				Stabilitydisplacement_R = 0;
 			}
-//			if (StabilityCount_R >= 10) {
-//				g_WallControlStatus = g_WallControlStatus + 2;
-//			}
+			if ( Stabilitydisplacement_R >= Stability_limit ) {
+				g_WallControlStatus = g_WallControlStatus + 2;
+			}
 		}
 /* 制御量計算 */
 		switch (g_WallControlStatus) {
@@ -246,9 +261,11 @@ float calWallConrol(void) {
 			if(highspeed_mode==1){
 				skewer_gain=SKEWER_GAIN_SHORT;
 				Skewer_limit = SKEWER_LIMIT_SHORT;
+				skewer_lpf = 0.1;
 			}else{
 				skewer_gain=SKEWER_GAIN;
 				Skewer_limit = SKEWER_LIMIT*straight.velocity/300;
+				skewer_lpf = 0.1;
 			}
 
 			g_skewer_displacement += straight.velocity * INTERRUPT_TIME;
@@ -269,7 +286,7 @@ float calWallConrol(void) {
 				skewer_gain=0;
 			}
 			if (g_skewer_displacement < Skewer_limit) {
-				wall_normal.error = 0.9 * wall_normal.error + (1 - 0.9) * skewer_gain
+				wall_normal.error = skewer_lpf * wall_normal.error + (1 - skewer_lpf) * skewer_gain
 						* (-(g_sensor_max_l - CENTER_L_PILLAR) / g_sensor_max_l
 								+ (g_sensor_max_r - CENTER_R_PILLAR) / g_sensor_max_r);
 			} else {
