@@ -866,8 +866,12 @@ void no_frontwall_straight(void){
 	fusion_speedL = E_speedL;
 	fusion_speedR = E_speedR;
 	gf_speed=0;
-	//yaw_angle=0;
-	//clear_Ierror();
+	if((fabsf(g_sensor[SENSOR_FRONT_L][0] - CENTER_FRONT_L)<50 && fabsf(g_sensor[SENSOR_FRONT_R][0] - CENTER_FRONT_R)<50))
+	{
+		yaw_angle=0;
+		clear_Ierror();
+	}
+	
 
 }
 
