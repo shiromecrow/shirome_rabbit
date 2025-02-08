@@ -120,6 +120,8 @@ void init_WallControl(void) {
 	g_sensor_max_fr_slant = 0;
 
 	Nowall_safe_flg = 0;
+	NoWallDisplacementR_safe = 0;//壁切れ安全機能
+	NoWallDisplacementL_safe = 0;//壁切れ安全機能
 
 }
 

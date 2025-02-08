@@ -171,10 +171,14 @@ int main(void)
 		mode_execution(main_mode);
 
 // failsafe後
+while(error_mode>=1 && angle_speedx <= 400){
+  HAL_Delay(1);
+}
+HAL_Delay(1000);
 		Control_mode_Init();
 		init_WallControl();
-		init_FailSafe();
 		init_EncoderGyro();
+    init_FailSafe();
 
 //	  Batt=pl_getbatt();
 //	  printf("BATT=%f\n", Batt);

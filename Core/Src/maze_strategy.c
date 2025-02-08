@@ -448,7 +448,7 @@ void AdatiWayReturn(float input_StraightVelocity, float input_TurningVelocity, f
 	pl_DriveMotor_standby(OFF); //MTU2.TSTR.BIT.CST0 = 0;
 	maze_mode = 0;
 	wait_ms_NoReset(100);
-	maze_display(&wall);
+	//maze_display(&wall);
 	create_StepCountMap_queue();
 	if(walk_count[0][0] == MAX_WALKCOUNT){
 		error_mode = 19;

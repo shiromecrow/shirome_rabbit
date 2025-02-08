@@ -44,7 +44,7 @@
 
 
 #define GOAL_X 7
-#define GOAL_Y 4
+#define GOAL_Y 7
 #define GOAL_ALL ((x == GOAL_X || x == GOAL_X + 1) && (y == GOAL_Y || y == GOAL_Y + 1))
 #define MAZE_TIMER 8
 
