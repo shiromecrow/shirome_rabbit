@@ -42,16 +42,21 @@
 #define FIRST_MOVE_R45 16
 #define FIRST_MOVE_R135 18
 
+// 32は3
+#define GOAL_SIZE 3
 
-#define GOAL_X 7
-#define GOAL_Y 7
-#define GOAL_ALL ((x == GOAL_X || x == GOAL_X + 1) && (y == GOAL_Y || y == GOAL_Y + 1))
-#define MAZE_TIMER 8
+// #define GOAL_X 8
+// #define GOAL_Y 7
+// #define GOAL_ALL ((x == GOAL_X || x == GOAL_X + 1) && (y == GOAL_Y || y == GOAL_Y + 1))
+// #define GOAL_ALL_D ((xd == GOAL_X || xd == GOAL_X + 1) && (yd == GOAL_Y || yd == GOAL_Y + 1))
+// #define MAZE_TIMER 8
 
-//#define GOAL_X 5
-//#define GOAL_Y 25
-//#define GOAL_ALL ((x == GOAL_X || x == GOAL_X + 1 || x == GOAL_X + 2) && (y == GOAL_Y || y == GOAL_Y + 1 || y == GOAL_Y + 2))
-//#define MAZE_TIMER 8
+#define GOAL_X 6
+#define GOAL_Y 6
+#define GOAL_ALL ((x == GOAL_X || x == GOAL_X + 1 || x == GOAL_X + 2) && (y == GOAL_Y || y == GOAL_Y + 1 || y == GOAL_Y + 2))
+#define GOAL_ALL_D ((xd == GOAL_X || xd == GOAL_X + 1 || xd == GOAL_X + 2) && (yd == GOAL_Y || yd == GOAL_Y + 1 || yd == GOAL_Y + 2))
+
+#define MAZE_TIMER 7
 
 #define F_PRESENCE 190
 #define R_PRESENCE 500//180//900
