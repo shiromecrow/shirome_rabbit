@@ -33,9 +33,10 @@ DIJKSTRA Dijkstra;
 STACK_T g_Goal_x;
 STACK_T g_Goal_y;
 
-int16_t discount_v[V_NUM_MAX]={129,74,61,53,45};
-int16_t discount_d[D_NUM_MAX]={91,58,49,43,32};
-
+//int16_t discount_v[V_NUM_MAX]={129,74,61,53,45};//5
+// int16_t discount_d[D_NUM_MAX]={91,58,49,43,32};//5
+int16_t discount_v[V_NUM_MAX]={129,88,75,67,61,56,52,49,47,44,42,41,39,38,37,37,37,37,37,37};
+int16_t discount_d[D_NUM_MAX]={91,67,59,53,49,45,42,40,38,36,35,34,32,31,30,29,29,28,27,27};
 
 void maze_out_matlab(void){
 
@@ -77,10 +78,14 @@ void maze_clear(void) { //初期化
 			Dijkstra.row_count[i][j]=MAX_WALKCOUNT_DIJKSTRA;
 		}
 	}
-	Dijkstra.row_count[GOAL_X][GOAL_Y]=0;
-	Dijkstra.row_count[GOAL_X+1][GOAL_Y]=0;
-	Dijkstra.column_count[GOAL_Y][GOAL_X]=0;
-	Dijkstra.column_count[GOAL_Y+1][GOAL_X]=0;
+	// Dijkstra.row_count[GOAL_X][GOAL_Y]=0;
+	// Dijkstra.row_count[GOAL_X+1][GOAL_Y]=0;
+	// Dijkstra.column_count[GOAL_Y][GOAL_X]=0;
+	// Dijkstra.column_count[GOAL_Y+1][GOAL_X]=0;
+	for(int i=0;i<=GOAL_SIZE-1;i++){
+		Dijkstra.row_count[GOAL_X+i][GOAL_Y]=0;
+		Dijkstra.column_count[GOAL_Y+i][GOAL_X]=0;
+	}
 
 
 //ここから歩数マップの初期状態を作る．
@@ -408,18 +413,20 @@ void create_DijkstraMap(void){
 			Dijkstra.row_count[i][j]=MAX_WALKCOUNT_DIJKSTRA;
 		}
 	}
-	Dijkstra.row_count[GOAL_X][GOAL_Y]=0;
-	Dijkstra.row_count[GOAL_X+1][GOAL_Y]=0;
-	Dijkstra.column_count[GOAL_Y][GOAL_X]=0;
-	Dijkstra.column_count[GOAL_Y+1][GOAL_X]=0;
-	pushStack_walk(&stack_x,GOAL_X);pushStack_walk(&stack_y,GOAL_Y);
-	pushStack_walk(&stack_matrix,ROW);pushStack_walk(&stack_direction,8);pushStack_walk(&stack_cost,0);
-	pushStack_walk(&stack_x,GOAL_X+1);pushStack_walk(&stack_y,GOAL_Y);
-	pushStack_walk(&stack_matrix,ROW);pushStack_walk(&stack_direction,8);pushStack_walk(&stack_cost,0);
-	pushStack_walk(&stack_x,GOAL_X);pushStack_walk(&stack_y,GOAL_Y);
-	pushStack_walk(&stack_matrix,COLUMN);pushStack_walk(&stack_direction,8);pushStack_walk(&stack_cost,0);
-	pushStack_walk(&stack_x,GOAL_X);pushStack_walk(&stack_y,GOAL_Y+1);
-	pushStack_walk(&stack_matrix,COLUMN);pushStack_walk(&stack_direction,8);pushStack_walk(&stack_cost,0);
+	// Dijkstra.row_count[GOAL_X][GOAL_Y]=0;
+	// Dijkstra.row_count[GOAL_X+1][GOAL_Y]=0;
+	// Dijkstra.column_count[GOAL_Y][GOAL_X]=0;
+	// Dijkstra.column_count[GOAL_Y+1][GOAL_X]=0;
+	for(int i=0;i<=GOAL_SIZE-1;i++){
+		Dijkstra.row_count[GOAL_X+i][GOAL_Y]=0;
+		Dijkstra.column_count[GOAL_Y+i][GOAL_X]=0;
+		pushStack_walk(&stack_x,GOAL_X+i);pushStack_walk(&stack_y,GOAL_Y);
+		pushStack_walk(&stack_matrix,ROW);pushStack_walk(&stack_direction,8);pushStack_walk(&stack_cost,0);
+		pushStack_walk(&stack_x,GOAL_X);pushStack_walk(&stack_y,GOAL_Y+i);
+		pushStack_walk(&stack_matrix,COLUMN);pushStack_walk(&stack_direction,8);pushStack_walk(&stack_cost,0);
+	}
+
+
 
 
 
@@ -664,7 +671,7 @@ void route_Dijkstra(void){
 //		if (mode_safty == 1) {break;}
 		update_coordinate(&xd,&yd,direction_d);
 
-		if((xd == GOAL_X || xd == GOAL_X+1) && (yd == GOAL_Y || yd == GOAL_Y+1)){
+		if(GOAL_ALL_D){
 					break;
 		}
 
@@ -924,15 +931,13 @@ void create_StepCountMap_queue(void){
 	initStack_walk(&stack_x);
 	initStack_walk(&stack_y);
 
+	for(int i=0;i<=GOAL_SIZE-1;i++){
+		for(int j=0;j<=GOAL_SIZE-1;j++){
+			walk_count[GOAL_X+i][GOAL_Y+j] = 0;
+			pushStack_walk(&stack_x,GOAL_X+i);pushStack_walk(&stack_y,GOAL_Y+j);
+		}
+	}
 
-	walk_count[GOAL_X][GOAL_Y] = 0;
-	walk_count[GOAL_X + 1][GOAL_Y] = 0;
-	walk_count[GOAL_X][GOAL_Y + 1] = 0;
-	walk_count[GOAL_X + 1][GOAL_Y + 1] = 0;
-	pushStack_walk(&stack_x,GOAL_X);pushStack_walk(&stack_y,GOAL_Y);
-	pushStack_walk(&stack_x,GOAL_X + 1);pushStack_walk(&stack_y,GOAL_Y);
-	pushStack_walk(&stack_x,GOAL_X);pushStack_walk(&stack_y,GOAL_Y + 1);
-	pushStack_walk(&stack_x,GOAL_X + 1);pushStack_walk(&stack_y,GOAL_Y + 1);
 	//printf("(%d,%d),(%d,%d),(%d,%d),(%d,%d)\n",stack_x.data[0],stack_y.data[0],stack_x.data[1],stack_y.data[1],stack_x.data[2],stack_y.data[2],stack_x.data[3],stack_y.data[3]);
 	//printf("x head %d tail %d\n y head %d tail %d\n",stack_x.head,stack_x.tail,stack_y.head,stack_y.tail);
 	uint16_t count_number = 1;

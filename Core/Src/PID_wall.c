@@ -196,13 +196,13 @@ float calWallConrol(void) {
 			if (g_sensor[SENSOR_LEFT][0] < CONTROLWALL_THRESHOLD_L
 					|| fabs(g_sensor_diff[SENSOR_LEFT]) > wallcut_threshold_L) {
 				g_WallControlStatus = g_WallControlStatus - 1;
-				g_sensor_max_l = 0;
-				for (int i = 0; i <= 19; i++) {
-					if (g_sensor_max_l < (float) (g_sensor[SENSOR_LEFT][i])) {
-						g_sensor_max_l = (float) (g_sensor[SENSOR_LEFT][i]);
-					}
-				}
-				g_skewer_displacement = 0;
+				// g_sensor_max_l = 0;
+				// for (int i = 0; i <= 19; i++) {
+				// 	if (g_sensor_max_l < (float) (g_sensor[SENSOR_LEFT][i])) {
+				// 		g_sensor_max_l = (float) (g_sensor[SENSOR_LEFT][i]);
+				// 	}
+				// }
+				//g_skewer_displacement = 0;
 			}
 			StabilityCount_L = 0;
 			Stabilitydisplacement_L = 0;
@@ -230,13 +230,13 @@ float calWallConrol(void) {
 					|| fabs(g_sensor_diff[SENSOR_RIGHT])
 							> wallcut_threshold_R) {
 				g_WallControlStatus = g_WallControlStatus - 2;
-				g_sensor_max_r = 0;
-				for (int i = 0; i <= 19; i++) {
-					if (g_sensor_max_r < (float) (g_sensor[SENSOR_RIGHT][i])) {
-						g_sensor_max_r = (float) (g_sensor[SENSOR_RIGHT][i]);
-					}
-				}
-				g_skewer_displacement = 0;
+				// g_sensor_max_r = 0;
+				// for (int i = 0; i <= 19; i++) {
+				// 	if (g_sensor_max_r < (float) (g_sensor[SENSOR_RIGHT][i])) {
+				// 		g_sensor_max_r = (float) (g_sensor[SENSOR_RIGHT][i]);
+				// 	}
+				// }
+				//g_skewer_displacement = 0;
 			}
 			StabilityCount_R = 0;
 			Stabilitydisplacement_R = 0;
@@ -763,8 +763,8 @@ void calFrontWallConrol(float *PID_frontwall_l, float *PID_frontwall_r) {
 		wall_front_l.sigma_error = 0;
 		wall_front_r.sigma_error = 0;
 	} else if (g_FrontWallControl_mode == 1) {
-		wall_front_l.error = (-(float) (g_sensor[SENSOR_FRONT_L][0] - CENTER_FRONT_L))/(float) g_sensor[SENSOR_FRONT_L][0];
-		wall_front_r.error = (-(float) (g_sensor[SENSOR_FRONT_R][0] - CENTER_FRONT_R))/(float) g_sensor[SENSOR_FRONT_R][0];
+		wall_front_l.error = (-(float) (g_sensor[SENSOR_FRONT_L][0] - CENTER_FRONT_L))/((float) g_sensor[SENSOR_FRONT_L][0]+0.1);
+		wall_front_r.error = (-(float) (g_sensor[SENSOR_FRONT_R][0] - CENTER_FRONT_R))/((float) g_sensor[SENSOR_FRONT_R][0]+0.1);
 		wall_front_l.delta_error = wall_front_l.error - wall_front_l.old_error;
 		wall_front_r.delta_error = wall_front_r.error - wall_front_r.old_error;
 		wall_front_l.old_error = wall_front_l.error;
