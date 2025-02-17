@@ -165,12 +165,13 @@ int main(void)
   {
 	  battcheak();
 	 // printf("%d\n", rand());
+   HAL_GPIO_WritePin(SENSOR_LED2_GPIO_Port, SENSOR_LED2_Pin, GPIO_PIN_SET);
 	  main_mode=mode_decision(main_mode);
 
 
 		mode_execution(main_mode);
 
-// failsafe後
+// failsafe
 while(error_mode>=1 && angle_speedx <= 400){
   HAL_Delay(1);
 }

@@ -156,7 +156,7 @@ switch (main_modeL) {
 		mode_WallSensorTuning_fast(main_modeR);
 	break;
 	case 0b0111:
-		testturning(speed1000_shortest_mollifier,main_modeR,1,ON,4.0,1);
+		testturning(speed1000_shortest_mollifier,main_modeR,1,ON,5.0,1);
 	break;
 	case 0b1000:
 		testturning(speed1200_shortest_mollifier,main_modeR,1,ON,6.12,1);
@@ -320,13 +320,14 @@ void mode_PLtest(unsigned char main_modeR) {
 			reset_gyro();
 		    control_fun(6.12);
 			pl_FunMotor_start();
-			HAL_Delay(2000);
+			
 			reset_speed();
 			clear_Ierror();
 			record_mode=2;
 			pl_r_blue_LED(ON);
 			pl_l_blue_LED(ON);
-			no_angle();
+			//no_angle();
+			HAL_Delay(2000);
 			pl_r_blue_LED(OFF);
 			pl_l_blue_LED(OFF);
 			pl_FunMotor_stop();
@@ -540,11 +541,11 @@ void mode_Running(unsigned char main_modeR){
 		break;
 		case 0b0111://吸引ありで斜め走行
 			record_out();
-			run_shortest(4000,10000,10000,TURN_ON,FUN_ON,SLANT_ON,speed1000_shortest_mollifier,4.0,1,0);
+			run_shortest(3000,15000,15000,TURN_ON,FUN_ON,SLANT_ON,speed1000_shortest_mollifier,5.0,1,0);
 		break;
 		case 0b1000://
 			record_out();
-			run_shortest(4000,18000,18000,TURN_ON,FUN_ON,SLANT_ON,speed1000_shortest_mollifier,4.0,1,0);
+			run_shortest(4000,18000,18000,TURN_ON,FUN_ON,SLANT_ON,speed1000_shortest_mollifier,5.0,1,0);
 		break;
 		case 0b1001:
 			record_out();
@@ -949,10 +950,10 @@ void mode_Tuning1(unsigned char main_modeR){
 		case 1://タイヤ径調整+壁制御ゲイン確認＋探索用のゲイン調整(直線)
 			record_mode = 5;
 			mode.WallControlMode=1;
-			straight_table2(90*8, 0, 0, 300, 6000,mode);
+			straight_table2(90*30, 0, 0, 300, 6000,mode);
 		break;
 		case 2://ジャイロ係数調整＋探索用のゲイン調整(旋回)
-			highspeed_mode = 0;
+			highspeed_mode = 1;
 			reset_gyro();
 			control_fun(6.12);
 			pl_FunMotor_start();

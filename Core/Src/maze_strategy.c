@@ -144,8 +144,8 @@ void run_movement_suspension(int *direction, unsigned short front_count,
 		if(error_mode==0){
 		record_in();
 		}
-//		clear_Ierror();
-//		reset_gyro();
+		// clear_Ierror();
+		// reset_gyro_integral();
 		reset_speed();
 		maze_mode = 1;
 	}

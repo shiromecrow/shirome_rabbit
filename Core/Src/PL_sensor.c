@@ -10,6 +10,7 @@
 #include "adc.h"
 #include "dma.h"
 #include "gpio.h"
+#include "main.h"
 #include "stm32g4xx_hal_adc.h"
 
 

@@ -20,8 +20,8 @@ float ImT;//0.00000116 //kg/m^2 ロータ慣性モーメントターン用
 float kbT;//Vs/rad 逆起電力定数 deg->rad->m変換sitenai
 
 if(highspeed_mode == 1){
-	Im = 0.00000112;
-	ImT = 0.00000032;
+	Im =  0.00000038;
+	ImT = 0.00000021;
 	kbT = 0.00001;
 }else{
 	Im = 0.00000038;
