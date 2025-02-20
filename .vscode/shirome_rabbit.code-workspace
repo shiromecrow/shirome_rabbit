@@ -16,7 +16,8 @@
 			"stm32g4xx_hal.h": "c",
 			"define.h": "c",
 			"maze_wall.h": "c",
-			"stdio.h": "c"
+			"stdio.h": "c",
+			"ff_motor.h": "c"
 		}
 	}
 }

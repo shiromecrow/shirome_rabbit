@@ -125,6 +125,22 @@ void init_WallControl(void) {
 
 }
 
+void init2_WallControl(void){
+	/* 串制御対策で作成 */
+		g_WallControlStatus = 0;
+		StabilityCount_reset = 0;
+		wall_normal.old_error = 0;
+		StabilityCount_L = 0;
+		StabilityCount_R = 0;
+		Stabilitydisplacement_L = 0;
+		Stabilitydisplacement_R = 0;
+		g_sensor_max_l = CENTER_L_PILLAR;
+		g_sensor_max_r = CENTER_R_PILLAR;
+		g_skewer_displacement = SKEWER_LIMIT;
+}
+
+
+
 
 float calWallConrol(void) {
 	float PID_wall,PID_w;
@@ -288,16 +304,21 @@ float calWallConrol(void) {
 				skewer_gain=0;
 			}
 			if (g_skewer_displacement < Skewer_limit) {
-				wall_normal.error = skewer_lpf * wall_normal.error + (1 - skewer_lpf) * skewer_gain
-						* (-(g_sensor_max_l - CENTER_L_PILLAR) / g_sensor_max_l
+				// wall_normal.error = skewer_lpf * wall_normal.error + (1 - skewer_lpf) * skewer_gain
+				// 		* (-(g_sensor_max_l - CENTER_L_PILLAR) / g_sensor_max_l
+				// 				+ (g_sensor_max_r - CENTER_R_PILLAR) / g_sensor_max_r);
+				wall_normal.error =	skewer_gain * (-(g_sensor_max_l - CENTER_L_PILLAR) / g_sensor_max_l
 								+ (g_sensor_max_r - CENTER_R_PILLAR) / g_sensor_max_r);
+				wall_normal.delta_error = wall_normal.error - wall_normal.old_error;
+				wall_normal.old_error = wall_normal.error;
+				PID_wall = sensor_gain_p * wall_normal.error
+					+ sensor_gain_d * wall_normal.delta_error;								
 			} else {
-				wall_normal.error = 0;
+				wall_normal.error = 0 ;
+				wall_normal.old_error = 0;
+				PID_wall = 0;
 			}
-			wall_normal.delta_error = wall_normal.error - wall_normal.old_error;
-			wall_normal.old_error = wall_normal.error;
-			PID_wall = sensor_gain_p * wall_normal.error
-					+ sensor_gain_d * wall_normal.delta_error;
+
 			pl_yellow_LED_count(0);
 			break;
 		case 1:			//左壁のみ
@@ -450,22 +471,22 @@ float calWallConrol(void) {
 		g_CenterSlantR90_diff = g_CenterSlantR90[0] - g_CenterSlantR90[4];
 		g_CenterSlantL90_diff = g_CenterSlantL90[0] - g_CenterSlantL90[4];
 
-		if (g_sensor[SENSOR_RIGHT][0] > CONTROLWALL_THRESHOLD_SLANT_R
+		if (g_sensor_distance_slant[SENSOR_RIGHT][0] < CONTROLWALL_THRESHOLD_SLANT_R
 				&& fabs(g_sensor_distance_slant_diff[SENSOR_RIGHT] - g_CenterSlantR90_diff)
 						< CONTROLWALLCUT_THRESHOLD_SLANT90_R) {
 			g_WallControlStatus = g_WallControlStatus | (1 << 1);
 		}
-		if (g_sensor[SENSOR_LEFT][0] > CONTROLWALL_THRESHOLD_SLANT_L
+		if (g_sensor_distance_slant[SENSOR_LEFT][0] < CONTROLWALL_THRESHOLD_SLANT_L
 				&& fabs(g_sensor_distance_slant_diff[SENSOR_LEFT] - g_CenterSlantL90_diff)
 						< CONTROLWALLCUT_THRESHOLD_SLANT90_L) {
 			g_WallControlStatus = g_WallControlStatus | (1 << 0);
 		}
-		if (g_sensor[SENSOR_RIGHT][0] < CONTROLWALL_THRESHOLD_SLANT_R
+		if (g_sensor_distance_slant[SENSOR_RIGHT][0] > CONTROLWALL_THRESHOLD_SLANT_R
 				|| fabs(g_sensor_distance_slant_diff[SENSOR_RIGHT] - g_CenterSlantR90_diff)
 						> CONTROLWALLCUT_THRESHOLD_SLANT90_R) {
 			g_WallControlStatus = g_WallControlStatus & ~(1 << 1);
 		}
-		if (g_sensor[SENSOR_LEFT][0] < CONTROLWALL_THRESHOLD_SLANT_L
+		if (g_sensor_distance_slant[SENSOR_LEFT][0] > CONTROLWALL_THRESHOLD_SLANT_L
 				|| fabs(g_sensor_distance_slant_diff[SENSOR_LEFT] - g_CenterSlantL90_diff)
 						> CONTROLWALLCUT_THRESHOLD_SLANT90_L) {
 			g_WallControlStatus = g_WallControlStatus & ~(1 << 0);
@@ -609,28 +630,28 @@ float calWallConrol(void) {
 		g_CenterSlantR45_diff = g_CenterSlantR45[0] - g_CenterSlantR45[4];
 		g_CenterSlantL45_diff = g_CenterSlantL45[0] - g_CenterSlantL45[4];
 
-		if (g_sensor[SENSOR_FRONT_RIGHT][0] > CONTROLWALL_THRESHOLD_SLANT45_R
+		if (g_sensor_distance_slant[SENSOR_FRONT_RIGHT][0] < CONTROLWALL_THRESHOLD_SLANT45_R
 				&& fabs(
 						g_sensor_distance_slant_diff[SENSOR_FRONT_RIGHT]
 								- g_CenterSlantR45_diff)
 						< CONTROLWALLCUT_THRESHOLD_SLANT45_R) {
 			g_WallControlStatus45 = g_WallControlStatus45 | (1 << 1);
 		}
-		if (g_sensor[SENSOR_FRONT_LEFT][0] > CONTROLWALL_THRESHOLD_SLANT45_L
+		if (g_sensor_distance_slant[SENSOR_FRONT_LEFT][0] < CONTROLWALL_THRESHOLD_SLANT45_L
 				&& fabs(
 						g_sensor_distance_slant_diff[SENSOR_FRONT_LEFT]
 								- g_CenterSlantL45_diff)
 						< CONTROLWALLCUT_THRESHOLD_SLANT45_L) {
 			g_WallControlStatus45 = g_WallControlStatus45 | (1 << 0);
 		}
-		if (g_sensor[SENSOR_FRONT_RIGHT][0] < CONTROLWALL_THRESHOLD_SLANT45_R
+		if (g_sensor_distance_slant[SENSOR_FRONT_RIGHT][0] > CONTROLWALL_THRESHOLD_SLANT45_R
 				|| fabs(
 						g_sensor_distance_slant_diff[SENSOR_FRONT_RIGHT]
 								- g_CenterSlantR45_diff)
 						> CONTROLWALLCUT_THRESHOLD_SLANT45_R) {
 			g_WallControlStatus45 = g_WallControlStatus45 & ~(1 << 1);
 		}
-		if (g_sensor[SENSOR_FRONT_LEFT][0] < CONTROLWALL_THRESHOLD_SLANT45_L
+		if (g_sensor_distance_slant[SENSOR_FRONT_LEFT][0] > CONTROLWALL_THRESHOLD_SLANT45_L
 				|| fabs(
 						g_sensor_distance_slant_diff[SENSOR_FRONT_LEFT]
 								- g_CenterSlantL45_diff)
@@ -763,6 +784,8 @@ void calFrontWallConrol(float *PID_frontwall_l, float *PID_frontwall_r) {
 		wall_front_l.sigma_error = 0;
 		wall_front_r.sigma_error = 0;
 	} else if (g_FrontWallControl_mode == 1) {
+
+		if( g_sensor[SENSOR_FRONT_L][0] > F_PRESENCE2 && g_sensor[SENSOR_FRONT_R][0] > F_PRESENCE2 ){
 		wall_front_l.error = (-(float) (g_sensor[SENSOR_FRONT_L][0] - CENTER_FRONT_L))/((float) g_sensor[SENSOR_FRONT_L][0]+0.1);
 		wall_front_r.error = (-(float) (g_sensor[SENSOR_FRONT_R][0] - CENTER_FRONT_R))/((float) g_sensor[SENSOR_FRONT_R][0]+0.1);
 		wall_front_l.delta_error = wall_front_l.error - wall_front_l.old_error;
@@ -771,8 +794,6 @@ void calFrontWallConrol(float *PID_frontwall_l, float *PID_frontwall_r) {
 		wall_front_r.old_error = wall_front_r.error;
 		wall_front_l.sigma_error += wall_front_l.error;
 		wall_front_r.sigma_error += wall_front_r.error;
-
-		if( g_sensor[SENSOR_FRONT_L][0] > F_PRESENCE2 && g_sensor[SENSOR_FRONT_R][0] > F_PRESENCE2 ){
 		*PID_frontwall_l =
 				SENSOR_FRONT_GAIN_P * wall_front_l.error + SENSOR_FRONT_GAIN_I * wall_front_l.sigma_error + SENSOR_FRONT_GAIN_D * wall_front_l.delta_error; 
 		*PID_frontwall_r =
@@ -780,6 +801,10 @@ void calFrontWallConrol(float *PID_frontwall_l, float *PID_frontwall_r) {
 		}else{
 			*PID_frontwall_l=0;
 			*PID_frontwall_r=0;
+			wall_front_l.old_error = 0;
+			wall_front_r.old_error = 0;
+			wall_front_l.sigma_error = 0;
+			wall_front_r.sigma_error = 0;
 		}
 
 

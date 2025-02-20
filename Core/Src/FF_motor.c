@@ -28,9 +28,9 @@ if(highspeed_mode == 1){
 	ImT = 0.00000020;
 	kbT = 0.00001;
 }
-if( turning_acceleration > 0 && turning_velocity < 200 && modeacc == 2){
+if( turning_acceleration > 0 && turning_velocity < 200 && (modeacc == 2 || modeacc == 9)){
 	//ImT = 0.000002;
-	ImT = 0.0000008;
+	ImT = 0.0000003;
 }
 //if(straight_velocity>1200){
 //	Im = 0.00000041;

@@ -292,6 +292,7 @@ void mode_PLtest(unsigned char main_modeR) {
 		modeacc = 6;
 		no_safty = 0;
 		record_mode=1;
+		kalman_mode=1;
 		while (1) {
 		  	printf("count=%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
 		  			tim6_log1,tim6_log2,tim6_log3,tim6_log4,tim6_log5,tim6_log6,
@@ -675,22 +676,28 @@ void mode_Tuning2(unsigned char main_modeR){
 		case 0:
 			sensor_line();
 		break;
-		case 1:
-			while (1) {
-				printf("dis90L=%f,dis90R=%f\n",g_sensor_distance[SENSOR_LEFT],g_sensor_distance[SENSOR_RIGHT] );
-				wait_ms(500);
-			}
+		case 1://未使用
+			// while (1) {
+			// 	printf("dis90L=%f,dis90R=%f\n",g_sensor_distance[SENSOR_LEFT],g_sensor_distance[SENSOR_RIGHT] );
+			// 	wait_ms(500);
+			// }
 		break;
 		case 2:
 			//sensor_line_slant();
 			mode.WallControlMode=0;
 			mode.WallControlStatus=0;mode.WallCutMode=0;mode.calMazeMode=0;
 			reset_distance();
+			reset_speed();
+			reset_Kalman();
+			reset_gyro_integral();
 			record_mode=22;
 			straight_table2(-150*sqrt(2), 0, 0, -300, 3000,mode);
 			record_mode=100;
 			while (MODE_SENSER_DEC) {HAL_Delay(1);}
 			reset_distance();
+			reset_speed();
+			reset_Kalman();
+			reset_gyro_integral();
 			record_mode=23;
 			straight_table2(-150*sqrt(2), 0, 0, -300, 3000,mode);
 			record_mode=0;
@@ -709,7 +716,10 @@ void mode_Tuning2(unsigned char main_modeR){
 			mode.WallControlMode=0;
 			mode.WallControlStatus=0;mode.WallCutMode=0;mode.calMazeMode=0;
 			straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
-			turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
+			slant_dbg_angle = 1;
+			// turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
+			mollifier_turning_table(-45,300*MAZE_SECTION/90);
+			slant_dbg_angle = 0;
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			record_mode=18;
 			straight_table2(90*3*sqrt(2), 0, 0, 300, 3000,mode);
@@ -718,7 +728,10 @@ void mode_Tuning2(unsigned char main_modeR){
 			mode.WallControlMode=0;
 			mode.WallControlStatus=0;mode.WallCutMode=0;mode.calMazeMode=0;
 			straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
-			turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
+			slant_dbg_angle = 1;
+			// turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
+			mollifier_turning_table(-45,300*MAZE_SECTION/90);
+			slant_dbg_angle = 0;
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			record_mode=19;
 			straight_table2(90*3*sqrt(2), 0, 0, 300, 3000,mode);
@@ -727,7 +740,10 @@ void mode_Tuning2(unsigned char main_modeR){
 			mode.WallControlMode=0;
 			mode.WallControlStatus=0;mode.WallCutMode=0;mode.calMazeMode=0;
 			straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
-			turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
+			slant_dbg_angle = 1;
+			// turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
+			mollifier_turning_table(-45,300*MAZE_SECTION/90);
+			slant_dbg_angle = 0;
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			mode.WallControlMode=3;
 			record_mode=18;
@@ -737,7 +753,10 @@ void mode_Tuning2(unsigned char main_modeR){
 			mode.WallControlMode=0;
 			mode.WallControlStatus=0;mode.WallCutMode=0;mode.calMazeMode=0;
 			straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
-			turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
+			slant_dbg_angle = 1;
+			// turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
+			mollifier_turning_table(-45,300*MAZE_SECTION/90);
+			slant_dbg_angle = 0;
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			mode.WallControlMode=3;
 			record_mode=19;
@@ -747,7 +766,10 @@ void mode_Tuning2(unsigned char main_modeR){
 			mode.WallControlMode=0;
 			mode.WallControlStatus=0;mode.WallCutMode=0;mode.calMazeMode=0;
 			straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
-			turning_table2(45, 0, 0, 300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
+			slant_dbg_angle = 1;
+			// turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
+			mollifier_turning_table(-45,300*MAZE_SECTION/90);
+			slant_dbg_angle = 0;
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			mode.WallControlMode=3;
 			highspeed_mode = 1;
@@ -765,7 +787,10 @@ void mode_Tuning2(unsigned char main_modeR){
 			mode.WallControlMode=0;
 			mode.WallControlStatus=0;mode.WallCutMode=0;mode.calMazeMode=0;
 			straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
-			turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
+			slant_dbg_angle = 1;
+			// turning_table2(45, 0, 0, 300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
+			mollifier_turning_table(45,300*MAZE_SECTION/90);
+			slant_dbg_angle = 0;
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			mode.WallControlMode=3;
 			highspeed_mode = 1;
@@ -846,8 +871,10 @@ void mode_Tuning2(unsigned char main_modeR){
 			turn135inR(speed1400_shortest_mollifier.turn135in_R, OFF,ON,1400);
 			straight_table2(90*sqrt(2) ,1400,0,1400,1400*1400/ 45/2, mode);
 		break;
-		case 14://斜め直進(45)
-
+		case 14://串制御
+			record_mode = 7;
+			mode.WallControlMode=1;
+			straight_table2(90*7, 0, 0, 300, 6000,mode);
 		break;
 		case 15://直線
 			highspeed_mode = 1;
@@ -950,7 +977,7 @@ void mode_Tuning1(unsigned char main_modeR){
 		case 1://タイヤ径調整+壁制御ゲイン確認＋探索用のゲイン調整(直線)
 			record_mode = 5;
 			mode.WallControlMode=1;
-			straight_table2(90*30, 0, 0, 300, 6000,mode);
+			straight_table2(90*8, 0, 0, 300, 6000,mode);
 		break;
 		case 2://ジャイロ係数調整＋探索用のゲイン調整(旋回)
 			highspeed_mode = 1;
@@ -992,7 +1019,7 @@ void mode_Tuning1(unsigned char main_modeR){
 		break;
 		case 4://探索用壁切れの確認
 			record_mode=7;
-			mode.WallControlMode=0;
+			mode.WallControlMode=1;
 			mode.WallControlStatus=0;
 			mode.WallCutMode=0;
 			mode.calMazeMode=0;
@@ -1008,13 +1035,13 @@ void mode_Tuning1(unsigned char main_modeR){
 			pl_r_blue_LED(ON);
 			pl_l_blue_LED(ON);
 			theta_comp_gain=0;
-			//get_duty(1, 1,&duty_L,&duty_R);
-			//pl_DriveMotor_duty(duty_L,duty_R);
+			get_duty(1, 1,&duty_L,&duty_R);
+			pl_DriveMotor_duty(duty_L,duty_R);
 			pl_DriveMotor_start();
-			//wait_ms(3000);
+			wait_ms(3000);
 			record_mode=11;
-			//wait_ms(2000);
-			straight_table2(90*8, 0, 0, 300, 6000,mode);
+			wait_ms(2000);
+			//straight_table2(90*8, 0, 0, 300, 6000,mode);
 			record_mode=0;
 			//reset_EncoderGyro_MeanVariance();
 			pl_DriveMotor_stop();
@@ -1057,7 +1084,10 @@ void mode_Tuning1(unsigned char main_modeR){
 			mode.WallCutMode=0;
 			mode.calMazeMode=0;
 			straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
-			turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
+			slant_dbg_angle = 1;
+			// turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
+			mollifier_turning_table(-45,300*MAZE_SECTION/90);
+			slant_dbg_angle = 0;
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			highspeed_mode = 1;
 			control_fun(6.12);
@@ -1083,7 +1113,10 @@ void mode_Tuning1(unsigned char main_modeR){
 			mode.WallCutMode=0;
 			mode.calMazeMode=0;
 			straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
-			turning_table2(45, 0, 0, 300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
+			slant_dbg_angle = 1;
+			// turning_table2(45, 0, 0, 300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
+			mollifier_turning_table(45,300*MAZE_SECTION/90);
+			slant_dbg_angle = 0;
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			highspeed_mode=1;
 			control_fun(6.12);
@@ -1373,8 +1406,12 @@ void mode_Tuning0(unsigned char main_modeR){
 		case 12:
 		record_mode=2;
 		for(int i=0;i<40;i++){
-		//turning_table2(90, 0, 0, 400, 3000);
-		mollifier_turning_table(90,600);
+		turning_table2(90, 0, 0, 700, 8000);
+		//mollifier_turning_table(90,700);
+		// wait_ms_NoReset(100);
+		// mode.WallControlMode=1;
+		// straight_table2(90, 0, 0, 300, 6000,mode);
+		// wait_ms_NoReset(100);
 		}
 		break;
 		case 13:

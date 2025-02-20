@@ -89,6 +89,7 @@ void backTurn_controlWall(float input_TurningVelocity,float input_TurningAcceler
 		wait_ms_NoReset(50);
 	}
 	if(left_wall){
+		wait_ms_NoReset(50);
 		//turning_table2(90,0,0,input_TurningVelocity,input_TurningAcceleration);
 		mollifier_turning_table(90,input_TurningVelocity);
 		pl_R_DriveMotor_mode(MOTOR_BREAK);
@@ -103,6 +104,7 @@ void backTurn_controlWall(float input_TurningVelocity,float input_TurningAcceler
 		//turning_table2(90,0,0,input_TurningVelocity,input_TurningAcceleration);
 		mollifier_turning_table(90,input_TurningVelocity);
 	}else if(left_wall==0 && right_wall){
+		wait_ms_NoReset(50);
 		//turning_table2(-90,0,0,-input_TurningVelocity,input_TurningAcceleration);
 		mollifier_turning_table(-90,input_TurningVelocity);
 		pl_R_DriveMotor_mode(MOTOR_BREAK);
@@ -117,6 +119,7 @@ void backTurn_controlWall(float input_TurningVelocity,float input_TurningAcceler
 		//turning_table2(-90,0,0,-input_TurningVelocity,input_TurningAcceleration);
 		mollifier_turning_table(-90,input_TurningVelocity);
 	}else if(left_wall==0 && right_wall==0){
+		wait_ms_NoReset(50);
 		//turning_table2(90,0,0,input_TurningVelocity,input_TurningAcceleration);
 		mollifier_turning_table(90,input_TurningVelocity);
 		pl_R_DriveMotor_mode(MOTOR_BREAK);

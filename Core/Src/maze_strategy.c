@@ -144,11 +144,12 @@ void run_movement_suspension(int *direction, unsigned short front_count,
 		if(error_mode==0){
 		record_in();
 		}
-		// clear_Ierror();
-		// reset_gyro_integral();
-		reset_speed();
 		maze_mode = 1;
 	}
+	// clear_Ierror();
+	// reset_gyro_integral();
+	//reset_speed();
+	//enc.sigma_error = 0;
 
 	if(Dijkstra_mode==1){
 		create_DijkstraMap();

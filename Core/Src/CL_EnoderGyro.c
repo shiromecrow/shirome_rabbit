@@ -38,6 +38,8 @@ float straight_alpha;
 
 float theta_comp_gain;//角度伝達誤差の補償
 
+float kalman_mode;//カルマンフィルタ計算ONフラグ
+
 // カルマンフィルタ系の変数
 float kal_A_1[2][2] = {
 {1,INTERRUPT_TIME},
@@ -77,6 +79,7 @@ float g_encY_variance,g_accelY_variance;
 void init_EncoderGyro(void){
 	straight_alpha=0.65;
 	theta_comp_gain=1;
+	kalman_mode = 0;
 	reset_Kalman();
 	reset_gyro();
 	reset_distance();
@@ -237,6 +240,7 @@ void reset_speed(void){
 	E_lpf_speedR=0;
 	fusion_speedL=0;
 	fusion_speedR=0;
+	kal_x_1_predict[1][0] = 0;
 
 }
 
@@ -328,6 +332,12 @@ void interupt_calKalman(void) {
 	//Kalman Filter (all system)
 	//---------------------------------------
 	//measurement data
+	if(kalman_mode==0){
+		kal_x_1_predict[0][0] = 0;
+		kal_x_1_predict[1][0] = 0;
+		kalman_speed = (fusion_speedL + fusion_speedR)/2;
+		kalman_distance = (fusion_distanceL + fusion_distanceR)/2;
+	}else{
 	        kal_data_in[0][0] = (E_distanceL+E_distanceR)/2;
 	        kal_data_in[1][0] = (E_speedL+E_speedR)/2;
 
@@ -368,6 +378,7 @@ void interupt_calKalman(void) {
 	        kalman_speed= *kal_data_out[1];
 	        kalman_distance2 += kalman_speed * INTERRUPT_TIME;//いつかカルマンに組み込む
 	        kalman_distance = *kal_data_out[0];
+	}
 }
 
 

@@ -315,7 +315,41 @@ void interrupt_record(void) {
 			r_data[3] = NoWallDisplacementR45slant2;
 			record_data(r_data, 4);
 		}
-
+		if (record_mode == 30) { //壁切れ計測
+			r_data[0] = (fusion_speedR + fusion_speedL) / 2;
+			r_data[1] = angle_speed;
+			r_data[2] = yaw_angle;
+			r_data[3] = 0;
+			record_data(r_data, 4);
+		}
+		if (record_mode == 31) { //壁切れ計測
+			r_data[0] = straight.velocity;
+			r_data[1] = turning.velocity;
+			r_data[2] = turning.displacement;
+			r_data[3] = 0;
+			record_data(r_data, 4);
+		}
+		if (record_mode == 32) { //壁切れ計測
+			r_data[0] = g_V_L;
+			r_data[1] = g_V_R;
+			r_data[2] = g_Vol1;
+			r_data[3] = g_Vol2;
+			record_data(r_data, 4);
+		}
+		if (record_mode == 33) { //壁切れ計測
+			r_data[0] = g_Vol1;
+			r_data[1] = (fusion_speedR + fusion_speedL) / 2;
+			r_data[2] = straight.velocity;
+			r_data[3] = 0;
+			record_data(r_data, 4);
+		}
+		if (record_mode == 34) { //壁切れ計測
+			r_data[0] = straight.velocity;
+			r_data[1] = (fusion_speedR + fusion_speedL) / 2;
+			r_data[2] = turning.velocity;
+			r_data[3] = angle_speed;
+			record_data(r_data, 4);
+		}
 	if (record_mode == 100) {
 			r_data[0] = record_point;
 			r_data[1] = record_point;

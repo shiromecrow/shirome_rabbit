@@ -12,7 +12,7 @@
 #include "PL_motor.h"
 #include "PL_LED.h"
 #include "PL_timer.h"
-//#include "fail_safe.h"
+#include "fail_safe.h"
 #include "FF_motor.h"
 
 #include "math.h"
@@ -39,7 +39,7 @@ char modeacc;
 
 uint8_t noGoalPillarMode;
 
-float g_V_L,g_V_R;
+float g_V_L,g_V_R,g_Vol1,g_Vol2;
 
 void Control_mode_Init(void){
 
@@ -278,6 +278,8 @@ void interupt_DriveMotor(void){
 	}
 		g_V_L=(float)(V_L);//V_L;
 		g_V_R=(float)(V_R);//V_R;
+		g_Vol1=(float)(PID_s);//V_R;
+		g_Vol2=(float)(PID_t);//V_R;
 
 
 
@@ -630,7 +632,7 @@ float turning_table2(float input_displacement, float input_start_velocity,
 	// 例外処理
 	if (input_acceleration < 0){input_acceleration=-input_acceleration;}//加速が負
 
-	yaw_angle=0;
+	// yaw_angle=0;
 
 	Trapezoid_turning.displacement = input_displacement;
 	Trapezoid_turning.start_velocity = input_start_velocity;
@@ -662,13 +664,13 @@ float turning_table2(float input_displacement, float input_start_velocity,
 		modeacc = 0;
 		pl_R_DriveMotor_mode(MOTOR_BREAK);
 		pl_L_DriveMotor_mode(MOTOR_BREAK);
+		pl_DriveMotor_stop();
 		wait_ms_NoReset(100);
 	}
 //	modeacc = 0;
 
 	yaw_angle = yaw_angle - input_displacement;
 
-	pl_DriveMotor_stop();
 	fusion_speedL = E_speedL;
 	fusion_speedR = E_speedR;
 	gf_speed=0;
@@ -776,6 +778,7 @@ void mollifier_turning_table(float input_displacement, float input_max_turning_v
 
 	wait_ms_NoReset(100);
 	modeacc = 0;
+	pl_DriveMotor_stop();
 	pl_R_DriveMotor_mode(MOTOR_BREAK);
 	pl_L_DriveMotor_mode(MOTOR_BREAK);
 	wait_ms_NoReset(50);
@@ -784,15 +787,12 @@ void mollifier_turning_table(float input_displacement, float input_max_turning_v
 	
 
 //	modeacc = 0;
-
+	
 	enc.sigma_error=0;
 	yaw_angle = yaw_angle - input_displacement;
 	fusion_speedL = E_speedL;
 	fusion_speedR = E_speedR;
 	gf_speed=0;
-
-
-	pl_DriveMotor_stop();
 }
 
 void mollifier_slalom_table(float input_center_velocity,float input_displacement, float input_max_turning_velocity) {

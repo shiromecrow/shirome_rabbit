@@ -176,6 +176,7 @@ while(error_mode>=1 && angle_speedx <= 400){
   HAL_Delay(1);
 }
 HAL_Delay(1000);
+record_mode=0;
 		Control_mode_Init();
 		init_WallControl();
 		init_EncoderGyro();

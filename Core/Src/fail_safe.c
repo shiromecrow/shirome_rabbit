@@ -182,7 +182,7 @@ void interrupt_FailSafe(void){
 
 		pl_yellow_LED_count(error_mode);
 
-		record_mode=0;
+		//record_mode=0;
 		error_time_count++;
 		if(error_time_count<=1000){
 			init_WallControl();
