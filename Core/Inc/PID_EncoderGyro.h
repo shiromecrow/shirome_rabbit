@@ -20,6 +20,8 @@ struct PID{
 extern struct PID enc;
 extern struct PID Gyro;
 
+extern float slant_dbg_angle;
+
 extern float Ksp,Ksi,Ksd;
 extern float Ktp,Kti,Ktd;
 extern char Encoder_PID_mode,Gyro_PID_mode,Accel_PID_mode;
