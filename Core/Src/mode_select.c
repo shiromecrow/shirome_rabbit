@@ -165,7 +165,7 @@ switch (main_modeL) {
 		testturning(speed1400_shortest_mollifier,main_modeR,1,ON,6.12,1);
 	break;
 	case 0b1010:
-		testturning(speed1600_shortest_mollifier,main_modeR,1,ON,6.2,1);
+		testturning(speed1600_shortest_mollifier,main_modeR,1,ON,6.7,1);
 	break;
 	case 0b1011:
 	break;
@@ -293,6 +293,7 @@ void mode_PLtest(unsigned char main_modeR) {
 		no_safty = 0;
 		record_mode=1;
 		kalman_mode=1;
+		straight.velocity=300;
 		while (1) {
 			printf("TIME=");
 			for(int log_conut = 0;log_conut < TIM6LOG_SIZE;log_conut++){
@@ -303,7 +304,7 @@ void mode_PLtest(unsigned char main_modeR) {
 				}
 			}
 			printf("\n");
-			printf("SUMTIME=%d\n",tim6_log[TIM6LOG_SIZE]);
+			printf("SUMTIME=%d\n",tim6_log[TIM6LOG_SIZE-1]);
 			wait_ms(500);
 		}
 
@@ -701,7 +702,7 @@ void mode_Tuning2(unsigned char main_modeR){
 			record_mode=22;
 			straight_table2(-150*sqrt(2), 0, 0, -300, 3000,mode);
 			record_mode=100;
-			while (MODE_SENSER_DEC) {HAL_Delay(1);}
+			while (MODE_SENSOR_DEC) {HAL_Delay(1);}
 			reset_distance();
 			reset_speed();
 			reset_Kalman();
@@ -886,7 +887,7 @@ void mode_Tuning2(unsigned char main_modeR){
 		break;
 		case 15://直線
 			highspeed_mode = 1;
-			control_fun(6.12);
+			control_fun(6.7);
 			pl_FunMotor_start();
 			HAL_Delay(600);
 			//reset_gyro();
@@ -894,12 +895,12 @@ void mode_Tuning2(unsigned char main_modeR){
 			reset_speed();
 			reset_distance();
 			clear_Ierror();
-			record_mode=13;
+			record_mode=2;
 //			mode.WallControlMode=0;
 //			straight_table2(90*32, 0, 0, 4000, 17000,mode);
 			mode.WallControlMode=1;
 //			straight_table2(BACK_TO_CENTER_FRONT,0,1000,1000,1000*1000/ BACK_TO_CENTER_FRONT/2, mode);
-			straight_table2(90*8, 0, 0, 4500, 30000,mode);
+			straight_table2(90*8, 0, 0, 5000, 40000,mode);
 		break;
 	}
 	record_mode=0;
@@ -948,14 +949,14 @@ void mode_Tuning1(unsigned char main_modeR){
 			wait_ms(150);
 			record_mode=100;
 			pl_r_blue_LED(ON);pl_l_blue_LED(ON);
-			while (MODE_SENSER_DEC) {HAL_Delay(1);}
+			while (MODE_SENSOR_DEC) {HAL_Delay(1);}
 			pl_r_blue_LED(OFF);pl_l_blue_LED(OFF);
 			wait_ms(600);
 			record_mode=7;
 			wait_ms(150);
 			record_mode=100;
 			pl_r_blue_LED(ON);pl_l_blue_LED(ON);
-			while (MODE_SENSER_DEC) {HAL_Delay(1);}
+			while (MODE_SENSOR_DEC) {HAL_Delay(1);}
 			pl_r_blue_LED(OFF);pl_l_blue_LED(OFF);
 			wait_ms(600);
 			record_mode=7;
@@ -963,7 +964,7 @@ void mode_Tuning1(unsigned char main_modeR){
 			straight_table2(90*4, 0, 0, 300, 6000,mode);
 			record_mode=100;
 			pl_r_blue_LED(ON);pl_l_blue_LED(ON);
-			while (MODE_SENSER_DEC) {HAL_Delay(1);}
+			while (MODE_SENSOR_DEC) {HAL_Delay(1);}
 			pl_r_blue_LED(OFF);pl_l_blue_LED(OFF);
 			wait_ms(600);
 			reset_gyro();
@@ -1006,7 +1007,7 @@ void mode_Tuning1(unsigned char main_modeR){
 			pl_FunMotor_stop();
 			wait_ms_NoReset(500);
 			pl_r_blue_LED(ON);pl_l_blue_LED(ON);
-			while (MODE_SENSER_DEC) {HAL_Delay(1);}
+			while (MODE_SENSOR_DEC) {HAL_Delay(1);}
 			pl_r_blue_LED(OFF);pl_l_blue_LED(OFF);
 			reset_gyro();
 			control_fun(6.12);

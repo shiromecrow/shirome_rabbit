@@ -19,22 +19,22 @@
 #define SENSOR_GAIN_D 0.006//0.16横壁制御のゲイン
 //#define SENSOR_GAIN_SHORT 0.5*800/1200//0.16横壁制御のゲイン最短用
 #define SENSOR_GAIN_SHORT_P 0.8//0.16横壁制御のゲイン最短用
-#define SENSOR_GAIN_SHORT_D -0.05//0.16横壁制御のゲイン最短用
+#define SENSOR_GAIN_SHORT_D -0.1//0.16横壁制御のゲイン最短用
 
-#define	CENTER_L                        	1306
-#define	CENTER_R                        	2081
-#define	CONTROLWALL_THRESHOLD_L         	489
-#define	CONTROLWALL_THRESHOLD_R         	704
-#define	CONTROLWALLCUT_THRESHOLD_L      	317
-#define	CONTROLWALLCUT_THRESHOLD_R      	303
-#define	WALLCUT_THRESHOLD_L90           	214
-#define	WALLCUT_THRESHOLD_R90           	392
-#define	CONTROLWALLCUT_THRESHOLD_SHORT_L	645
-#define	CONTROLWALLCUT_THRESHOLD_SHORT_R	940
-#define	SENSOR_L_MIN                    	489
-#define	SENSOR_L_MAX                    	2616
-#define	SENSOR_R_MIN                    	704
-#define	SENSOR_R_MAX                    	3403
+#define	CENTER_L                        	1288
+#define	CENTER_R                        	1615
+#define	CONTROLWALL_THRESHOLD_L         	658
+#define	CONTROLWALL_THRESHOLD_R         	922
+#define	CONTROLWALLCUT_THRESHOLD_L      	672
+#define	CONTROLWALLCUT_THRESHOLD_R      	683
+#define	WALLCUT_THRESHOLD_L90           	310
+#define	WALLCUT_THRESHOLD_R90           	315
+#define	CONTROLWALLCUT_THRESHOLD_SHORT_L	620
+#define	CONTROLWALLCUT_THRESHOLD_SHORT_R	629
+#define	SENSOR_L_MIN                    	658
+#define	SENSOR_L_MAX                    	2343
+#define	SENSOR_R_MIN                    	922
+#define	SENSOR_R_MAX                    	3182
 
 #define STABILITY_LIMIT 6
 #define STABILITY_LIMIT_SHORT 4

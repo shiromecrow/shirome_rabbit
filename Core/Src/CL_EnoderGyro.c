@@ -70,7 +70,7 @@ float kal_P_1_predict[2][2];
 float kal_P_1[2][2];
 float K_G_1[2][2];
 
-float kalman_speed,kalman_distance,kalman_distance2;
+float kalman_speed,kalman_distance;
 
 float g_omegaZ_mean,g_accelY_mean;
 float g_encY_variance,g_accelY_variance;
@@ -226,7 +226,6 @@ void reset_distance(void){
 	fusion_distanceL=0;
 	fusion_distanceR=0;
 	kalman_distance=0;
-	kalman_distance2=0;
 
     	kal_x_1_predict[0][0] = 0;
 
@@ -375,9 +374,8 @@ void interupt_calKalman(void) {
 	        mat_mul_const(BBT[0], kal_U_1, BUBT[0], 2, 2);//BUB^T
 	        mat_add(APAT[0], BUBT[0], kal_P_1_predict[0], 2, 2);//APA^T+BUB^T
 
-	        kalman_speed= *kal_data_out[1];
-	        kalman_distance2 += kalman_speed * INTERRUPT_TIME;//いつかカルマンに組み込む
 	        kalman_distance = *kal_data_out[0];
+	        kalman_speed= *kal_data_out[1];
 	}
 }
 

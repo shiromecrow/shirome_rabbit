@@ -10,7 +10,7 @@
 
 #include "stm32g4xx_hal.h"
 
-#define MODE_SENSER_DEC (g_sensor[0][0] <= SENSOR_FINGER_0 || g_sensor[2][0] <= SENSOR_FINGER_2 || g_sensor[3][0] <= SENSOR_FINGER_3 || g_sensor[5][0] <= SENSOR_FINGER_5)
+#define MODE_SENSOR_DEC (g_sensor[0][0] <= SENSOR_FINGER_0 || g_sensor[2][0] <= SENSOR_FINGER_2 || g_sensor[3][0] <= SENSOR_FINGER_3 || g_sensor[5][0] <= SENSOR_FINGER_5)
 
 
 extern uint16_t main_mode;
