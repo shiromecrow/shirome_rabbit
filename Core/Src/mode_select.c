@@ -294,9 +294,16 @@ void mode_PLtest(unsigned char main_modeR) {
 		record_mode=1;
 		kalman_mode=1;
 		while (1) {
-		  	printf("count=%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
-		  			tim6_log1,tim6_log2,tim6_log3,tim6_log4,tim6_log5,tim6_log6,
-					tim6_log7,tim6_log8,tim6_log9,tim6_log10,tim6_log11,tim6_log12);
+			printf("TIME=");
+			for(int log_conut = 0;log_conut < TIM6LOG_SIZE;log_conut++){
+				if(log_conut == 0){
+					printf("%d",tim6_log[0]);
+				}else{
+					printf(", %d",tim6_log[log_conut]-tim6_log[log_conut-1]);
+				}
+			}
+			printf("\n");
+			printf("SUMTIME=%d\n",tim6_log[TIM6LOG_SIZE]);
 			wait_ms(500);
 		}
 

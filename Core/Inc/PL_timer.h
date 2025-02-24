@@ -11,19 +11,9 @@
 #include "stm32g4xx_hal.h"
 
 #define INTERRUPT_TIME 0.001
+#define TIM6LOG_SIZE 13
 
-extern uint16_t tim6_log1;
-extern uint16_t tim6_log2;
-extern uint16_t tim6_log3;
-extern uint16_t tim6_log4;
-extern uint16_t tim6_log5;
-extern uint16_t tim6_log6;
-extern uint16_t tim6_log7;
-extern uint16_t tim6_log8;
-extern uint16_t tim6_log9;
-extern uint16_t tim6_log10;
-extern uint16_t tim6_log11;
-extern uint16_t tim6_log12;
+extern uint16_t tim6_log[TIM6LOG_SIZE];
 
 extern volatile uint32_t g_timCount;
 extern float g_timCount_sec;
