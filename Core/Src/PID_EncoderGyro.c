@@ -74,8 +74,8 @@ void EncoderGyro_PID(float *PID_s, float *PID_t,float straight_velocity,float tu
 		Ktp_angle = 20.0; //P項の制御量旋回
 		Ktd_angle = 0; //D項の制御量旋回
 		if(modeacc == 2 || modeacc == 9){//旋回
-			Ktp = 2.4; //295//P項の制御量旋回
-			Kti = 0.11; //1//.6//I項の制御量旋回
+			Ktp = 2.9; //295//P項の制御量旋回
+			Kti = 0.09; //1//.6//I項の制御量旋回
 			Ktd = 0.0; //205//D項の制御量旋回
 			Ktp_angle = 120; //P項の制御量旋回
 			Ktd_angle = 0; //D項の制御量旋回

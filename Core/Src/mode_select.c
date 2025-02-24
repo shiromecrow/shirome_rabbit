@@ -674,13 +674,14 @@ void mode_Tuning2(unsigned char main_modeR){
 	yaw_angle=0;
 	switch (main_modeR) {
 		case 0:
-			sensor_line();
+			record_mode = 5;
+			mode.WallControlMode=1;
+			straight_table2(90*31, 0, 0, 300, 6000,mode);
 		break;
 		case 1://未使用
-			// while (1) {
-			// 	printf("dis90L=%f,dis90R=%f\n",g_sensor_distance[SENSOR_LEFT],g_sensor_distance[SENSOR_RIGHT] );
-			// 	wait_ms(500);
-			// }
+			record_mode = 5;
+			mode.WallControlMode=1;
+			straight_table2(90*31, 0, 0, 600, 4000,mode);
 		break;
 		case 2:
 			//sensor_line_slant();

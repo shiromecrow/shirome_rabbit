@@ -51,8 +51,8 @@
 // #define GOAL_ALL_D ((xd == GOAL_X || xd == GOAL_X + 1) && (yd == GOAL_Y || yd == GOAL_Y + 1))
 // #define MAZE_TIMER 8
 
-#define GOAL_X 6
-#define GOAL_Y 6
+#define GOAL_X 19
+#define GOAL_Y 8
 #define GOAL_ALL ((x == GOAL_X || x == GOAL_X + 1 || x == GOAL_X + 2) && (y == GOAL_Y || y == GOAL_Y + 1 || y == GOAL_Y + 2))
 #define GOAL_ALL_D ((xd == GOAL_X || xd == GOAL_X + 1 || xd == GOAL_X + 2) && (yd == GOAL_Y || yd == GOAL_Y + 1 || yd == GOAL_Y + 2))
 
