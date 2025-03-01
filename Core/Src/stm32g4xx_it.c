@@ -250,31 +250,31 @@ void TIM6_DAC_IRQHandler(void)
   /* USER CODE END TIM6_DAC_IRQn 0 */
   HAL_TIM_IRQHandler(&htim6);
   /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
-  interrupt_timer();/* 3us */
+  interrupt_timer();/* 2us */
   tim6_log[0]=TIM6->CNT;
-  pl_interupt_getSensor();/* 246?us */
+  pl_interupt_getSensor();/* 73us */
   tim6_log[1]=TIM6->CNT;
-  interupt_calSensor();/* 246?us */
+  interupt_calSensor();/* 68us */
   tim6_log[2]=TIM6->CNT;
-  ICM20602_DataUpdate();/* 89us */
+  ICM20602_DataUpdate();/* 18us */
   tim6_log[3]=TIM6->CNT;
-  interrupt_calGyro();/* 25us */
+  interrupt_calGyro();/* 26us */
   tim6_log[4]=TIM6->CNT;
-  AS5047_DataUpdate();/* 49us */
+  AS5047_DataUpdate();/* 23us */
   tim6_log[5]=TIM6->CNT;
-  interupt_calEncoder();/* 25us */
+  interupt_calEncoder();/* 96us */
   tim6_log[6]=TIM6->CNT;
-  interupt_calFusion();/* 13us */
+  interupt_calFusion();/* 11us */
   tim6_log[7]=TIM6->CNT;
-  interupt_calKalman();/* 87us */
+  interupt_calKalman();/* 59us */
   tim6_log[8]=TIM6->CNT;
-  interrupt_WallCut();/* 7us */
+  interrupt_WallCut();/* 8us */
   tim6_log[9]=TIM6->CNT;
-  interupt_DriveMotor();/* 46us */
+  interupt_DriveMotor();/* 33us */
   tim6_log[10]=TIM6->CNT;
-  interrupt_FailSafe();/* 1us */
+  interrupt_FailSafe();/* 2us */
   tim6_log[11]=TIM6->CNT;
-  interrupt_record();/* 2us */
+  interrupt_record();/* 3us */
   tim6_log[12]=TIM6->CNT;
   /* USER CODE END TIM6_DAC_IRQn 1 */
 }

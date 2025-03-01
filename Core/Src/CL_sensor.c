@@ -15,11 +15,11 @@
 #include "stdio.h"
 #include "math.h"
 
-int g_sensor[SENSOR_NUM][20];
-int g_sensor_diff[SENSOR_NUM];
-int g_sensor_diff_wallcut[SENSOR_NUM];
-int g_sensor_diff_wallcut_slant[SENSOR_NUM];
-int g_sensor_mean[SENSOR_NUM];
+short g_sensor[SENSOR_NUM][20];
+short g_sensor_diff[SENSOR_NUM];
+short g_sensor_diff_wallcut[SENSOR_NUM];
+short g_sensor_diff_wallcut_slant[SENSOR_NUM];
+short g_sensor_mean[SENSOR_NUM];
 float g_sensor_distance[SENSOR_NUM];
 float g_sensor_distance_slant[SENSOR_NUM][12];
 float g_sensor_distance_slant_diff[SENSOR_NUM];
@@ -35,7 +35,7 @@ float g_V_battery_mean;
 void battcheak(void){
 int i;
 	for(i = 0;i <= 20-1;i++){
-		g_V_battery[i]=pl_getbatt();
+		g_V_battery[i]=pl_getbatt_dma();
 		wait_ms(10);
 	}
 
@@ -48,6 +48,8 @@ int i;
 	//printf("%f",g_V_battery_mean);
 	if(g_V_battery_mean <= BATTLIMIT){
 		//pl_stop_Sound();
+		printf("BATT=%f\n",g_V_battery_mean);
+		printf("BATT=%f,%f,%f\n",g_V_battery[0],g_V_battery[1],g_V_battery[2]);
 		while(1){
 		pl_r_blue_LED(ON);
 		pl_l_blue_LED(ON);
@@ -66,7 +68,7 @@ int i;
 /*******************************************************************/
 void interupt_calSensor(void){
 	int j;
-
+	
 
 	for (j = 19; j >= 1; j--) {
 		//g_V_battery[j] = g_V_battery[j - 1];

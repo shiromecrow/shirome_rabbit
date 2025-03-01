@@ -23,7 +23,7 @@
 #include "math.h"
 
 char no_safty;
-unsigned char error_mode;
+volatile unsigned char error_mode;
 char highspeed_mode;
 float encoder_PID_error;
 float gyro_PID_error;

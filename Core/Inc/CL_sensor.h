@@ -75,11 +75,11 @@
 #define	LIN_SLANT_COEFFICIENT45_R_c	125.288326521041
 
 
-extern int g_sensor[SENSOR_NUM][20];
-extern int g_sensor_diff[SENSOR_NUM];
-extern int g_sensor_diff_wallcut[SENSOR_NUM];
-extern int g_sensor_diff_wallcut_slant[SENSOR_NUM];
-extern int g_sensor_mean[SENSOR_NUM];
+extern short g_sensor[SENSOR_NUM][20];
+extern short g_sensor_diff[SENSOR_NUM];
+extern short g_sensor_diff_wallcut[SENSOR_NUM];
+extern short g_sensor_diff_wallcut_slant[SENSOR_NUM];
+extern short g_sensor_mean[SENSOR_NUM];
 extern float g_sensor_distance[SENSOR_NUM];
 extern float g_sensor_distance_slant[SENSOR_NUM][12];
 extern float g_sensor_distance_slant_diff[SENSOR_NUM];

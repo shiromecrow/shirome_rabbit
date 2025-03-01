@@ -16,7 +16,7 @@
 
 
 uint16_t g_ADCBuffer[SENSOR_NUM+1];
-char AD_step;
+volatile char AD_step;
 
 
 uint16_t g_sensor_on[SENSOR_NUM];
@@ -39,7 +39,7 @@ void pl_sensor_init(void){
 /*******************************************************************/
 /*	電圧の取得			(pl_getbatt)	*/
 /*******************************************************************/
-/*	戻り値に電圧を返す．						*/
+/*	戻り値に電圧を返す(最適化によって動作しなくなった)						*/
 /*******************************************************************/
 float pl_getbatt(void){
 	 float batt;
@@ -54,6 +54,18 @@ float pl_getbatt(void){
 return batt;
 }
 
+
+/*******************************************************************/
+/*	電圧の取得			(pl_getbatt_dma)	*/
+/*******************************************************************/
+/*	戻り値に電圧を返す．(DMA送信)						*/
+/*******************************************************************/
+float pl_getbatt_dma(void){
+
+return g_V_batt;
+
+}
+
 /*******************************************************************/
 /*	callback用関数			(pl_callback_getSensor)	*/
 /*******************************************************************/
@@ -62,7 +74,7 @@ return batt;
 void pl_callback_getSensor(void) {
 	uint16_t V_battAD;
 
-	int j;
+	volatile int LED_wait;
 	HAL_ADC_Stop_DMA(&hadc1);
 
 
@@ -83,8 +95,8 @@ void pl_callback_getSensor(void) {
 		HAL_GPIO_WritePin(SENSOR_LED3_GPIO_Port, SENSOR_LED3_Pin,
 				GPIO_PIN_RESET);
 
-		j=0;
-		while (j <= 500) {j++;}
+		for(LED_wait=0;LED_wait<=100;LED_wait++){}
+
 		break;
 	case 1:
 		g_sensor_on[0] = g_ADCBuffer[1];
@@ -100,8 +112,8 @@ void pl_callback_getSensor(void) {
 		HAL_GPIO_WritePin(SENSOR_LED3_GPIO_Port, SENSOR_LED3_Pin,
 				GPIO_PIN_RESET);
 
-		j=0;
-		while (j <= 500) {j++;}
+		for(LED_wait=0;LED_wait<=100;LED_wait++){}
+
 		break;
 	case 2:
 		//g_sensor_off[0] = g_ADCBuffer[1];
@@ -116,8 +128,9 @@ void pl_callback_getSensor(void) {
 		HAL_GPIO_WritePin(SENSOR_LED2_GPIO_Port, SENSOR_LED2_Pin,
 				GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(SENSOR_LED3_GPIO_Port, SENSOR_LED3_Pin, GPIO_PIN_SET);
-		j=0;
-		while (j <= 500) {j++;}
+		
+		for(LED_wait=0;LED_wait<=100;LED_wait++){}
+
 		break;
 	case 3:
 		//g_sensor_off[0] = g_ADCBuffer[1];
@@ -162,8 +175,8 @@ void pl_callback_getSensor(void) {
 void pl_interupt_getSensor(void){
 
 		HAL_ADC_Start_DMA(&hadc1, (uint32_t *)g_ADCBuffer, sizeof(g_ADCBuffer) / sizeof(uint16_t));
-		while(AD_step == 4){
-			AD_step = 0;
+		while(AD_step < 4){
 		}
+		AD_step = 0;
 
 }

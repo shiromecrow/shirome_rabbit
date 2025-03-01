@@ -120,6 +120,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   pl_timer_init();
   pl_gyro_init();
+  pl_encoder_init();
   pl_sensor_init();
   init_EncoderGyro();
   record_reset();

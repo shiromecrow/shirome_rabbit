@@ -32,7 +32,7 @@ float accel_z;
 
 extern GYRO_DATA gyro;
 
-void SPI_Communication(SPI_TypeDef * ,uint8_t *, uint8_t *, uint8_t, GPIO_TypeDef *, uint32_t);
+void Gyro_Communication(SPI_TypeDef * ,uint8_t *, uint8_t *, uint8_t);
 
 void pl_gyro_init( void );
 

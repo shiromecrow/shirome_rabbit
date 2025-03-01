@@ -22,6 +22,7 @@ extern float g_V_batt;
 void pl_sensor_init();
 
 float pl_getbatt();
+float pl_getbatt_dma();
 
 void pl_callback_getSensor();
 

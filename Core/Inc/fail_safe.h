@@ -9,7 +9,7 @@
 #define INC_FAIL_SAFE_H_
 
 extern char no_safty;
-extern unsigned char error_mode;
+extern volatile unsigned char error_mode;
 extern char highspeed_mode;
 extern float encoder_PID_error;
 extern float gyro_PID_error;

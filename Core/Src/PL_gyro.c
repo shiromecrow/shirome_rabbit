@@ -24,7 +24,7 @@ static uint8_t set_flag = 0;
 GYRO_DATA gyro;
 
 
-void SPI_Communication(SPI_TypeDef *SPIx ,uint8_t *tx_data, uint8_t *rx_data, uint8_t length, GPIO_TypeDef *GPIOx, uint32_t CS_Pin)
+void Gyro_Communication(SPI_TypeDef *SPIx ,uint8_t *tx_data, uint8_t *rx_data, uint8_t length)
 {
   uint8_t count = length;
 
@@ -55,7 +55,7 @@ uint8_t gyro_read_byte(uint8_t reg)
 	  tx_data[0] = reg | 0x80;
 	  tx_data[1] = 0x00;
 
-	  SPI_Communication(SPI1, tx_data,rx_data, 2, GYRO_CS_GPIO_Port, GYRO_CS_Pin);
+	  Gyro_Communication(SPI1, tx_data,rx_data, 2);
 
 	  return rx_data[1];
 
@@ -70,7 +70,7 @@ void gyro_write_byte(uint8_t reg, uint8_t val)
 	  tx_data[0] = reg & 0x7F;
 	  tx_data[1] = val;
 
-	  SPI_Communication(SPI1, tx_data,rx_data, 2, GYRO_CS_GPIO_Port, GYRO_CS_Pin);
+	  Gyro_Communication(SPI1, tx_data,rx_data, 2);
 
 }
 
