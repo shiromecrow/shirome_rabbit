@@ -287,7 +287,8 @@ void mode_PLtest(unsigned char main_modeR) {
 	break;
 	case 0b1001://tim6
 		g_wallCut_mode = 1;
-		g_WallControl_mode = 1;
+		g_WallControl_mode = 3;
+		g_FrontWallControl_mode = 1;
 		highspeed_mode = 1;
 		modeacc = 6;
 		no_safty = 0;
@@ -298,13 +299,13 @@ void mode_PLtest(unsigned char main_modeR) {
 			printf("TIME=");
 			for(int log_conut = 0;log_conut < TIM6LOG_SIZE;log_conut++){
 				if(log_conut == 0){
-					printf("%d",tim6_log[0]);
+					printf("%0.1f",(float)tim6_log[0]*INTERRUPT_TIME/0.001);
 				}else{
-					printf(", %d",tim6_log[log_conut]-tim6_log[log_conut-1]);
+					printf(", %0.1f",(float)(tim6_log[log_conut]-tim6_log[log_conut-1])*INTERRUPT_TIME/0.001);
 				}
 			}
 			printf("\n");
-			printf("SUMTIME=%d\n",tim6_log[TIM6LOG_SIZE-1]);
+			printf("SUMTIME=%0.1f\n",(float)tim6_log[TIM6LOG_SIZE-1]*INTERRUPT_TIME/0.001);
 			wait_ms(500);
 		}
 
@@ -612,11 +613,11 @@ void mode_Running2(unsigned char main_modeR){
 		break;
 		case 0b0010:
 			record_out();
-			run_shortest(4000,13000,14000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,6.2,1,2);
+			run_shortest(4000,13000,14000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,6.7,1,2);
 		break;
 		case 0b0011:
 			record_out();
-			run_shortest(4000,17000,20000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,6.2,1,2);
+			run_shortest(4000,17000,20000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,6.7,1,2);
 		break;
 		case 0b0100:
 					tic_timer();
@@ -701,7 +702,7 @@ void mode_Tuning2(unsigned char main_modeR){
 			reset_gyro_integral();
 			record_mode=22;
 			straight_table2(-150*sqrt(2), 0, 0, -300, 3000,mode);
-			record_mode=100;
+			record_mode=RECORD_STOPMODE;
 			while (MODE_SENSOR_DEC) {HAL_Delay(1);}
 			reset_distance();
 			reset_speed();
@@ -819,11 +820,11 @@ void mode_Tuning2(unsigned char main_modeR){
 			straight_table2(BACK_TO_CENTER,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			record_mode=27;
 			HAL_Delay(300);
-			record_mode=100;
+			record_mode=RECORD_STOPMODE;
 			mollifier_turning_table(90,400);
 			record_mode=27;
 			HAL_Delay(300);
-			record_mode=100;
+			record_mode=RECORD_STOPMODE;
 			for(int i=0;i<7;i++){
 			mollifier_turning_table(90,400);
 			}
@@ -947,14 +948,14 @@ void mode_Tuning1(unsigned char main_modeR){
 			record_mode=7;
 			mode.WallControlMode=0;
 			wait_ms(150);
-			record_mode=100;
+			record_mode=RECORD_STOPMODE;
 			pl_r_blue_LED(ON);pl_l_blue_LED(ON);
 			while (MODE_SENSOR_DEC) {HAL_Delay(1);}
 			pl_r_blue_LED(OFF);pl_l_blue_LED(OFF);
 			wait_ms(600);
 			record_mode=7;
 			wait_ms(150);
-			record_mode=100;
+			record_mode=RECORD_STOPMODE;
 			pl_r_blue_LED(ON);pl_l_blue_LED(ON);
 			while (MODE_SENSOR_DEC) {HAL_Delay(1);}
 			pl_r_blue_LED(OFF);pl_l_blue_LED(OFF);
@@ -962,7 +963,7 @@ void mode_Tuning1(unsigned char main_modeR){
 			record_mode=7;
 			wait_ms(150);
 			straight_table2(90*4, 0, 0, 300, 6000,mode);
-			record_mode=100;
+			record_mode=RECORD_STOPMODE;
 			pl_r_blue_LED(ON);pl_l_blue_LED(ON);
 			while (MODE_SENSOR_DEC) {HAL_Delay(1);}
 			pl_r_blue_LED(OFF);pl_l_blue_LED(OFF);
@@ -981,7 +982,7 @@ void mode_Tuning1(unsigned char main_modeR){
 			clear_Ierror();
 			record_mode=7;
 			straight_table2(90*8, 0, 0, 4000, 22000,mode);
-			record_mode=100;
+			record_mode=RECORD_STOPMODE;
 		break;
 		case 1://タイヤ径調整+壁制御ゲイン確認＋探索用のゲイン調整(直線)
 			record_mode = 5;
@@ -1002,7 +1003,7 @@ void mode_Tuning1(unsigned char main_modeR){
 			for(int i=0;i<8;i++){
 			turning_table2(90, 0, 0, 400, 3000);
 			}
-			record_mode=100;
+			record_mode=RECORD_STOPMODE;
 			wait_ms_NoReset(500);
 			pl_FunMotor_stop();
 			wait_ms_NoReset(500);

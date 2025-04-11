@@ -263,12 +263,17 @@ void interupt_calEncoder(void) {
 	E_speedR = (angle_R) * pi / 180 * TIRE_DIAMETER /2 * 1000 / INTERRUPT_TIME;
 */
 	E_speedL = (angle_L) * pi / 180 * TIRE_DIAMETER /2 * 1000  / INTERRUPT_TIME*THETA_COMP_L0
+			/(THETA_COMP_L0 + theta_comp_gain*(THETA_COMP_L3*sinf(2*encoder_L*pi/180+THETA_COMP_L4)));
+	E_speedR = (angle_R) * pi / 180 * TIRE_DIAMETER /2 * 1000 / INTERRUPT_TIME*THETA_COMP_R0
+			/ (THETA_COMP_R0 + theta_comp_gain*(THETA_COMP_R3*sinf(2*encoder_R*pi/180+THETA_COMP_R4)));
+/*
+	E_speedL = (angle_L) * pi / 180 * TIRE_DIAMETER /2 * 1000  / INTERRUPT_TIME*THETA_COMP_L0
 			/(THETA_COMP_L0 + theta_comp_gain*(THETA_COMP_L1*sinf(encoder_L*pi/180+THETA_COMP_L2)
 	+THETA_COMP_L3*sinf(2*encoder_L*pi/180+THETA_COMP_L4)+THETA_COMP_L5*sinf(3*encoder_L*pi/180+THETA_COMP_L6)));
 	E_speedR = (angle_R) * pi / 180 * TIRE_DIAMETER /2 * 1000 / INTERRUPT_TIME*THETA_COMP_R0
 			/ (THETA_COMP_R0 + theta_comp_gain*(THETA_COMP_R1*sinf(encoder_R*pi/180+THETA_COMP_R2)
 	+THETA_COMP_R3*sinf(2*encoder_R*pi/180+THETA_COMP_R4)+THETA_COMP_R5*sinf(3*encoder_R*pi/180+THETA_COMP_R6)));
-
+*/
 
 
 	E_distanceL += E_speedL * INTERRUPT_TIME;
@@ -346,7 +351,7 @@ void interupt_calKalman(void) {
 	        mat_mul(kal_P_1_predict[0], tran_kal_C_1[0], P_CT[0], 2, 2, 2, 2);//P'C^T
 	        mat_mul(kal_C_1[0], P_CT[0], G_temp1[0], 2, 2, 2, 2);//CPC^T
 	        mat_add(G_temp1[0], kal_W_1[0], G_temp2[0], 2, 2);//W+CP'C^T
-	        mat_inv(G_temp2[0], G_temp2_inv[0], 2, 2);//(W+CP'C^T)^-1
+	        mat_inv_fast(G_temp2[0], G_temp2_inv[0]);//(W+CP'C^T)^-1
 	        mat_mul(P_CT[0], G_temp2_inv[0], K_G_1[0], 2, 2, 2, 2); //P'C^T(W+CP'C^T)^-1
 
 	        //x_data estimation: x = x'+G(y-Cx')

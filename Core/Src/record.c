@@ -32,9 +32,9 @@
 
 float record_value[max_record_num][max_record_time];
 
-char record_mode;
+short record_mode;
 
-int sample_time;/* サンプリング時間 [ms] */
+int sample_time;/* サンプリング時間 [0.5ms] */
 int sample_count;/* サンプリング観測用のカウント値 */
 
 int record_time;
@@ -43,6 +43,8 @@ char record_rupe_flag;
 
 float record_buf;
 
+char recordstop_count = 0;
+
 //int SEN_record[5][15];
 //int SEN_recordD[5][15];
 
@@ -50,13 +52,16 @@ void record_reset(void) {
 	record_mode = 0;
 	record_time = 0;
 	record_rupe_flag = 0;
-	sample_time = 1;
+	sample_time = 2;
 	sample_count = 0;
+	recordstop_count = 0;
 }
 
 void record_data(float *input_record_data, int numlen) {
 
-	if( (sample_count % sample_time) == 0 ){
+	sample_count = sample_count % sample_time;
+
+	if( sample_count == 0 ){
 		for (int record_count = 0; record_count < numlen; record_count++) {
 			record_value[record_count][record_time] =
 					input_record_data[record_count];
@@ -69,6 +74,7 @@ void record_data(float *input_record_data, int numlen) {
 			record_time = 0;
 			record_rupe_flag = 1;
 		}
+		recordstop_count++;
 
 	}
 	sample_count++;
@@ -93,7 +99,7 @@ void record_print(void) {
 			if (time_index >= max_record_time) {
 				time_index -= max_record_time;
 			}
-			printf("%d", a);
+			printf("%f", (float)(a*sample_time)*INTERRUPT_TIME);
 			for (int record_count = 0; record_count < max_record_num;
 					record_count++) {
 				printf(",%f", record_value[record_count][time_index]);
@@ -350,14 +356,16 @@ void interrupt_record(void) {
 			r_data[3] = angle_speed;
 			record_data(r_data, 4);
 		}
-	if (record_mode == 100) {
-			r_data[0] = record_point;
-			r_data[1] = record_point;
-			r_data[2] = record_point;
-			r_data[3] = record_point;
-			record_data(r_data, 4);
-			record_mode=0;
-	}
+		if (record_mode == RECORD_STOPMODE && recordstop_count == 0 ) {
+			r_data[0] = RECORD_STOPNUM;
+			r_data[1] = RECORD_STOPNUM;
+			r_data[2] = RECORD_STOPNUM;
+			r_data[3] = RECORD_STOPNUM;
+			record_data(r_data, 4);			
+		}
+		if (record_mode != RECORD_STOPMODE){
+			recordstop_count=0;
+		}
 
 
 }

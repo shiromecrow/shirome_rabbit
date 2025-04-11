@@ -309,7 +309,7 @@ float calWallConrol(void) {
 				// 				+ (g_sensor_max_r - CENTER_R_PILLAR) / g_sensor_max_r);
 				wall_normal.error =	skewer_gain * (-(g_sensor_max_l - CENTER_L_PILLAR) / g_sensor_max_l
 								+ (g_sensor_max_r - CENTER_R_PILLAR) / g_sensor_max_r);
-				wall_normal.delta_error = wall_normal.error - wall_normal.old_error;
+				wall_normal.delta_error = (wall_normal.error - wall_normal.old_error) * 0.001 / INTERRUPT_TIME;
 				wall_normal.old_error = wall_normal.error;
 				PID_wall = sensor_gain_p * wall_normal.error
 					+ sensor_gain_d * wall_normal.delta_error;								
@@ -324,7 +324,7 @@ float calWallConrol(void) {
 		case 1:			//左壁のみ
 			wall_normal.error = (-2 * (float) (sensorWall_L - CENTER_L)
 					/ (float) (sensorWall_L));
-			wall_normal.delta_error = wall_normal.error - wall_normal.old_error;
+			wall_normal.delta_error = (wall_normal.error - wall_normal.old_error) * 0.001 / INTERRUPT_TIME;
 			wall_normal.old_error = wall_normal.error;
 			PID_wall = sensor_gain_p * wall_normal.error
 					+ sensor_gain_d * wall_normal.delta_error;
@@ -333,7 +333,7 @@ float calWallConrol(void) {
 		case 2:			//右壁のみ
 			wall_normal.error = (2 * (float) (sensorWall_R - CENTER_R)
 					/ (float) (sensorWall_R));
-			wall_normal.delta_error = wall_normal.error - wall_normal.old_error;
+			wall_normal.delta_error = (wall_normal.error - wall_normal.old_error) * 0.001 / INTERRUPT_TIME;
 			wall_normal.old_error = wall_normal.error;
 			PID_wall = sensor_gain_p * wall_normal.error
 					+ sensor_gain_d * wall_normal.delta_error;
@@ -344,7 +344,7 @@ float calWallConrol(void) {
 					(-(float) (sensorWall_L - CENTER_L) / (float) (sensorWall_L)
 							+ (float) (sensorWall_R - CENTER_R)
 									/ (float) (sensorWall_R));
-			wall_normal.delta_error = wall_normal.error - wall_normal.old_error;
+			wall_normal.delta_error = (wall_normal.error - wall_normal.old_error) * 0.001 / INTERRUPT_TIME;
 			wall_normal.old_error = wall_normal.error;
 			PID_wall = sensor_gain_p * wall_normal.error
 					+ sensor_gain_d * wall_normal.delta_error;
@@ -508,8 +508,8 @@ float calWallConrol(void) {
 			pl_yellow_LED_8(1);
 			wall_slant90.error = ((float) (g_sensor_distance_slant[SENSOR_LEFT][0]
 					- CenterSlantL));
-			wall_slant90.delta_error = wall_slant90.error
-					- wall_slant90.old_error;
+			wall_slant90.delta_error = (wall_slant90.error
+					- wall_slant90.old_error) * 0.001 / INTERRUPT_TIME;
 			wall_slant90.old_error = wall_slant90.error;
 			PID_wall = sensor_gain_slant90_p * wall_slant90.error
 					+ sensor_gain_slant90_d * wall_slant90.delta_error;
@@ -519,8 +519,8 @@ float calWallConrol(void) {
 			pl_yellow_LED_8(0);
 			wall_slant90.error = (-(float) (g_sensor_distance_slant[SENSOR_RIGHT][0]
 					- CenterSlantR));
-			wall_slant90.delta_error = wall_slant90.error
-					- wall_slant90.old_error;
+			wall_slant90.delta_error = (wall_slant90.error
+					- wall_slant90.old_error) * 0.001 / INTERRUPT_TIME;
 			wall_slant90.old_error = wall_slant90.error;
 			PID_wall = sensor_gain_slant90_p * wall_slant90.error
 					+ sensor_gain_slant90_d * wall_slant90.delta_error;
@@ -532,8 +532,8 @@ float calWallConrol(void) {
 					- CenterSlantL)
 					- (float) (g_sensor_distance_slant[SENSOR_RIGHT][0] - CenterSlantR)
 							);
-			wall_slant90.delta_error = wall_slant90.error
-					- wall_slant90.old_error;
+			wall_slant90.delta_error = (wall_slant90.error
+					- wall_slant90.old_error) * 0.001 / INTERRUPT_TIME;
 			wall_slant90.old_error = wall_slant90.error;
 			PID_wall = sensor_gain_slant90_p * wall_slant90.error
 					+ sensor_gain_slant90_d * wall_slant90.delta_error;
@@ -677,8 +677,8 @@ float calWallConrol(void) {
 			wall_slant45.error =
 					((float) (g_sensor_distance_slant[SENSOR_FRONT_LEFT][0] - CenterSlantL45)
 							);
-			wall_slant45.delta_error = wall_slant45.error
-					- wall_slant45.old_error;
+			wall_slant45.delta_error = (wall_slant45.error
+					- wall_slant45.old_error) * 0.001 / INTERRUPT_TIME;
 			wall_slant45.old_error = wall_slant45.error;
 			PID_wall += sensor_gain_slant45_p * wall_slant45.error
 					+ sensor_gain_slant45_d * wall_slant45.delta_error;
@@ -689,8 +689,8 @@ float calWallConrol(void) {
 			wall_slant45.error = (-(float) (g_sensor_distance_slant[SENSOR_FRONT_RIGHT][0]
 					- CenterSlantR45)
 					);
-			wall_slant45.delta_error = wall_slant45.error
-					- wall_slant45.old_error;
+			wall_slant45.delta_error = (wall_slant45.error
+					- wall_slant45.old_error) * 0.001 / INTERRUPT_TIME;
 			wall_slant45.old_error = wall_slant45.error;
 			PID_wall += sensor_gain_slant45_p * wall_slant45.error
 					+ sensor_gain_slant45_d * wall_slant45.delta_error;
@@ -702,8 +702,8 @@ float calWallConrol(void) {
 					- CenterSlantL45)
 					- (float) (g_sensor_distance_slant[SENSOR_FRONT_RIGHT][0] - CenterSlantR45)
 							);
-			wall_slant45.delta_error = wall_slant45.error
-					- wall_slant45.old_error;
+			wall_slant45.delta_error = (wall_slant45.error
+					- wall_slant45.old_error) * 0.001 / INTERRUPT_TIME;
 			wall_slant45.old_error = wall_slant45.error;
 			PID_wall += sensor_gain_slant45_p * wall_slant45.error
 					+ sensor_gain_slant45_d * wall_slant45.delta_error;
@@ -788,8 +788,8 @@ void calFrontWallConrol(float *PID_frontwall_l, float *PID_frontwall_r) {
 		if( g_sensor[SENSOR_FRONT_L][0] > F_PRESENCE2 && g_sensor[SENSOR_FRONT_R][0] > F_PRESENCE2 ){
 		wall_front_l.error = (-(float) (g_sensor[SENSOR_FRONT_L][0] - CENTER_FRONT_L))/((float) g_sensor[SENSOR_FRONT_L][0]+0.1);
 		wall_front_r.error = (-(float) (g_sensor[SENSOR_FRONT_R][0] - CENTER_FRONT_R))/((float) g_sensor[SENSOR_FRONT_R][0]+0.1);
-		wall_front_l.delta_error = wall_front_l.error - wall_front_l.old_error;
-		wall_front_r.delta_error = wall_front_r.error - wall_front_r.old_error;
+		wall_front_l.delta_error = (wall_front_l.error - wall_front_l.old_error) * 0.001 / INTERRUPT_TIME;
+		wall_front_r.delta_error = (wall_front_r.error - wall_front_r.old_error) * 0.001 / INTERRUPT_TIME;
 		wall_front_l.old_error = wall_front_l.error;
 		wall_front_r.old_error = wall_front_r.error;
 		wall_front_l.sigma_error += wall_front_l.error;

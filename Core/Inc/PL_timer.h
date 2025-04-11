@@ -9,9 +9,11 @@
 #define INC_PL_TIMER_H_
 
 #include "stm32g4xx_hal.h"
-
-#define INTERRUPT_TIME 0.001
+/* 割り込み時間0.5msのときはINV_INTERRUPT_TIMEを2に設定(0.001/INTERRUPT_TIME)  */
+#define INTERRUPT_TIME 0.0005
+#define INV_INTERRUPT_TIME 2
 #define TIM6LOG_SIZE 13
+
 
 extern uint16_t tim6_log[TIM6LOG_SIZE];
 

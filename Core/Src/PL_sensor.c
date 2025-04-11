@@ -90,10 +90,7 @@ void pl_callback_getSensor(void) {
 		g_V_batt = 3.3 * (float) V_battAD / 4095.0 * (20.0 + 10.0) / 10.0*1.144086;
 
 		HAL_GPIO_WritePin(SENSOR_LED1_GPIO_Port, SENSOR_LED1_Pin, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(SENSOR_LED2_GPIO_Port, SENSOR_LED2_Pin,
-				GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(SENSOR_LED3_GPIO_Port, SENSOR_LED3_Pin,
-				GPIO_PIN_RESET);
+
 
 		for(LED_wait=0;LED_wait<=100;LED_wait++){}
 
@@ -109,8 +106,7 @@ void pl_callback_getSensor(void) {
 		HAL_GPIO_WritePin(SENSOR_LED1_GPIO_Port, SENSOR_LED1_Pin,
 				GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(SENSOR_LED2_GPIO_Port, SENSOR_LED2_Pin, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(SENSOR_LED3_GPIO_Port, SENSOR_LED3_Pin,
-				GPIO_PIN_RESET);
+
 
 		for(LED_wait=0;LED_wait<=100;LED_wait++){}
 
@@ -123,13 +119,12 @@ void pl_callback_getSensor(void) {
 		//g_sensor_off[4] = g_ADCBuffer[5];
 		g_sensor_on[5] = g_ADCBuffer[6];
 
-		HAL_GPIO_WritePin(SENSOR_LED1_GPIO_Port, SENSOR_LED1_Pin,
-						GPIO_PIN_RESET);
+
 		HAL_GPIO_WritePin(SENSOR_LED2_GPIO_Port, SENSOR_LED2_Pin,
 				GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(SENSOR_LED3_GPIO_Port, SENSOR_LED3_Pin, GPIO_PIN_SET);
 		
-		for(LED_wait=0;LED_wait<=100;LED_wait++){}
+		for(LED_wait=0;LED_wait<=500;LED_wait++){}
 
 		break;
 	case 3:
@@ -139,10 +134,7 @@ void pl_callback_getSensor(void) {
 		g_sensor_on[3] = g_ADCBuffer[4];
 		//g_sensor_off[4] = g_ADCBuffer[5];
 		//g_sensor_off[5] = g_ADCBuffer[6];
-		HAL_GPIO_WritePin(SENSOR_LED1_GPIO_Port, SENSOR_LED1_Pin,
-						GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(SENSOR_LED2_GPIO_Port, SENSOR_LED2_Pin,
-				GPIO_PIN_RESET);
+
 		HAL_GPIO_WritePin(SENSOR_LED3_GPIO_Port, SENSOR_LED3_Pin,
 				GPIO_PIN_RESET);
 		break;
@@ -173,10 +165,11 @@ void pl_callback_getSensor(void) {
 /*	センサーの情報を取得する割り込み関数．						*/
 /*******************************************************************/
 void pl_interupt_getSensor(void){
-
+	
+		AD_step = 0;
 		HAL_ADC_Start_DMA(&hadc1, (uint32_t *)g_ADCBuffer, sizeof(g_ADCBuffer) / sizeof(uint16_t));
 		while(AD_step < 4){
 		}
-		AD_step = 0;
+		
 
 }

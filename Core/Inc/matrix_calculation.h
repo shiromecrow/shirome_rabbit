@@ -18,6 +18,7 @@ void mat_mul(float *, float *, float *, int , int , int , int );
 void mat_tran(float *, float *, int , int );
 void mat_mul_const(float *,float , float *, int , int );
 void mat_inv(float *, float *, int , int );
+void mat_inv_fast(float *, float *);
 
 
 #endif /* INC_MATRIX_CALCULATION_H_ */

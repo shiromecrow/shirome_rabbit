@@ -61,6 +61,44 @@ int i;
 	}
 }
 
+
+/*******************************************************************/
+/*	割り込み用動作関数(センサー処理)			(interupt_calSensor)	*/
+/*******************************************************************/
+/*	センサーの情報を処理する割り込み関数．						*/
+/*******************************************************************/
+// void interupt_calSensor(void){
+// 	int j;
+	
+
+// 	for (j = 19; j >= 1; j--) {
+// 		//g_V_battery[j] = g_V_battery[j - 1];
+// 		for(int k=0;k < SENSOR_NUM; k++){
+// 			g_sensor[k][j] = g_sensor[k][j - 1];
+// 		}
+// 	}
+// 	//g_V_battery[0] = g_V_batt;
+// 	for(int k=0;k < SENSOR_NUM; k++){
+// 		g_sensor[k][0] = g_sensor_on[k] - g_sensor_off[k];
+// 	}
+
+// 	for (j = 0; j < SENSOR_NUM; j++) {
+// 		g_sensor_diff[j]=g_sensor[j][0]-g_sensor[j][11];
+// 		//g_sensor_diff_wallcut[j]=g_sensor[j][0]-g_sensor[j][6];
+// 		g_sensor_mean[j] = (g_sensor[j][0] + g_sensor[j][1] + g_sensor[j][2]) / 3;
+// 	}
+
+
+
+// }
+/* センサー計算用の高速なルート計算 */
+float fast_sqrt(float x) {
+    float guess = x / 2.0f;
+    for (int i = 0; i < 4; ++i) { // 反復回数を調整
+        guess = (guess + x / guess) / 2.0f;
+    }
+    return guess;
+}
 /*******************************************************************/
 /*	割り込み用動作関数(センサー処理)			(interupt_calSensor)	*/
 /*******************************************************************/
@@ -70,7 +108,7 @@ void interupt_calSensor(void){
 	int j;
 	
 
-	for (j = 19; j >= 1; j--) {
+	for (j = 11; j >= 1; j--) {
 		//g_V_battery[j] = g_V_battery[j - 1];
 		for(int k=0;k < SENSOR_NUM; k++){
 			g_sensor[k][j] = g_sensor[k][j - 1];
@@ -101,6 +139,7 @@ void interupt_calSensor(void){
 	// 								  + LIN_COEFFICIENT_R2*(double)(g_sensor[SENSOR_RIGHT][0]*g_sensor[SENSOR_RIGHT][0])
 	// 								  + LIN_COEFFICIENT_R1*(double)(g_sensor[SENSOR_RIGHT][0]) + LIN_COEFFICIENT_R0;
 
+/*
 	g_sensor_distance_slant[SENSOR_LEFT][0] = LIN_SLANT_COEFFICIENT90_L_n3 / ((float)(g_sensor[SENSOR_LEFT][0])*(float)(g_sensor[SENSOR_LEFT][0])*(float)(g_sensor[SENSOR_LEFT][0])+1)
 											+ LIN_SLANT_COEFFICIENT90_L_n2 / ((float)(g_sensor[SENSOR_LEFT][0])*(float)(g_sensor[SENSOR_LEFT][0])+1)
 											+ LIN_SLANT_COEFFICIENT90_L_n1 / ((float)(g_sensor[SENSOR_LEFT][0])+1)
@@ -122,6 +161,24 @@ void interupt_calSensor(void){
 											+ LIN_SLANT_COEFFICIENT45_R_n1 / ((float)(g_sensor[SENSOR_FRONT_RIGHT][0])+1)
 											+ LIN_SLANT_COEFFICIENT45_R_00
 											+ LIN_SLANT_COEFFICIENT45_R_p1 * (float)(g_sensor[SENSOR_FRONT_RIGHT][0]);
+
+*/
+
+	g_sensor_distance_slant[SENSOR_LEFT][0] = LIN_SLANT_COEFFICIENT90_L_n1 / fast_sqrt((float)g_sensor[SENSOR_LEFT][0])
+											+ LIN_SLANT_COEFFICIENT90_L_00
+											+ LIN_SLANT_COEFFICIENT90_L_p1 * (float)g_sensor[SENSOR_LEFT][0];
+	g_sensor_distance_slant[SENSOR_RIGHT][0] = LIN_SLANT_COEFFICIENT90_R_n1 / fast_sqrt((float)g_sensor[SENSOR_RIGHT][0])
+											+ LIN_SLANT_COEFFICIENT90_R_00
+											+ LIN_SLANT_COEFFICIENT90_R_p1 * (float)g_sensor[SENSOR_RIGHT][0];
+
+	g_sensor_distance_slant[SENSOR_FRONT_LEFT][0] = LIN_SLANT_COEFFICIENT45_L_n1 / fast_sqrt((float)g_sensor[SENSOR_FRONT_LEFT][0])
+											+ LIN_SLANT_COEFFICIENT45_L_00
+											+ LIN_SLANT_COEFFICIENT45_L_p1 * (float)g_sensor[SENSOR_FRONT_LEFT][0];
+	g_sensor_distance_slant[SENSOR_FRONT_RIGHT][0] = LIN_SLANT_COEFFICIENT45_R_n1 / fast_sqrt((float)g_sensor[SENSOR_FRONT_RIGHT][0])
+											+ LIN_SLANT_COEFFICIENT45_R_00
+											+ LIN_SLANT_COEFFICIENT45_R_p1 * (float)g_sensor[SENSOR_FRONT_RIGHT][0];
+
+
 
 //	if(g_sensor_distance_slant[SENSOR_LEFT][0]>150){g_sensor_distance_slant[SENSOR_LEFT][0]=150;}
 //	if(g_sensor_distance_slant[SENSOR_RIGHT][0]>150){g_sensor_distance_slant[SENSOR_RIGHT][0]=150;}

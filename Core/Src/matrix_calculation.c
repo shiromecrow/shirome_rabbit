@@ -179,3 +179,20 @@ void mat_inv(float *m, float *sol, int column, int row)
     free(temp);
     return;
 }
+
+//Matrix inversion (by 2*2の行列のみ使用可能)
+void mat_inv_fast(float *m, float *sol)
+{
+    // 行列の行列式を計算
+    float det = m[0] * m[3] - m[1] * m[2];
+    if (det == 0) {return;}   
+
+    // 逆行列を計算
+    float inv_det = 1.0 / det;
+    sol[0] =  m[3] * inv_det;
+    sol[1] = -m[1] * inv_det;
+    sol[2] = -m[2] * inv_det;
+    sol[3] =  m[0] * inv_det;
+
+    return;
+}

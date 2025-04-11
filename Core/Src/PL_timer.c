@@ -47,7 +47,7 @@ void wait_ms(uint32_t waitTime) {
 
         g_timCount = 0;
         __HAL_TIM_SET_COUNTER(&htim6, 0);
-        while ((float)(g_timCount) * 0.001 / INTERRUPT_TIME < waitTime) {
+        while ((float)(g_timCount) / 0.001 * INTERRUPT_TIME < waitTime) {
         }
 
 }
@@ -55,7 +55,7 @@ void wait_ms(uint32_t waitTime) {
 void wait_ms_NoReset(uint32_t waitTime) {
 
         g_timCount = 0;
-        while ((float)(g_timCount) * 0.001 / INTERRUPT_TIME < waitTime) {
+        while ((float)(g_timCount) / 0.001 * INTERRUPT_TIME < waitTime) {
         }
 
 }

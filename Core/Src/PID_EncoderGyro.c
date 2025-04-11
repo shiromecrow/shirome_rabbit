@@ -7,6 +7,7 @@
 
 #include "PID_EncoderGyro.h"
 #include "PID_wall.h"
+#include "PL_timer.h"
 #include "fail_safe.h"
 #include "CL_EnoderGyro.h"
 #include "CL_sensor.h"
@@ -88,7 +89,7 @@ void EncoderGyro_PID(float *PID_s, float *PID_t,float straight_velocity,float tu
 			obs_vel_str = (fusion_speedR + fusion_speedL) / 2;
 		}else{
 			kalman_mode=0;
-			obs_vel_str = (fusion_speedR + fusion_speedL) / 2;
+			obs_vel_str = kalman_speed;
 		}
 		obs_vel_turn = angle_speed;
 		obs_angle_turn = yaw_angle;
@@ -131,27 +132,27 @@ void EncoderGyro_PID(float *PID_s, float *PID_t,float straight_velocity,float tu
 		Ktp_angle = 400; //P項の制御量旋回
 		Ktd_angle = 2; //D項の制御量旋回
 	}
-
+	
 
 	enc.error = straight_velocity - obs_vel_str;
-	enc.delta_error = enc.error - enc.old_error;
+	enc.delta_error = (enc.error - enc.old_error) * 0.001 / INTERRUPT_TIME;
 	enc.old_error = enc.error;
-	enc.sigma_error += enc.error;
+	enc.sigma_error += enc.error / 0.001 * INTERRUPT_TIME;
 	PID_stra = Ksp * enc.error + Ksi * enc.sigma_error + Ksd * enc.delta_error;
 
 
 
 
 	Gyro.error = turning_velocity - obs_vel_turn;
-	Gyro.delta_error = Gyro.error - Gyro.old_error;
+	Gyro.delta_error = (Gyro.error - Gyro.old_error) * 0.001 / INTERRUPT_TIME;
 	Gyro.old_error = Gyro.error;
-	Gyro.sigma_error += Gyro.error;
+	Gyro.sigma_error += Gyro.error / 0.001 * INTERRUPT_TIME;
 	PID_turn = Ktp * Gyro.error + Kti * Gyro.sigma_error
 			+ Ktd * Gyro.delta_error;
 
 
 	Gyro_angle.error = turning_displacement - obs_angle_turn;
-	Gyro_angle.delta_error = Gyro_angle.error - Gyro_angle.old_error;
+	Gyro_angle.delta_error = (Gyro_angle.error - Gyro_angle.old_error) * 0.001 / INTERRUPT_TIME;
 	Gyro_angle.old_error = Gyro_angle.error;
 	PID_turn += Ktp_angle * Gyro_angle.error + Ktd_angle * Gyro_angle.delta_error;
 
