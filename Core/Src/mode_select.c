@@ -165,7 +165,7 @@ switch (main_modeL) {
 		testturning(speed1400_shortest_mollifier,main_modeR,1,ON,6.12,1);
 	break;
 	case 0b1010:
-		testturning(speed1600_shortest_mollifier,main_modeR,1,ON,6.7,1);
+		testturning(speed1600_shortest_mollifier,main_modeR,1,ON,8,1);
 	break;
 	case 0b1011:
 	break;
@@ -571,7 +571,7 @@ void mode_Running(unsigned char main_modeR){
 		break;
 		case 0b1100:
 			record_out();
-			run_shortest(3000,12000,12000,TURN_ON,FUN_ON,SLANT_ON,speed1400_shortest_mollifier,6.12,1,0);
+			run_shortest(6000,40000,40000,TURN_ON,FUN_ON,SLANT_ON,speed1400_shortest_mollifier,6.12,1,0);
 		break;
 		case 0b1101:
 			record_out();
@@ -613,20 +613,18 @@ void mode_Running2(unsigned char main_modeR){
 		break;
 		case 0b0010:
 			record_out();
-			run_shortest(4000,13000,14000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,6.7,1,2);
+			run_shortest(4000,13000,14000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,7.1,1,2);
 		break;
 		case 0b0011:
 			record_out();
-			run_shortest(4000,17000,20000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,6.7,1,2);
+			run_shortest(4000,17000,20000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,7.1,1,2);
 		break;
 		case 0b0100:
-					tic_timer();
-			AdatiWayReturn(300,700,4000,8000,speed300_exploration,1,0);
-
+		record_out();
+		run_shortest(6000,40000,40000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8,1,2);
 		break;
 		case 0b0101:
-					tic_timer();
-			AdatiWayReturn(300,700,4000,8000,speed300_exploration,0,1);
+
 
 		break;
 		case 0b0110:
@@ -651,10 +649,13 @@ void mode_Running2(unsigned char main_modeR){
 
 		break;
 		case 0b1101:
+		tic_timer();
+		AdatiWayReturn(300,700,4000,8000,speed300_exploration,1,0);
 
 		break;
 		case 0b1110:
-
+		tic_timer();
+		AdatiWayReturn(300,700,4000,8000,speed300_exploration,0,1);
 		break;
 		case 0b1111:
 			create_StepCountMap_queue();
@@ -901,7 +902,7 @@ void mode_Tuning2(unsigned char main_modeR){
 //			straight_table2(90*32, 0, 0, 4000, 17000,mode);
 			mode.WallControlMode=1;
 //			straight_table2(BACK_TO_CENTER_FRONT,0,1000,1000,1000*1000/ BACK_TO_CENTER_FRONT/2, mode);
-			straight_table2(90*8, 0, 0, 5000, 40000,mode);
+			straight_table2(90*8, 0, 0, 6000, 40000,mode);
 		break;
 	}
 	record_mode=0;
@@ -1045,13 +1046,13 @@ void mode_Tuning1(unsigned char main_modeR){
 			pl_r_blue_LED(ON);
 			pl_l_blue_LED(ON);
 			theta_comp_gain=0;
-			get_duty(1, 1,&duty_L,&duty_R);
-			pl_DriveMotor_duty(duty_L,duty_R);
+			//get_duty(1, 1,&duty_L,&duty_R);
+			//pl_DriveMotor_duty(duty_L,duty_R);
 			pl_DriveMotor_start();
-			wait_ms(3000);
+			//wait_ms(3000);
 			record_mode=11;
-			wait_ms(2000);
-			//straight_table2(90*8, 0, 0, 300, 6000,mode);
+			//wait_ms(2000);
+			straight_table2(90*8, 0, 0, 300, 6000,mode);
 			record_mode=0;
 			//reset_EncoderGyro_MeanVariance();
 			pl_DriveMotor_stop();

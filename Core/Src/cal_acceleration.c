@@ -482,7 +482,7 @@ float time_delay5;
 float OverShot=0;
 	mollifier_timer+=INTERRUPT_TIME;
 		mollifier_T=2*fabs(input.displacement)/MOLLIFIER_INTEGRAL*exp(-1)/input.max_turning_velocity;
-		time_delay5 = mollifier_T/35;
+		time_delay5 = mollifier_T/70;
 		if (mollifier_timer>-mollifier_T/2 && mollifier_timer<mollifier_T/2){
 			old_velocity=target->velocity;
 			target->velocity = cal_mollifier_velocity(mollifier_timer,mollifier_T,input.displacement);

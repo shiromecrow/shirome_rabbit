@@ -156,9 +156,9 @@ float calWallConrol(void) {
 		wallcut_threshold_L = CONTROLWALLCUT_THRESHOLD_SHORT_L;
 		wallcut_threshold_R = CONTROLWALLCUT_THRESHOLD_SHORT_R;
 
-		if (straight.velocity > 2000) {
-			sensor_gain_p = SENSOR_GAIN_SHORT_P * 2000;
-			sensor_gain_d = SENSOR_GAIN_SHORT_D * 2000;
+		if (straight.velocity > 6000) {
+			sensor_gain_p = SENSOR_GAIN_SHORT_P * 6000;
+			sensor_gain_d = SENSOR_GAIN_SHORT_D * 6000;
 		} else {
 			sensor_gain_p = SENSOR_GAIN_SHORT_P * straight.velocity;
 			sensor_gain_d = SENSOR_GAIN_SHORT_D * straight.velocity;

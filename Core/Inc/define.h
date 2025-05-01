@@ -30,35 +30,34 @@
 #define MAZE_OFFSET 19
 
 #define FRONT_TO_CENTER_FRONT 12
-#define BACK_TO_CENTER2 16.5
-#define BACK_TO_CENTER 20
+#define BACK_TO_CENTER2 12.5
+#define BACK_TO_CENTER 12.5
 #define BACK_TO_CENTER_FRONT 12.5
 #define BACK_TO_CENTER_BACK 28.5
-#define TURN_CENTER (BACK_TO_CENTER_BACK-BACK_TO_CENTER_FRONT)
 #define BACK_TO_CENTER_SLANT 42.5
 #define BACK_TO_CENTER_FRONT_SLANT 34.5
 
 #define FIRST_MOVE_R90 16
-#define FIRST_MOVE_R45 16
+#define FIRST_MOVE_R45 21
 #define FIRST_MOVE_R135 20
 
-// 32は3
-#define GOAL_SIZE 3
-
-// #define GOAL_X 8
-// #define GOAL_Y 7
-// #define GOAL_ALL ((x == GOAL_X || x == GOAL_X + 1) && (y == GOAL_Y || y == GOAL_Y + 1))
-// #define GOAL_ALL_D ((xd == GOAL_X || xd == GOAL_X + 1) && (yd == GOAL_Y || yd == GOAL_Y + 1))
-// #define MAZE_TIMER 8
-
+// 16対応
+#define GOAL_SIZE 2
 #define GOAL_X 6
 #define GOAL_Y 6
-#define GOAL_ALL ((x == GOAL_X || x == GOAL_X + 1 || x == GOAL_X + 2) && (y == GOAL_Y || y == GOAL_Y + 1 || y == GOAL_Y + 2))
-#define GOAL_ALL_D ((xd == GOAL_X || xd == GOAL_X + 1 || xd == GOAL_X + 2) && (yd == GOAL_Y || yd == GOAL_Y + 1 || yd == GOAL_Y + 2))
+#define GOAL_ALL ((x == GOAL_X || x == GOAL_X + 1) && (y == GOAL_Y || y == GOAL_Y + 1))
+#define GOAL_ALL_D ((xd == GOAL_X || xd == GOAL_X + 1) && (yd == GOAL_Y || yd == GOAL_Y + 1))
+#define MAZE_TIMER 4
 
-#define MAZE_TIMER 7
+// 32対応
+// #define GOAL_SIZE 3
+// #define GOAL_X 6
+// #define GOAL_Y 6
+// #define GOAL_ALL ((x == GOAL_X || x == GOAL_X + 1 || x == GOAL_X + 2) && (y == GOAL_Y || y == GOAL_Y + 1 || y == GOAL_Y + 2))
+// #define GOAL_ALL_D ((xd == GOAL_X || xd == GOAL_X + 1 || xd == GOAL_X + 2) && (yd == GOAL_Y || yd == GOAL_Y + 1 || yd == GOAL_Y + 2))
+// #define MAZE_TIMER 7
 
-#define F_PRESENCE 100
+#define F_PRESENCE 60
 #define R_PRESENCE 500//180//900
 #define L_PRESENCE 500//180//900
 

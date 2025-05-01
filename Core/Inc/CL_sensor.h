@@ -13,11 +13,11 @@
 
 #define BATTLIMIT 7.7
 
-#define SENSOR_FINGER_0 700
+#define SENSOR_FINGER_0 300
 #define SENSOR_FINGER_1 700
 #define SENSOR_FINGER_2 700
 #define SENSOR_FINGER_3 700
-#define SENSOR_FINGER_4 700
+#define SENSOR_FINGER_4 500
 #define SENSOR_FINGER_5 700
 
 /* 多項式近似 *//* 直線は未使用 */
