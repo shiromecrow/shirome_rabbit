@@ -1136,9 +1136,17 @@ void testturning(parameter_speed Howspeed,int turnmode,char shortest_mode,char f
 	if(funmode==ON){
 		pl_DriveMotor_standby(ON);
 		pl_L_DriveMotor_mode(MOTOR_BREAK);
-		control_fun(fun_V);
-		pl_FunMotor_start();
-		HAL_Delay(600);
+		if(fun_V > FUN_GAP_LIMIT){
+			control_fun(FUN_GAP_LIMIT);
+			pl_FunMotor_start();
+			wait_ms_NoReset(400);
+			control_fun(fun_V);
+			wait_ms_NoReset(200);
+		}else{
+			control_fun(fun_V);
+			pl_FunMotor_start();
+			wait_ms_NoReset(600);
+		}
 		//reset_gyro();
 		reset_gyro_integral();
 		reset_speed();
@@ -1154,7 +1162,8 @@ void testturning(parameter_speed Howspeed,int turnmode,char shortest_mode,char f
 		clear_Ierror();
 
 	}
-	record_mode = 2;
+	//record_mode = 2;
+	record_mode = 12;
 	//record_mode = 25;
 //	if(turnmode==0){test_mollifier_slalomR(Howspeed.slalom_R);}
 	if(turnmode==0){slalomR(Howspeed.slalom_R,ON,shortest_mode,mollifier_mode,-100);}

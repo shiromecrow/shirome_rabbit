@@ -20,6 +20,9 @@
 
 #define FUN_MAX_DUTY 200
 
+/* ファンの回転で角度ずれるリミット0003 */
+#define FUN_GAP_LIMIT 6.5
+
 void pl_motor_init();
 
 void pl_DriveMotor_standby(int);

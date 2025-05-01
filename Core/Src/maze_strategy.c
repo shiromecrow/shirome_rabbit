@@ -1012,9 +1012,17 @@ if(pass_mode==1){
 	reset_speed();
 	////wall_control_mode = 1;
 	if (fun_mode == 1) {
-		control_fun(fun_V);
-		pl_FunMotor_start();
-		wait_ms_NoReset(600);
+		if(fun_V > FUN_GAP_LIMIT){
+			control_fun(FUN_GAP_LIMIT);
+			pl_FunMotor_start();
+			wait_ms_NoReset(400);
+			control_fun(fun_V);
+			wait_ms_NoReset(200);
+		}else{
+			control_fun(fun_V);
+			pl_FunMotor_start();
+			wait_ms_NoReset(600);
+		}
 		//reset_gyro();
 		reset_gyro_integral();
 		reset_speed();

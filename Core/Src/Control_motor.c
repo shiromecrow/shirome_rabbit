@@ -441,6 +441,8 @@ float straight_table2(float input_displacement, float input_start_velocity,
 	Trapezoid_straight.count_velocity = input_count_velocity;
 	Trapezoid_straight.acceleration = input_acceleration;
 
+	if (input_start_velocity==input_count_velocity && input_start_velocity==input_end_velocity){input_acceleration=0;}
+
 	NoWallDisplacementR_safe = 0;//壁切れ安全機能
 	NoWallDisplacementL_safe = 0;//壁切れ安全機能
 	Nowall_safe_flg = 1;
