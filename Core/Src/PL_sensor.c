@@ -92,7 +92,7 @@ void pl_callback_getSensor(void) {
 		HAL_GPIO_WritePin(SENSOR_LED1_GPIO_Port, SENSOR_LED1_Pin, GPIO_PIN_SET);
 
 
-		for(LED_wait=0;LED_wait<=100;LED_wait++){}
+		for(LED_wait=0;LED_wait<=500;LED_wait++){}
 
 		break;
 	case 1:
@@ -108,7 +108,7 @@ void pl_callback_getSensor(void) {
 		HAL_GPIO_WritePin(SENSOR_LED2_GPIO_Port, SENSOR_LED2_Pin, GPIO_PIN_SET);
 
 
-		for(LED_wait=0;LED_wait<=100;LED_wait++){}
+		for(LED_wait=0;LED_wait<=500;LED_wait++){}
 
 		break;
 	case 2:
