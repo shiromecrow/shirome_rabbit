@@ -87,7 +87,7 @@ void interrupt_FailSafe(void){
 					if (fabs(turning.velocity - angle_speed) >= gyro_PID_error_in ) {
 						error_count1++;
 						if(error_count1>=25){
-							pl_FunMotor_stop();
+							stop_fun();
 							g_WallControl_mode =0;
 							error_mode = 1;
 							pl_yellow_LED_count(error_mode);
@@ -100,7 +100,7 @@ void interrupt_FailSafe(void){
 					if (angle_speedx_set >= gyro_x_error_in) {
 						error_count2++;
 						if(error_count2>=30){
-							pl_FunMotor_stop();
+							stop_fun();
 							g_WallControl_mode =0;
 							error_mode = 2;
 							pl_yellow_LED_count(error_mode);
@@ -114,7 +114,7 @@ void interrupt_FailSafe(void){
 					if(fabs(straight.velocity - gf_speed) >= encoder_gyro_error_in && modeacc==1){
 						error_count3++;
 						if(error_count3>=500){
-							pl_FunMotor_stop();
+							stop_fun();
 							g_WallControl_mode =0;
 							error_mode = 3;
 							pl_yellow_LED_count(error_mode);
@@ -131,7 +131,7 @@ void interrupt_FailSafe(void){
 					){
 						error_count4++;
 						if(error_count4>=40){
-							pl_FunMotor_stop();
+							stop_fun();
 							g_WallControl_mode =0;
 							error_mode = 4;
 							pl_yellow_LED_count(error_mode);
@@ -146,7 +146,7 @@ void interrupt_FailSafe(void){
 					if(fabs(gf_speed - (E_speedR+E_speedL)/2) >= encoder_gyro_error_in && modeacc==1){
 						error_count5++;
 						if(error_count5>=400){
-							pl_FunMotor_stop();
+							stop_fun();
 							g_WallControl_mode =0;
 							error_mode = 5;
 							pl_yellow_LED_count(error_mode);
@@ -161,7 +161,7 @@ void interrupt_FailSafe(void){
 					if( NoWallDisplacementL_safe > 90*wallcut_error || NoWallDisplacementR_safe > 90*wallcut_error ){
 						error_count6++;
 						if(error_count6>=10){
-							pl_FunMotor_stop();
+							stop_fun();
 							g_WallControl_mode =0;
 							error_mode = 6;
 							pl_yellow_LED_count(error_mode);
@@ -192,7 +192,7 @@ void interrupt_FailSafe(void){
 		}else{
 			pl_DriveMotor_standby(OFF);
 			pl_DriveMotor_stop();
-			pl_FunMotor_stop();
+			stop_fun();
 			modeacc=0;
 		}
 					NoWallCountL90 = 4294967295;

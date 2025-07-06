@@ -39,6 +39,8 @@ extern char modeacc;
 extern uint8_t noGoalPillarMode;
 
 void Control_mode_Init();
+void start_fun(float);
+void stop_fun(void);
 void control_fun(float);
 void get_duty(float , float ,int *,int *);
 

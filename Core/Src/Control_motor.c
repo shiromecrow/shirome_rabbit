@@ -51,6 +51,28 @@ void Control_mode_Init(void){
 
 }
 
+void start_fun(float fun_V){
+
+	if(fun_V > FUN_GAP_LIMIT){
+		control_fun(FUN_GAP_LIMIT);
+		pl_FunMotor_start();
+		wait_ms_NoReset(400);
+		control_fun(fun_V);
+		wait_ms_NoReset(200);
+	}else{
+		control_fun(fun_V);
+		pl_FunMotor_start();
+		wait_ms_NoReset(600);
+	}
+
+}
+
+void stop_fun(void){
+
+	pl_FunMotor_stop();
+
+}
+
 /* ファンも電圧で指定に変更(初期電圧に依存させる。) */
 void control_fun(float fun_V){
 	int duty_fun ;

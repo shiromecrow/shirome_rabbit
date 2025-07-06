@@ -1136,17 +1136,7 @@ void testturning(parameter_speed Howspeed,int turnmode,char shortest_mode,char f
 	if(funmode==ON){
 		pl_DriveMotor_standby(ON);
 		pl_L_DriveMotor_mode(MOTOR_BREAK);
-		if(fun_V > FUN_GAP_LIMIT){
-			control_fun(FUN_GAP_LIMIT);
-			pl_FunMotor_start();
-			wait_ms_NoReset(400);
-			control_fun(fun_V);
-			wait_ms_NoReset(200);
-		}else{
-			control_fun(fun_V);
-			pl_FunMotor_start();
-			wait_ms_NoReset(600);
-		}
+		start_fun(fun_V);
 		//reset_gyro();
 		reset_gyro_integral();
 		reset_speed();
@@ -1193,7 +1183,7 @@ void testturning(parameter_speed Howspeed,int turnmode,char shortest_mode,char f
 	pl_R_DriveMotor_mode(MOTOR_BREAK);
 	pl_L_DriveMotor_mode(MOTOR_BREAK);
 	wait_ms_NoReset(500);
-	pl_FunMotor_stop();
+	stop_fun();
 	wait_ms_NoReset(500);
 	pl_DriveMotor_standby(OFF);
 

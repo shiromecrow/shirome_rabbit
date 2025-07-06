@@ -1012,17 +1012,7 @@ if(pass_mode==1){
 	reset_speed();
 	////wall_control_mode = 1;
 	if (fun_mode == 1) {
-		if(fun_V > FUN_GAP_LIMIT){
-			control_fun(FUN_GAP_LIMIT);
-			pl_FunMotor_start();
-			wait_ms_NoReset(400);
-			control_fun(fun_V);
-			wait_ms_NoReset(200);
-		}else{
-			control_fun(fun_V);
-			pl_FunMotor_start();
-			wait_ms_NoReset(600);
-		}
+		start_fun(fun_V);
 		//reset_gyro();
 		reset_gyro_integral();
 		reset_speed();
@@ -1032,8 +1022,6 @@ if(pass_mode==1){
 //				enc.sigma_error = 0;
 //					Gyro.sigma_error = 0;
 //				pl_FunMotor_duty(160);
-//		pl_FunMotor_start();
-//						wait_ms_NoReset(2000);	//候補1
 
 	}
 	maze_mode = 1;
@@ -1193,7 +1181,7 @@ if(pass_mode==1){
 		mode.WallControlStatus=0;
 		straight_table2(FRONT_TO_CENTER_FRONT,end_velocity,0,end_velocity,end_velocity*end_velocity/ FRONT_TO_CENTER_FRONT/2, mode);
 		wait_ms_NoReset(700);
-		pl_FunMotor_stop();
+		stop_fun();
 //		turning_table(180, 0, 0, 400, 5000);
 
 	maze_mode = 0;
