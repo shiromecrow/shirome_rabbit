@@ -48,6 +48,12 @@ void Control_mode_Init(void){
 	mollifier_timer=0;
 	noGoalPillarMode=0;
 	straight_acceleration_lpf=0;
+	straight.displacement = 0;
+	straight.velocity = 0;
+	straight.acceleration = 0;
+	turning.displacement = 0;
+	turning.velocity = 0;
+	turning.acceleration = 0;
 
 }
 

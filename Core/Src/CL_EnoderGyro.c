@@ -12,6 +12,7 @@
 #include "PL_timer.h"
 #include "math.h"
 #include "matrix_calculation.h"
+#include "Control_motor.h" //指令値補正
 
 
 float yaw_angle,angle_speed;
@@ -332,6 +333,7 @@ void interupt_calKalman(void) {
     float APAT[2][2];
     float BBT[2][2];
     float BUBT[2][2];
+	float kal_V_1_in;
 	//---------------------------------------
 	//Kalman Filter (all system)
 	//---------------------------------------
@@ -344,6 +346,7 @@ void interupt_calKalman(void) {
 	}else{
 	        kal_data_in[0][0] = (E_distanceL+E_distanceR)/2;
 	        kal_data_in[1][0] = (E_speedL+E_speedR)/2;
+			kal_V_1_in = gf_accel;
 
 
 	        //calculate Kalman gain: G = P'C^T(W+CP'C^T)^-1
@@ -367,7 +370,7 @@ void interupt_calKalman(void) {
 
 	        //predict the next step data: x'=Ax+Bu
 	        mat_mul(kal_A_1[0], kal_data_out[0], kal_A_1_x[0], 2, 2, 2, 1);//Ax_hat
-	        mat_mul_const(kal_B_1[0], gf_accel , kal_B_1_Vin[0], 2, 1);//Bu
+	        mat_mul_const(kal_B_1[0], kal_V_1_in , kal_B_1_Vin[0], 2, 1);//Bu
 	        mat_add(kal_A_1_x[0], kal_B_1_Vin[0], kal_x_1_predict[0], 2, 1);//Ax+Bu
 
 	        //predict covariance matrix: P'=APA^T + BUB^T
@@ -396,7 +399,7 @@ void interrupt_calGyro(void) {
 // オフセット差分
 	angle_speed = gyro.omega_z*GYRO_COEFFICIENT - omegaZ_offset;
 	angle_speedx_set=-(gyro.omega_x - omegaX_offset);
-	gf_accel = gyro.accel_y*ACCEL_COEFFICIENT - accelY_offset;
+	gf_accel = gyro.accel_y*ACCEL_COEFFICIENT - accelY_offset - R_ACC*fabsf(turning.velocity);
 
 // 積分値
 	yaw_angle += angle_speed * INTERRUPT_TIME; //deg

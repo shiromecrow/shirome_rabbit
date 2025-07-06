@@ -51,6 +51,8 @@
 #define	ACCY_MEAN 333.726196
 #define	ACCY_VAR 443236.6891442692
 
+#define	R_ACC 0.124587638
+
 extern float yaw_angle,angle_speed;
 extern float anglex,angle_speedx,angle_speedx_set;
 extern float gf_speed,gf_distance,gf_accel;

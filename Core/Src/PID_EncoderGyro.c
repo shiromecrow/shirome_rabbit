@@ -59,9 +59,9 @@ void clear_Ierror(void) {
 void EncoderGyro_PID(float *PID_s, float *PID_t,float straight_velocity,float turning_velocity,float turning_displacement) {
 	float PID_stra = 0;
 	float PID_turn = 0;
-	float obs_vel_str;//直線観測値
-	float obs_vel_turn;//旋回観測値
-	float obs_angle_turn;//旋回観測値
+	float obs_vel_str = 0;//直線観測値
+	float obs_vel_turn = 0;//旋回観測値
+	float obs_angle_turn = 0;//旋回観測値
 
 
 
@@ -86,11 +86,10 @@ void EncoderGyro_PID(float *PID_s, float *PID_t,float straight_velocity,float tu
 		}
 		if (straight_velocity < 200){
 			kalman_mode=0;
-			obs_vel_str = (fusion_speedR + fusion_speedL) / 2;
 		}else{
-			kalman_mode=0;
-			obs_vel_str = kalman_speed;
+			kalman_mode=1;
 		}
+		obs_vel_str = kalman_speed;
 		obs_vel_turn = angle_speed;
 		obs_angle_turn = yaw_angle;
 	}else if(highspeed_mode == 1){//最短用
@@ -120,17 +119,16 @@ void EncoderGyro_PID(float *PID_s, float *PID_t,float straight_velocity,float tu
 		}
 		if (straight_velocity < 50){
 			kalman_mode=0;
-			obs_vel_str = (fusion_speedR + fusion_speedL) / 2;
 		}else{
 			kalman_mode=1;
-			obs_vel_str = kalman_speed;
 		}
+		obs_vel_str = kalman_speed;
 		obs_vel_turn = angle_speed;
 		obs_angle_turn = yaw_angle;
 	}
 	if(slant_dbg_angle == 1){
-		Ktp_angle = 40; //P項の制御量旋回
-		Ktd_angle = 0.1; //D項の制御量旋回
+		Ktp_angle = 10; //P項の制御量旋回
+		Ktd_angle = 0.01; //D項の制御量旋回
 	}
 	
 

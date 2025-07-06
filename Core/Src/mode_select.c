@@ -1400,7 +1400,7 @@ void mode_Tuning0(unsigned char main_modeR){
 		break;
 		case 14:// ジャイロ回転半径導出 /2002:加速度とジャイロの計測
 			record_mode=35;
-			turning_table2(360*10, 0, 0, 700, 8000);
+			turning_table2(360*2, 0, 0, 700, 8000);
 		break;
 		case 15:
 			highspeed_mode = 1;
