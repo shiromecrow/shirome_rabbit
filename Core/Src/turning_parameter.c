@@ -650,12 +650,12 @@ void input_parameter(void) {
 				speed1600_shortest_mollifier.turn135in_R.g_speed = 1680;
 				speed1600_shortest_mollifier.turn135in_R.t_speed = 2800;
 				speed1600_shortest_mollifier.turn135in_R.f_ofset = 10;
-				speed1600_shortest_mollifier.turn135in_R.e_ofset = 25;
+				speed1600_shortest_mollifier.turn135in_R.e_ofset = 41;
 
 				speed1600_shortest_mollifier.turn135in_L.g_speed = 1680;
 				speed1600_shortest_mollifier.turn135in_L.t_speed = 2800;
 				speed1600_shortest_mollifier.turn135in_L.f_ofset = 10;
-				speed1600_shortest_mollifier.turn135in_L.e_ofset = 22;
+				speed1600_shortest_mollifier.turn135in_L.e_ofset = 41;
 
 				speed1600_shortest_mollifier.turn45out_R.g_speed = 1800;
 				speed1600_shortest_mollifier.turn45out_R.t_speed = 2000;
@@ -679,13 +679,13 @@ void input_parameter(void) {
 
 				speed1600_shortest_mollifier.V90_R.g_speed = 1700;
 				speed1600_shortest_mollifier.V90_R.t_speed = 3100;
-				speed1600_shortest_mollifier.V90_R.f_ofset = 9;
-				speed1600_shortest_mollifier.V90_R.e_ofset = 37;
+				speed1600_shortest_mollifier.V90_R.f_ofset = 8;
+				speed1600_shortest_mollifier.V90_R.e_ofset = 47;
 
 				speed1600_shortest_mollifier.V90_L.g_speed = 1700;
 				speed1600_shortest_mollifier.V90_L.t_speed = 3100;
-				speed1600_shortest_mollifier.V90_L.f_ofset = 9;
-				speed1600_shortest_mollifier.V90_L.e_ofset = 35;
+				speed1600_shortest_mollifier.V90_L.f_ofset = 6.5;
+				speed1600_shortest_mollifier.V90_L.e_ofset = 45;
 
 
 }
