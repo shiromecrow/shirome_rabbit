@@ -474,12 +474,12 @@ void cal_mollifier_table(MOLLIFIER input,TARGET *target){
 
 float mollifier_T;
 float old_velocity;
-float time_delay=12;
-float time_delay2=-10;
-float time_delay3=3;
-float time_delay4=5;
+//float time_delay=12;
+//float time_delay2=-10;
+//float time_delay3=3;
+//float time_delay4=5;
 float time_delay5;
-float OverShot=0;
+//float OverShot=0;
 	mollifier_timer+=INTERRUPT_TIME;
 		mollifier_T=2*fabs(input.displacement)/MOLLIFIER_INTEGRAL*exp(-1)/input.max_turning_velocity;
 		time_delay5 = mollifier_T/70;

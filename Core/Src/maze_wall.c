@@ -19,6 +19,8 @@
 #include"maze_strategy.h"
 #include"define.h"
 #include "stdio.h"
+#include <inttypes.h>
+
 
 WALL wall;
 WALL record;
@@ -42,8 +44,8 @@ void maze_out_matlab(void){
 
 	int tt=0;
 	while (tt <= MAZE_SQUARE_NUM-2) {
-		printf("g_maze_row(%d) = %d;\n",tt+1,wall.row[tt]);
-		printf("g_maze_column(%d) = %d;\n",tt+1,wall.column[tt]);
+		printf("g_maze_row(%d) = %" PRIu32 ";\n",tt+1,wall.row[tt]);
+		printf("g_maze_column(%d) = %" PRIu32 ";\n",tt+1,wall.column[tt]);
 		tt++;
 	}
 	tt = 0;
@@ -430,7 +432,6 @@ void create_DijkstraMap(void){
 
 
 
-	unsigned short count_number = 1;
 	unsigned short Xcoordinate,Ycoordinate,Row_or_Column,Direction,dis_cost;
 	while (1) {
 
@@ -625,8 +626,6 @@ void create_DijkstraMap(void){
 
 				}
 
-		count_number+=1;
-
 		}
 
 
@@ -644,9 +643,9 @@ void route_Dijkstra(void){
 	STACK_T stack_x;
 	STACK_T stack_y;
 	STACK_T stack_matrix;//行列
-	STACK_T stack_x_unknow;
-	STACK_T stack_y_unknow;
-	STACK_T stack_matrix_unknow;//行列
+	//STACK_T stack_x_unknow;
+	//STACK_T stack_y_unknow;
+	//STACK_T stack_matrix_unknow;//行列
 	initStack_walk(&stack_x);
 	initStack_walk(&stack_y);
 	initStack_walk(&stack_matrix);
@@ -658,9 +657,9 @@ void route_Dijkstra(void){
 
 	unsigned short front_count, right_count, back_count, left_count;
 
-	_Bool front_wall;
-	_Bool right_wall;
-	_Bool left_wall;
+	//_Bool front_wall;
+	//_Bool right_wall;
+	//_Bool left_wall;
 
 	int xd = 0;
 	int yd = 0;
@@ -862,7 +861,6 @@ void create_StepCountMap_unknown(void){
 	}
 	//printf("(%d,%d),(%d,%d),(%d,%d),(%d,%d)\n",stack_x.data[0],stack_y.data[0],stack_x.data[1],stack_y.data[1],stack_x.data[2],stack_y.data[2],stack_x.data[3],stack_y.data[3]);
 	//printf("x head %d tail %d\n y head %d tail %d\n",stack_x.head,stack_x.tail,stack_y.head,stack_y.tail);
-	uint16_t count_number = 1;
 	unsigned short Xcoordinate,Ycoordinate;
 	uint32_t wall_north=1,wall_south=1,wall_east=1,wall_west=1;
 	while (1) {
@@ -909,7 +907,6 @@ void create_StepCountMap_unknown(void){
 			pushStack_walk(&stack_x,Xcoordinate - 1);
 			pushStack_walk(&stack_y,Ycoordinate);
 		}
-		count_number=walk_count[Xcoordinate][Ycoordinate] + 1;
 
 		}
 
@@ -940,7 +937,6 @@ void create_StepCountMap_queue(void){
 
 	//printf("(%d,%d),(%d,%d),(%d,%d),(%d,%d)\n",stack_x.data[0],stack_y.data[0],stack_x.data[1],stack_y.data[1],stack_x.data[2],stack_y.data[2],stack_x.data[3],stack_y.data[3]);
 	//printf("x head %d tail %d\n y head %d tail %d\n",stack_x.head,stack_x.tail,stack_y.head,stack_y.tail);
-	uint16_t count_number = 1;
 	unsigned short Xcoordinate,Ycoordinate;
 	uint32_t wall_north=1,wall_south=1,wall_east=1,wall_west=1;
 	while (1) {
@@ -1010,8 +1006,7 @@ void create_StepCountMapBack_queue(void){
 	pushStack_walk(&stack_x,0);pushStack_walk(&stack_y,0);
 	//printf("(%d,%d),(%d,%d),(%d,%d),(%d,%d)\n",stack_x.data[0],stack_y.data[0],stack_x.data[1],stack_y.data[1],stack_x.data[2],stack_y.data[2],stack_x.data[3],stack_y.data[3]);
 	//printf("x head %d tail %d\n y head %d tail %d\n",stack_x.head,stack_x.tail,stack_y.head,stack_y.tail);
-	unsigned short coordinate;
-	uint16_t count_number = 1;
+	//unsigned short coordinate;
 	unsigned short Xcoordinate,Ycoordinate;
 	uint32_t wall_north=1,wall_south=1,wall_east=1,wall_west=1;
 	while (1) {
@@ -1059,7 +1054,6 @@ void create_StepCountMapBack_queue(void){
 			pushStack_walk(&stack_x,Xcoordinate - 1);
 			pushStack_walk(&stack_y,Ycoordinate);
 		}
-		count_number=walk_count[Xcoordinate][Ycoordinate] + 1;
 
 		}
 

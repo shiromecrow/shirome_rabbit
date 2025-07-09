@@ -149,7 +149,6 @@ float calWallConrol(void) {
 	float wallcut_threshold_L, wallcut_threshold_R;
 	float skewer_gain;
 	float Skewer_limit;
-	float skewer_lpf;
 	float Stability_limit;
 
 	if (highspeed_mode == 1) {
@@ -279,11 +278,9 @@ float calWallConrol(void) {
 			if(highspeed_mode==1){
 				skewer_gain=SKEWER_GAIN_SHORT;
 				Skewer_limit = SKEWER_LIMIT_SHORT;
-				skewer_lpf = 0.1;
 			}else{
 				skewer_gain=SKEWER_GAIN;
 				Skewer_limit = SKEWER_LIMIT*straight.velocity/300;
-				skewer_lpf = 0.1;
 			}
 
 			g_skewer_displacement += straight.velocity * INTERRUPT_TIME;

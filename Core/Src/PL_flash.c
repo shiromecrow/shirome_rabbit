@@ -21,6 +21,7 @@
 #include "stdio.h"
 #include "define.h"
 #include "maze_wall.h"
+#include <inttypes.h>
 
 
 
@@ -123,7 +124,7 @@ void record_in(void) {
 	address+=16;
 	t++;
 	}
-	printf("%x\n",address);
+	printf("%x" PRIx32 "\n",address);
 //	writeFlash(start_address + sizeof(record.row), (uint64_t*) record.column,
 //			sizeof(record.column), OFF);
 //	writeFlash(start_address + 2 * sizeof(record.row),
