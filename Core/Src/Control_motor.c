@@ -63,8 +63,10 @@ void start_fun(float fun_V){
 		control_fun(FUN_GAP_LIMIT);
 		pl_FunMotor_start();
 		wait_ms_NoReset(400);
+		control_fun(FUN_GAP_LIMIT2);
+		wait_ms_NoReset(120);
 		control_fun(fun_V);
-		wait_ms_NoReset(200);
+		wait_ms_NoReset(80);
 	}else{
 		control_fun(fun_V);
 		pl_FunMotor_start();

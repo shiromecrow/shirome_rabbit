@@ -22,6 +22,7 @@
 
 /* ファンの回転で角度ずれるリミット0003 */
 #define FUN_GAP_LIMIT 6.5
+#define FUN_GAP_LIMIT2 7.5
 
 void pl_motor_init();
 
