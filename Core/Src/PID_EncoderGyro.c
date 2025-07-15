@@ -111,7 +111,7 @@ void EncoderGyro_PID(float *PID_s, float *PID_t,float straight_velocity,float tu
 			Ksp = 2.9; //3//P項の制御量直進
 			Ksi = 0.10; //80//5//43//I項の制御量直進
 			Ksd = 0.05; //D項の制御量直進
-			Ktp = 2.5; //295//P項の制御量旋回
+			Ktp = 3; //295//P項の制御量旋回
 			Kti = 0.092; //1//.6//I項の制御量旋回
 			Ktd = 0.01; //205//D項の制御量旋回
 			Ktp_angle = 70; //P項の制御量旋回
