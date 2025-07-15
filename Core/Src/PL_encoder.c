@@ -26,6 +26,10 @@ void Encoder_Communication(SPI_TypeDef *SPIx ,uint8_t *tx_data, uint8_t *rx_data
 
   HAL_GPIO_WritePin( GPIOx, CS_Pin, GPIO_PIN_RESET); //cs = 0;
 
+  __NOP();__NOP();__NOP();__NOP();__NOP();
+  __NOP();__NOP();__NOP();__NOP();__NOP();
+
+
   if ( LL_SPI_IsActiveFlag_RXNE(SPIx) == SET ) LL_SPI_ReceiveData8(SPIx);
   if ( LL_SPI_IsEnabled(SPIx) == RESET ) LL_SPI_Enable(SPIx);
 
