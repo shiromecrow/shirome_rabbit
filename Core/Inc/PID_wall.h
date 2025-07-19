@@ -56,7 +56,7 @@
 #define SENSOR_FRONT_GAIN_D -1
 #define CENTER_FRONT_S 3070//前壁制御
 #define CENTER_FRONT_L 914//前壁制御
-#define CENTER_FRONT_R 1488//前壁制御
+#define CENTER_FRONT_R 1670//前壁制御
 #define F_PRESENCE2 500
 
 //壁切れ

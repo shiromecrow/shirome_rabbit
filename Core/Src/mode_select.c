@@ -164,9 +164,10 @@ switch (main_modeL) {
 		testturning(speed1400_shortest_mollifier,main_modeR,1,ON,6.12,1);
 	break;
 	case 0b1010:
-		testturning(speed1600_shortest_mollifier,main_modeR,1,ON,8,1);
+		testturning(speed1600_shortest_mollifier,main_modeR,1,ON,8.1,1);
 	break;
 	case 0b1011:
+		testturning(speed1600_shortest_mollifier,16+main_modeR,1,ON,8.1,1);
 	break;
 	case 0b1100:
 	break;
@@ -604,19 +605,19 @@ void mode_Running2(unsigned char main_modeR){
 		break;
 		case 0b0010:
 			record_out();
-			run_shortest(4000,13000,14000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8,1,0);
+			run_shortest(4000,13000,14000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8.1,1,0);
 		break;
 		case 0b0011:
 			record_out();
-			run_shortest(4000,17000,20000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8,1,2);
+			run_shortest(4000,17000,20000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8.1,1,2);
 		break;
 		case 0b0100:
 			record_out();
-			run_shortest(6000,40000,40000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8,1,2);
+			run_shortest(6000,40000,40000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8.1,1,2);
 		break;
 		case 0b0101:
-
-
+			record_out();
+			run_shortest(6000,55000,55000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8.1,1,2);
 		break;
 		case 0b0110:
 

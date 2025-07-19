@@ -57,7 +57,7 @@
 // #define GOAL_ALL_D ((xd == GOAL_X || xd == GOAL_X + 1 || xd == GOAL_X + 2) && (yd == GOAL_Y || yd == GOAL_Y + 1 || yd == GOAL_Y + 2))
 // #define MAZE_TIMER 7
 
-#define F_PRESENCE 170
+#define F_PRESENCE 200
 #define R_PRESENCE 500//180//900
 #define L_PRESENCE 500//180//900
 

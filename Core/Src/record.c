@@ -20,6 +20,7 @@
 #include "CL_sensor.h"
 #include "CL_EnoderGyro.h"
 #include "Control_motor.h"
+#include "FF_motor.h"
 #include "PID_wall.h"
 #include "stdio.h"
 #include "define.h"
@@ -363,7 +364,14 @@ void interrupt_record(void) {
 			r_data[3] = (E_speedL + E_speedR)/2;
 					record_data(r_data, 4);
 			}
-		if (record_mode == RECORD_STOPMODE && recordstop_count == 0 ) {
+		if (record_mode == 36) { //FF項デバック
+			r_data[0] = turning.velocity;
+			r_data[1] = angle_speed;
+			r_data[2] = g_V_R*100;
+			r_data[3] = g_V_L*100;
+						record_data(r_data, 4);
+		}
+			if (record_mode == RECORD_STOPMODE && recordstop_count == 0 ) {
 			r_data[0] = RECORD_STOPNUM;
 			r_data[1] = RECORD_STOPNUM;
 			r_data[2] = RECORD_STOPNUM;

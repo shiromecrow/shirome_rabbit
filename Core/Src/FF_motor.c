@@ -10,6 +10,8 @@
 #include "Control_motor.h"
 #include "fail_safe.h"
 
+float g_feedforward_straight,g_feedforward_turning;
+
 void feedforward_const_accel(float *feedforward_straight,
 		float straight_velocity, float straight_acceleration,
 		float *feedforward_turning, float turning_velocity,
@@ -31,16 +33,14 @@ if(highspeed_mode == 1){
 	KVFF_turning = 5.9272e-04;// turning_velocity / 1000 * ng * kbT / TIRE_DIAMETER
 	KFF_turning = 0;// TwT * Rm / kt
 }else{
-	KAFF_straight = 2.4178e-05;// Im * ng * straight_acceleration / 1000 / TIRE_DIAMETER * Rm / kt
-	KVFF_straight = 1.0989e-06;// straight_velocity / 1000 * ng * kb / TIRE_DIAMETER
+	KAFF_straight = 1.8715e-04*0.57;// Im * ng * straight_acceleration / 1000 / TIRE_DIAMETER * Rm / kt
+	KVFF_straight = 0.0012;// straight_velocity / 1000 * ng * kb / TIRE_DIAMETER
 	KFF_straight = 0;// Tw * Rm / kt
-	KAFF_turning = 1.2725e-05;// ImT * ng * turning_acceleration / 1000 / TIRE_DIAMETER* Rm / kt
-	KVFF_turning = 3.3299e-06;// turning_velocity / 1000 * ng * kbT / TIRE_DIAMETER
+	KAFF_turning = 2.3046e-05*0.57;// ImT * ng * turning_acceleration / 1000 / TIRE_DIAMETER* Rm / kt
+	KVFF_turning = 3.8774e-04;// turning_velocity / 1000 * ng * kbT / TIRE_DIAMETER
 	KFF_turning = 0;// TwT * Rm / kt
 }
-if( turning_acceleration > 0 && turning_velocity < 200 && (modeacc == 2 || modeacc == 9)){
-	KAFF_turning = 1.2725e-05;// ImT * ng * turning_acceleration / 1000 / TIRE_DIAMETER* Rm / kt
-}
+
 	if (straight_velocity >= 0) {
 		*feedforward_straight = KAFF_straight * straight_acceleration
 								+ KVFF_straight * straight_velocity
@@ -61,5 +61,7 @@ if( turning_acceleration > 0 && turning_velocity < 200 && (modeacc == 2 || modea
 	}
 	//*feedforward_straight=0;
 	//*feedforward_turning =0;
+	g_feedforward_straight = *feedforward_straight;
+	g_feedforward_turning = *feedforward_turning;
 
 }

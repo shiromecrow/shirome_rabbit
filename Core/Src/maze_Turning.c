@@ -1047,7 +1047,7 @@ void V90L(parameter turnpara,  char test_mode,char mollifier_mode,float end_velo
 				wallmode.WallControlStatus=0;
 				wallmode.WallCutMode=0;
 				wallmode.calMazeMode=0;
-				straight_table2(BACK_TO_CENTER_SLANT + MAZE_SECTION/2*sqrt(2), 0, turnpara.g_speed, turnpara.g_speed,
+				straight_table2(BACK_TO_CENTER_FRONT_SLANT + MAZE_SECTION/2*sqrt(2), 0, turnpara.g_speed, turnpara.g_speed,
 							turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
 				wallmode.WallControlMode=0;
 				wallmode.WallCutMode=4;
@@ -1102,6 +1102,51 @@ void V90L(parameter turnpara,  char test_mode,char mollifier_mode,float end_velo
 
 }
 
+void examine_V90R(parameter turnpara,char mollifier_mode){
+	MOTOR_MODE wallmode;
+
+	highspeed_mode = 1;
+	wallmode.WallControlMode=0;
+	wallmode.WallControlStatus=0;
+	wallmode.WallCutMode=0;
+	wallmode.calMazeMode=0;
+	straight_table2(BACK_TO_CENTER_SLANT + MAZE_SECTION/2*sqrt(2), 0, turnpara.g_speed, turnpara.g_speed,
+				turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
+	for(int i=0;i<8;i++){
+		V90R(turnpara,OFF,mollifier_mode,turnpara.g_speed);
+		straight_table2(MAZE_SECTION/2*sqrt(2), turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
+		turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);	
+	}
+	wallmode.WallControlMode=0;
+	wallmode.WallCutMode=0;
+	straight_table2(MAZE_SECTION*sqrt(2), turnpara.g_speed, 0, turnpara.g_speed,
+			turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
+	highspeed_mode = 0;
+
+}
+
+void examine_V90L(parameter turnpara,char mollifier_mode){
+	MOTOR_MODE wallmode;
+
+	highspeed_mode = 1;
+	wallmode.WallControlMode=0;
+	wallmode.WallControlStatus=0;
+	wallmode.WallCutMode=0;
+	wallmode.calMazeMode=0;
+	straight_table2(BACK_TO_CENTER_SLANT + MAZE_SECTION/2*sqrt(2), 0, turnpara.g_speed, turnpara.g_speed,
+				turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
+	for(int i=0;i<8;i++){
+		V90L(turnpara,OFF,mollifier_mode,turnpara.g_speed);
+		straight_table2(MAZE_SECTION/2*sqrt(2), turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
+		turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);	
+	}
+	wallmode.WallControlMode=0;
+	wallmode.WallCutMode=0;
+	straight_table2(MAZE_SECTION*sqrt(2), turnpara.g_speed, 0, turnpara.g_speed,
+			turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
+	highspeed_mode = 0;
+
+}
 
 void testturning(parameter_speed Howspeed,int turnmode,char shortest_mode,char funmode,float fun_V,char mollifier_mode){
 	//0=slalomR,1=slalomL,2=90R,3=90L,4=180R,5=180L,6=in45R,7=in45L,8=in135R,9=in135L
@@ -1118,14 +1163,14 @@ void testturning(parameter_speed Howspeed,int turnmode,char shortest_mode,char f
 	reset_speed();
 	reset_distance();
 	clear_Ierror();
-	if(turnmode==10 || turnmode==12 || turnmode==14){
+	if(turnmode==10 || turnmode==12 || turnmode==14 || turnmode==16){
 		highspeed_mode=0;
 		straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, wallmode);
 		turning_table2(45, 0, 0, 300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
 		straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, wallmode);
 		highspeed_mode=1;
 	}
-	if(turnmode==11 || turnmode==13 || turnmode==15){
+	if(turnmode==11 || turnmode==13 || turnmode==15 || turnmode==17){
 		highspeed_mode=0;
 		straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, wallmode);
 		turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
@@ -1153,8 +1198,9 @@ void testturning(parameter_speed Howspeed,int turnmode,char shortest_mode,char f
 
 	}
 	//record_mode = 2;
-	record_mode = 12;
-	//record_mode = 25;
+	//record_mode = 12;
+	record_mode = 25;
+	record_mode = 36;
 //	if(turnmode==0){test_mollifier_slalomR(Howspeed.slalom_R);}
 	if(turnmode==0){slalomR(Howspeed.slalom_R,ON,shortest_mode,mollifier_mode,-100);}
 	if(turnmode==1){slalomL(Howspeed.slalom_L,ON,shortest_mode,mollifier_mode,-100);}
@@ -1172,6 +1218,8 @@ void testturning(parameter_speed Howspeed,int turnmode,char shortest_mode,char f
 	if(turnmode==13){turn135outL(Howspeed.turn135out_L,ON,mollifier_mode,-100);}
 	if(turnmode==14){V90R(Howspeed.V90_R,ON,mollifier_mode,-100);}
 	if(turnmode==15){V90L(Howspeed.V90_L,ON,mollifier_mode,-100);}
+	if(turnmode==16){examine_V90R(Howspeed.V90_R,mollifier_mode);}
+	if(turnmode==17){examine_V90L(Howspeed.V90_L,mollifier_mode);}	
 //	if(turnmode==10){turn45inL(Howspeed.turn45in_L, CONNECT);turn45outR(Howspeed.turn45out_R,CONNECT);}
 //	if(turnmode==11){turn45inR(Howspeed.turn45in_R, CONNECT);turn45outL(Howspeed.turn45out_L,CONNECT);}
 //	if(turnmode==12){turn135inL(Howspeed.turn135in_L, CONNECT);turn135outR(Howspeed.turn135out_R,CONNECT);}

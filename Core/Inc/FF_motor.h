@@ -23,7 +23,7 @@
 
 #define TwT 0.0000 //7
 
-
+extern float g_feedforward_straight,g_feedforward_turning;
 
 void feedforward_const_accel(float *,float,float,float *,float,float);
 

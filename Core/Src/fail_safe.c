@@ -130,7 +130,7 @@ void interrupt_FailSafe(void){
 					(fabs(straight.velocity - kalman_speed) >= encoder_PID_error_in && modeacc==1 && highspeed_mode == 1)
 					){
 						error_count4++;
-						if(error_count4>=60){
+						if(error_count4>=100){
 							stop_fun();
 							g_WallControl_mode =0;
 							error_mode = 4;

@@ -17,7 +17,8 @@
 			"define.h": "c",
 			"maze_wall.h": "c",
 			"stdio.h": "c",
-			"ff_motor.h": "c"
+			"ff_motor.h": "c",
+			"control_motor.h": "c"
 		}
 	}
 }

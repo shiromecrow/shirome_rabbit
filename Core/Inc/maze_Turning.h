@@ -39,6 +39,8 @@ void turn135outL(parameter,char,char,float);
 void V90R(parameter,char,char,float);
 void V90L(parameter,char,char,float);
 
+void examine_V90R(parameter,char);
+void examine_V90L(parameter,char);
 
 
 void testturning(parameter_speed,int,char,char,float,char);
