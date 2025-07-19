@@ -35,6 +35,8 @@ extern float straight_acceleration_lpf;
 
 extern float g_V_L,g_V_R,g_Vol1,g_Vol2;
 
+extern float V_cmd_sysid;
+
 extern char modeacc;
 extern uint8_t noGoalPillarMode;
 

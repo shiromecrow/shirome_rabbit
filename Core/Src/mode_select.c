@@ -611,8 +611,8 @@ void mode_Running2(unsigned char main_modeR){
 			run_shortest(4000,17000,20000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8,1,2);
 		break;
 		case 0b0100:
-		record_out();
-		run_shortest(6000,40000,40000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8,1,2);
+			record_out();
+			run_shortest(6000,40000,40000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8,1,2);
 		break;
 		case 0b0101:
 
@@ -879,7 +879,8 @@ void mode_Tuning2(unsigned char main_modeR){
 			reset_speed();
 			reset_distance();
 			clear_Ierror();
-			record_mode=2;
+			// record_mode=2;
+			record_mode=3;
 //			mode.WallControlMode=0;
 //			straight_table2(90*32, 0, 0, 4000, 17000,mode);
 			mode.WallControlMode=1;
@@ -1170,8 +1171,8 @@ void mode_Tuning1(unsigned char main_modeR){
 			reset_distance();
 			clear_Ierror();
 			// record_mode=13;
-			// record_mode=2;
-			record_mode=7;
+			record_mode=2;
+			// record_mode=7;
 //			mode.WallControlMode=0;
 //			straight_table2(90*32, 0, 0, 4000, 17000,mode);
 			mode.WallControlMode=1;
@@ -1205,7 +1206,6 @@ void mode_Tuning1(unsigned char main_modeR){
 
 void mode_Tuning0(unsigned char main_modeR){
 	MOTOR_MODE mode;
-	int duty_L=0, duty_R=0;
 	mode.WallControlMode=0;
 	mode.WallControlStatus=0;
 	mode.WallCutMode=0;
@@ -1247,34 +1247,7 @@ void mode_Tuning0(unsigned char main_modeR){
 			turning_table2(45, 0, 0, 300, 3000);
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100,5000, mode);
 		break;
-		case 6://斜め直進(制御あり)
-			highspeed_mode = 1;
-			start_fun(6.12);
-			//reset_gyro();
-			reset_gyro_integral();
-			reset_speed();
-			reset_distance();
-			clear_Ierror();
-			record_mode=5;
-			mode.WallControlMode=1;
-			//straight_table_max(90*8, 0, 0, 4000, 17000,30000,mode);
-			straight_acceleration_lpf=1000*1000/ BACK_TO_CENTER_FRONT;
-			straight_table2(BACK_TO_CENTER_FRONT,0,1000,1000,1000*1000/ BACK_TO_CENTER_FRONT/2, mode);
-			straight_table_max(90*8-BACK_TO_CENTER_FRONT, 1000, 0, 4000, 17000,17000,mode);
-		break;
-		case 7://斜め直進(平松さん式制御あり)
-			highspeed_mode = 1;
-			start_fun(6.12);
-			//reset_gyro();
-			reset_gyro_integral();
-			reset_speed();
-			reset_distance();
-			clear_Ierror();
-			record_mode=3;
-			mode.WallControlMode=1;
-			straight_table_dis(90*8, 0, 0, 4000, 17000,30000,mode);
-		break;
-		case 8://宴会芸
+		case 6://宴会芸
 			record_mode=2;
 			pl_r_blue_LED(ON);
 			pl_l_blue_LED(ON);
@@ -1282,15 +1255,54 @@ void mode_Tuning0(unsigned char main_modeR){
 			pl_r_blue_LED(OFF);
 			pl_l_blue_LED(OFF);
 		break;
-		case 9://システム同定enc
+		case 7://システム同定enc
 			pl_r_blue_LED(ON);
 			pl_l_blue_LED(ON);
-			get_duty(1, 1,&duty_L,&duty_R);
-			pl_DriveMotor_duty(duty_L,duty_R);
+			record_mode=14;
+			no_safty=1;
+			modeacc=10;
 			pl_DriveMotor_start();
-			wait_ms(3000);
-			record_mode=11;
-			wait_ms(2000);
+			V_cmd_sysid=0;
+			wait_ms(500);
+			V_cmd_sysid=0.5;
+			wait_ms(1000);
+			pl_DriveMotor_stop();
+			pl_r_blue_LED(OFF);
+			pl_l_blue_LED(OFF);
+		break;
+		case 8:
+			highspeed_mode = 1;
+			start_fun(8);
+			reset_gyro_integral();
+			reset_speed();
+			reset_distance();
+			clear_Ierror();
+			pl_r_blue_LED(ON);
+			pl_l_blue_LED(ON);
+			record_mode=14;
+			no_safty=1;
+			modeacc=10;
+			pl_DriveMotor_start();
+			V_cmd_sysid=0;
+			wait_ms(500);
+			V_cmd_sysid=2.5;
+			wait_ms(500);
+			pl_DriveMotor_stop();
+			pl_r_blue_LED(OFF);
+			pl_l_blue_LED(OFF);
+	break;
+		break;
+		case 9:
+			pl_r_blue_LED(ON);
+			pl_l_blue_LED(ON);
+			record_mode=12;
+			no_safty=1;
+			modeacc=11;
+			pl_DriveMotor_start();
+			V_cmd_sysid=0;
+			wait_ms(500);
+			V_cmd_sysid=0.5;
+			wait_ms(1000);
 			pl_DriveMotor_stop();
 			pl_r_blue_LED(OFF);
 			pl_l_blue_LED(OFF);
@@ -1305,13 +1317,12 @@ void mode_Tuning0(unsigned char main_modeR){
 			pl_r_blue_LED(ON);
 			pl_l_blue_LED(ON);
 			record_mode=12;
-			get_duty(0, 0,&duty_L,&duty_R);
-			pl_DriveMotor_duty(duty_L,duty_R);
+			no_safty=1;
+			modeacc=11;
 			pl_DriveMotor_start();
+			V_cmd_sysid=0;
 			wait_ms(500);
-			get_duty(-2, 2,&duty_L,&duty_R);
-			pl_DriveMotor_duty(duty_L,duty_R);
-			pl_DriveMotor_start();
+			V_cmd_sysid=2;
 			wait_ms(500);
 			pl_DriveMotor_stop();
 			pl_r_blue_LED(OFF);

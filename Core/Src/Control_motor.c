@@ -39,6 +39,8 @@ char modeacc;
 
 uint8_t noGoalPillarMode;
 
+float V_cmd_sysid;
+
 float g_V_L,g_V_R,g_Vol1,g_Vol2;
 
 void Control_mode_Init(void){
@@ -54,6 +56,7 @@ void Control_mode_Init(void){
 	turning.displacement = 0;
 	turning.velocity = 0;
 	turning.acceleration = 0;
+	V_cmd_sysid = 0;
 
 }
 
@@ -149,16 +152,25 @@ void interupt_DriveMotor(void){
 		straight_acceleration_lpf=0;
 
 	}
-	if (modeacc == 1) {
+	if (modeacc == 1 || modeacc == 7 || modeacc == 8) {//直進(7:加速減速分離モード、8:最大スペック加速モード)
 		g_wallCut_mode=1;
 		g_MotorTimCount++;
 		straight.displacement += straight.velocity*INTERRUPT_TIME + straight.acceleration*INTERRUPT_TIME*INTERRUPT_TIME/2;
 		straight.velocity += straight.acceleration*INTERRUPT_TIME;
 		turning.displacement += turning.velocity*INTERRUPT_TIME + turning.acceleration*INTERRUPT_TIME*INTERRUPT_TIME/2;
 		turning.velocity += turning.acceleration*INTERRUPT_TIME;
-		cal_table(Trapezoid_straight,&straight);
+		switch (modeacc) {
+			case 7:
+				cal_table_dis(Trapezoid_straight,&straight); 
+				break;
+			case 8:
+				cal_table_max(Trapezoid_straight,&straight);
+				break;
+			default:
+				cal_table(Trapezoid_straight,&straight);
+		}
 		EncoderGyro_PID(&PID_s,&PID_t,straight.velocity,turning.velocity,turning.displacement);
-		straight_acceleration_lpf=0.9 * straight_acceleration_lpf + (1 - 0.9) * straight.acceleration;
+		straight_acceleration_lpf=0.0 * straight_acceleration_lpf + (1 - 0.0) * straight.acceleration;
 		feedforward_const_accel(&feedforward_straight,(E_lpf_speedL+E_lpf_speedR)/2,
 				straight_acceleration_lpf,&feedforward_turning,
 					angle_speed,turning.acceleration);
@@ -225,7 +237,7 @@ void interupt_DriveMotor(void){
 		pl_DriveMotor_duty(duty_L,duty_R);
 	}if (modeacc == 6 || modeacc == 9) {//ネイピア加速
 		g_WallControl_mode=0;
-				g_wallCut_mode=0;
+		g_wallCut_mode=0;
 		straight.displacement += straight.velocity*INTERRUPT_TIME + straight.acceleration*INTERRUPT_TIME*INTERRUPT_TIME/2;
 		straight.velocity += straight.acceleration*INTERRUPT_TIME;
 		turning.displacement += turning.velocity*INTERRUPT_TIME;// + turning.acceleration*INTERRUPT_TIME*INTERRUPT_TIME/2;
@@ -246,47 +258,22 @@ void interupt_DriveMotor(void){
 		get_duty(V_L, V_R,&duty_L,&duty_R);
 		pl_DriveMotor_duty(duty_L,duty_R);
 
-	}if (modeacc == 7) {
-		g_wallCut_mode=1;
-		g_MotorTimCount++;
-		straight.displacement += straight.velocity*INTERRUPT_TIME + straight.acceleration*INTERRUPT_TIME*INTERRUPT_TIME/2;
-		straight.velocity += straight.acceleration*INTERRUPT_TIME;
-		turning.displacement += turning.velocity*INTERRUPT_TIME + turning.acceleration*INTERRUPT_TIME*INTERRUPT_TIME/2;
-		turning.velocity += turning.acceleration*INTERRUPT_TIME;
-		cal_table_dis(Trapezoid_straight,&straight);
-		EncoderGyro_PID(&PID_s,&PID_t,straight.velocity,turning.velocity,turning.displacement);
-		feedforward_const_accel(&feedforward_straight,(E_lpf_speedL+E_lpf_speedR)/2,
-				straight.acceleration,&feedforward_turning,
-					angle_speed,turning.acceleration);
-		PID_w = calWallConrol();
-		V_L = PID_s-PID_t-PID_w+feedforward_straight-feedforward_turning;
-		V_R = PID_s+PID_t+PID_w+feedforward_straight+feedforward_turning;
-		if(PID_s+feedforward_straight>g_V_battery_mean*MAX_DUTY_RATIO_ST){
-			V_L+=g_V_battery_mean*MAX_DUTY_RATIO_ST-(PID_s+feedforward_straight);
-			V_R+=g_V_battery_mean*MAX_DUTY_RATIO_ST-(PID_s+feedforward_straight);
-		}else if(PID_s+feedforward_straight<-g_V_battery_mean*MAX_DUTY_RATIO_ST){
-			V_L+=-g_V_battery_mean*MAX_DUTY_RATIO_ST-(PID_s+feedforward_straight);
-			V_R+=-g_V_battery_mean*MAX_DUTY_RATIO_ST-(PID_s+feedforward_straight);
-		}
+	}if (modeacc == 10 || modeacc == 11) {
+		g_WallControl_mode=0;
+		g_wallCut_mode=0;
+		
 		get_duty(V_L, V_R,&duty_L,&duty_R);
 		pl_DriveMotor_duty(duty_L,duty_R);
-	}if (modeacc == 8) {
-		g_wallCut_mode=1;
-		g_MotorTimCount++;
-
-		straight.displacement += straight.velocity*INTERRUPT_TIME + straight.acceleration*INTERRUPT_TIME*INTERRUPT_TIME/2;
-		straight.velocity += straight.acceleration*INTERRUPT_TIME;
-
-		turning.displacement += turning.velocity*INTERRUPT_TIME + turning.acceleration*INTERRUPT_TIME*INTERRUPT_TIME/2;
-		turning.velocity += turning.acceleration*INTERRUPT_TIME;
-		cal_table_max(Trapezoid_straight,&straight);
-		EncoderGyro_PID(&PID_s,&PID_t,straight.velocity,turning.velocity,turning.displacement);
-		feedforward_const_accel(&feedforward_straight,(E_lpf_speedL+E_lpf_speedR)/2,
-				straight.acceleration,&feedforward_turning,
-					angle_speed,turning.acceleration);
-		PID_w = calWallConrol();
-		V_L = PID_s-PID_t-PID_w+feedforward_straight-feedforward_turning;
-		V_R = PID_s+PID_t+PID_w+feedforward_straight+feedforward_turning;
+		EncoderGyro_PID(&PID_s,&PID_t,0,0,0);
+		if(modeacc ==10){
+			feedforward_straight = V_cmd_sysid;
+			PID_s = 0;
+		}else{
+			feedforward_turning = V_cmd_sysid;
+			PID_t = 0;
+		}
+		V_L = PID_s-PID_t+feedforward_straight-feedforward_turning;
+		V_R = PID_s+PID_t+feedforward_straight+feedforward_turning;
 		if(PID_s+feedforward_straight>g_V_battery_mean*MAX_DUTY_RATIO_ST){
 			V_L+=g_V_battery_mean*MAX_DUTY_RATIO_ST-(PID_s+feedforward_straight);
 			V_R+=g_V_battery_mean*MAX_DUTY_RATIO_ST-(PID_s+feedforward_straight);

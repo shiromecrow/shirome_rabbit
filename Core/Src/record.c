@@ -131,8 +131,8 @@ void interrupt_record(void) {
 	if (record_mode == 3) {
 			r_data[0] = straight.velocity;
 			r_data[1] = straight.displacement;
-			r_data[2] = (fusion_speedL + fusion_speedR) / 2;
-			r_data[3] = (fusion_distanceL + fusion_distanceR) / 2;
+			r_data[2] = kalman_speed;
+			r_data[3] = kalman_distance;
 			record_data(r_data, 4);
 		}
 	if (record_mode == 4) { //距離の比較
@@ -206,8 +206,8 @@ void interrupt_record(void) {
 					record_data(r_data, 4);
 			}
 	if (record_mode == 14) {
-		r_data[0] = turning.velocity;
-		r_data[1] = g_V_batt;
+		r_data[0] = straight.velocity;
+		r_data[1] = kalman_speed;
 		r_data[2] = g_V_L;
 		r_data[3] = g_V_R;
 					record_data(r_data, 4);
