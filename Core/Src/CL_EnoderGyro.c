@@ -10,6 +10,7 @@
 #include "PL_gyro.h"
 #include "PL_encoder.h"
 #include "PL_timer.h"
+#include "PL_motor.h"
 #include "math.h"
 #include "matrix_calculation.h"
 #include "Control_motor.h" //指令値補正
@@ -263,10 +264,18 @@ void interupt_calEncoder(void) {
 	E_speedL = (angle_L) * pi / 180 * TIRE_DIAMETER /2 * 1000  / INTERRUPT_TIME;
 	E_speedR = (angle_R) * pi / 180 * TIRE_DIAMETER /2 * 1000 / INTERRUPT_TIME;
 */
+if(g_fan_mode==0){
 	E_speedL = (angle_L) * pi / 180 * TIRE_DIAMETER /2 * 1000  / INTERRUPT_TIME*THETA_COMP_L0
-			/(THETA_COMP_L0 + theta_comp_gain*(THETA_COMP_L3*sinf(2*encoder_L*pi/180+THETA_COMP_L4)));
+	/(THETA_COMP_L0 + theta_comp_gain*(THETA_COMP_L3*sinf(2*encoder_L*pi/180+THETA_COMP_L4)));
 	E_speedR = (angle_R) * pi / 180 * TIRE_DIAMETER /2 * 1000 / INTERRUPT_TIME*THETA_COMP_R0
-			/ (THETA_COMP_R0 + theta_comp_gain*(THETA_COMP_R3*sinf(2*encoder_R*pi/180+THETA_COMP_R4)));
+	/ (THETA_COMP_R0 + theta_comp_gain*(THETA_COMP_R3*sinf(2*encoder_R*pi/180+THETA_COMP_R4)));
+}else{
+	E_speedL = (angle_L) * pi / 180 * TIRE_DIAMETER_FAN /2 * 1000  / INTERRUPT_TIME*THETA_COMP_L0
+	/(THETA_COMP_L0 + theta_comp_gain*(THETA_COMP_L3*sinf(2*encoder_L*pi/180+THETA_COMP_L4)));
+	E_speedR = (angle_R) * pi / 180 * TIRE_DIAMETER_FAN /2 * 1000 / INTERRUPT_TIME*THETA_COMP_R0
+	/ (THETA_COMP_R0 + theta_comp_gain*(THETA_COMP_R3*sinf(2*encoder_R*pi/180+THETA_COMP_R4)));
+}
+
 /*
 	E_speedL = (angle_L) * pi / 180 * TIRE_DIAMETER /2 * 1000  / INTERRUPT_TIME*THETA_COMP_L0
 			/(THETA_COMP_L0 + theta_comp_gain*(THETA_COMP_L1*sinf(encoder_L*pi/180+THETA_COMP_L2)

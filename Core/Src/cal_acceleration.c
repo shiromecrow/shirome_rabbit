@@ -323,7 +323,7 @@ if (input.displacement>=0){
 		break;
 	case 1:
 		//加速(減速)
-		if(target->velocity <=3000){
+		if(target->velocity <=2000){
         acc_distance = (target->velocity*target->velocity-input.start_velocity*input.start_velocity)/2/input.acceleration;
         dec_distance = (target->velocity*target->velocity-input.end_velocity*input.end_velocity)/2/input.deceleration;
         if (target->velocity >= input.count_velocity){
@@ -340,7 +340,7 @@ if (input.displacement>=0){
             g_acc_flag=3;
         }
 		}else{
-			acc_distance = distance+velocity*INTERRUPT_TIME;
+			acc_distance = distance;
 			dec_distance = (velocity*velocity-input.end_velocity*input.end_velocity)/2/input.deceleration;
 			target->displacement = distance;
 			target->velocity = velocity;
@@ -353,7 +353,7 @@ if (input.displacement>=0){
 			else if(input.displacement <= (acc_distance + dec_distance)){
 				time_over=(acc_distance + dec_distance - input.displacement)/velocity;
 				target->displacement -= 1/2*INTERRUPT_TIME*input.deceleration*(2*time_over);
-				target->velocity -= input.deceleration*(2*time_over+INTERRUPT_TIME);
+				target->velocity -= input.deceleration*(2*time_over);
 
 				target->acceleration = -input.deceleration;
 				g_acc_flag=3;
@@ -362,7 +362,7 @@ if (input.displacement>=0){
 		break;
 	case 2:
 		//定常
-		acc_distance = (input.count_velocity*input.count_velocity-input.start_velocity*input.start_velocity)/2/input.acceleration;
+		acc_distance = distance;
 		dec_distance = (input.count_velocity*input.count_velocity-input.end_velocity*input.end_velocity)/2/input.deceleration;
 		if (input.displacement-target->displacement <= dec_distance) {
 			time_over=(target->displacement+dec_distance-input.displacement)/target->velocity;
@@ -406,7 +406,7 @@ if (input.displacement>=0){
 		break;
 	case 1:
 		//加速(減速)
-		acc_distance = (target->velocity*target->velocity-input.start_velocity*input.start_velocity)/2/input.acceleration;
+		acc_distance = distance-velocity*INTERRUPT_TIME;
 		dec_distance = (target->velocity*target->velocity-input.end_velocity*input.end_velocity)/2/input.deceleration;
 			if (target->velocity <= input.count_velocity){
 				target->velocity = input.count_velocity;
@@ -424,7 +424,7 @@ if (input.displacement>=0){
 		break;
 	case 2:
 		//定常
-		acc_distance = (input.count_velocity*input.count_velocity-input.start_velocity*input.start_velocity)/2/input.acceleration;
+		acc_distance = distance-velocity*INTERRUPT_TIME;
 		dec_distance = (input.count_velocity*input.count_velocity-input.end_velocity*input.end_velocity)/2/input.deceleration;
 		if (-input.displacement+target->displacement <= dec_distance) {
 			time_over=(target->displacement-dec_distance-input.displacement)/target->velocity;

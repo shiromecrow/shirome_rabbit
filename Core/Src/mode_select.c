@@ -266,7 +266,7 @@ void mode_PLtest(unsigned char main_modeR) {
 
 		break;
 	case 0b0111:
-			start_fun(6.12);
+			start_fun(8);
 			reset_gyro();
 			reset_speed();
 			clear_Ierror();
@@ -604,7 +604,7 @@ void mode_Running2(unsigned char main_modeR){
 		break;
 		case 0b0010:
 			record_out();
-			run_shortest(4000,13000,14000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8,1,2);
+			run_shortest(4000,13000,14000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8,1,0);
 		break;
 		case 0b0011:
 			record_out();

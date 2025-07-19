@@ -8,6 +8,8 @@
 #ifndef INC_PL_MOTOR_H_
 #define INC_PL_MOTOR_H_
 
+#include "stm32g4xx_hal.h"
+
 #define MOTOR_STOP 0
 #define MOTOR_FRONT 1
 #define MOTOR_BACK 2
@@ -23,6 +25,8 @@
 /* ファンの回転で角度ずれるリミット0003 */
 #define FUN_GAP_LIMIT 6.5
 #define FUN_GAP_LIMIT2 7.5
+
+extern uint8_t g_fan_mode;
 
 void pl_motor_init();
 

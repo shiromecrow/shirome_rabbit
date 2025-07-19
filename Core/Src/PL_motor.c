@@ -19,11 +19,14 @@
 #include "gpio.h"
 #include "define.h"
 
+uint8_t g_fan_mode;
+
 void pl_motor_init(void){
-	  HAL_TIM_Base_Start_IT(&htim8);//モータ
-	  HAL_TIM_PWM_MspInit(&htim8);//モータ
-	  HAL_TIM_Base_Start_IT(&htim16);//吸
-	  HAL_TIM_PWM_MspInit(&htim16);//吸
+	g_fan_mode = 0;
+	HAL_TIM_Base_Start_IT(&htim8);//モータ
+	HAL_TIM_PWM_MspInit(&htim8);//モータ
+	HAL_TIM_Base_Start_IT(&htim16);//吸
+	HAL_TIM_PWM_MspInit(&htim16);//吸
 
 	pl_L_DriveMotor_mode(MOTOR_FRONT);
 	__HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_3,90);
@@ -95,10 +98,12 @@ void pl_DriveMotor_duty(int duty_l,int duty_r){
 
 
 void pl_FunMotor_start(void){
+	g_fan_mode = 1;
 	HAL_TIM_PWM_Start(&htim16, TIM_CHANNEL_1);
 }
 
 void pl_FunMotor_stop(void){
+	g_fan_mode = 0;
 	HAL_TIM_PWM_Stop(&htim16, TIM_CHANNEL_1);
 }
 
