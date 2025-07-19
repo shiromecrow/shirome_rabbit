@@ -15,8 +15,8 @@
 //#define CONTROLRIGHTWALL 2
 
 // 壁制御に使用する値
-#define SENSOR_GAIN_P 0.6//0.16横壁制御のゲイン
-#define SENSOR_GAIN_D 0.003//0.16横壁制御のゲイン
+#define SENSOR_GAIN_P 0.5//0.16横壁制御のゲイン
+#define SENSOR_GAIN_D 0.002//0.16横壁制御のゲイン
 //#define SENSOR_GAIN_SHORT 0.5*800/1200//0.16横壁制御のゲイン最短用
 #define SENSOR_GAIN_SHORT_P 0.4//0.16横壁制御のゲイン最短用
 #define SENSOR_GAIN_SHORT_D -0.001//0.16横壁制御のゲイン最短用
@@ -41,14 +41,14 @@
 
 
 //串制御
-#define	CENTER_L_PILLAR	816
-#define	CENTER_R_PILLAR 892
+#define	CENTER_L_PILLAR	561
+#define	CENTER_R_PILLAR 753
 #define SKEWER_GAIN 0.9
 #define SKEWER_GAIN_SHORT 0.9
 #define SKEWER_LIMIT 20//左90
 #define SKEWER_LIMIT_SHORT 90//左90
-#define	PILLAR_THRESHOLD_L	500
-#define	PILLAR_THRESHOLD_R 500
+#define	PILLAR_THRESHOLD_L	300
+#define	PILLAR_THRESHOLD_R 400
 
 //前壁制御3348,SEN3=1366,SEN4=1710
 #define SENSOR_FRONT_GAIN_P 1.8

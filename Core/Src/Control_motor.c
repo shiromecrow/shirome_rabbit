@@ -171,7 +171,7 @@ void interupt_DriveMotor(void){
 		}
 		EncoderGyro_PID(&PID_s,&PID_t,straight.velocity,turning.velocity,turning.displacement);
 		straight_acceleration_lpf=0.0 * straight_acceleration_lpf + (1 - 0.0) * straight.acceleration;
-		feedforward_const_accel(&feedforward_straight,(E_lpf_speedL+E_lpf_speedR)/2,
+		feedforward_const_accel(&feedforward_straight,kalman_speed,
 				straight_acceleration_lpf,&feedforward_turning,
 					angle_speed,turning.acceleration);
 		PID_w = calWallConrol();
@@ -198,7 +198,7 @@ void interupt_DriveMotor(void){
 		turning.velocity += turning.acceleration*INTERRUPT_TIME;
 		cal_table(Trapezoid_turning,&turning);
 		EncoderGyro_PID(&PID_s,&PID_t,straight.velocity,turning.velocity,turning.displacement);
-		feedforward_const_accel(&feedforward_straight,(E_lpf_speedL+E_lpf_speedR)/2,
+		feedforward_const_accel(&feedforward_straight,kalman_speed,
 				straight.acceleration,&feedforward_turning,
 					angle_speed,turning.acceleration);
 		V_L = PID_s-PID_t+feedforward_straight-feedforward_turning;
@@ -243,18 +243,18 @@ void interupt_DriveMotor(void){
 		turning.displacement += turning.velocity*INTERRUPT_TIME;// + turning.acceleration*INTERRUPT_TIME*INTERRUPT_TIME/2;
 		cal_mollifier_table(Mollifier_turning,&turning);//角速度と角加速度はここで決定
 		EncoderGyro_PID(&PID_s,&PID_t,straight.velocity,turning.velocity,turning.displacement);
-		feedforward_const_accel(&feedforward_straight,(E_lpf_speedL+E_lpf_speedR)/2,
+		feedforward_const_accel(&feedforward_straight,kalman_speed,
 				straight.acceleration,&feedforward_turning,
 					angle_speed,turning.acceleration);
 		V_L = PID_s-PID_t+feedforward_straight-feedforward_turning;
 		V_R = PID_s+PID_t+feedforward_straight+feedforward_turning;
-//		if(PID_s+feedforward_straight>g_V_battery_mean*MAX_DUTY_RATIO_ST){
-//			V_L+=g_V_battery_mean*MAX_DUTY_RATIO_ST-(PID_s+feedforward_straight);
-//			V_R+=g_V_battery_mean*MAX_DUTY_RATIO_ST-(PID_s+feedforward_straight);
-//		}else if(PID_s+feedforward_straight<-g_V_battery_mean*MAX_DUTY_RATIO_ST){
-//			V_L+=-g_V_battery_mean*MAX_DUTY_RATIO_ST-(PID_s+feedforward_straight);
-//			V_R+=-g_V_battery_mean*MAX_DUTY_RATIO_ST-(PID_s+feedforward_straight);
-//		}
+		if(PID_s+feedforward_straight>g_V_battery_mean*MAX_DUTY_RATIO_ST){
+			V_L+=g_V_battery_mean*MAX_DUTY_RATIO_ST-(PID_s+feedforward_straight);
+			V_R+=g_V_battery_mean*MAX_DUTY_RATIO_ST-(PID_s+feedforward_straight);
+		}else if(PID_s+feedforward_straight<-g_V_battery_mean*MAX_DUTY_RATIO_ST){
+			V_L+=-g_V_battery_mean*MAX_DUTY_RATIO_ST-(PID_s+feedforward_straight);
+			V_R+=-g_V_battery_mean*MAX_DUTY_RATIO_ST-(PID_s+feedforward_straight);
+		}
 		get_duty(V_L, V_R,&duty_L,&duty_R);
 		pl_DriveMotor_duty(duty_L,duty_R);
 

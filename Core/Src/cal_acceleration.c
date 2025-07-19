@@ -497,7 +497,7 @@ float time_delay5;
 				mollifier_accGain = 0.9 * mollifier_accGain + 0.1 * 0.95;
 				target->acceleration = mollifier_accGain*cal_mollifier_acceleration(mollifier_timer+time_delay5,mollifier_T,input.displacement);
 			}else{
-				mollifier_accGain = 0.9 * mollifier_accGain + 0.1 * 0.3;
+				mollifier_accGain = 0 * mollifier_accGain + 1 * 0;
 				target->acceleration = mollifier_accGain*cal_mollifier_acceleration(mollifier_timer,mollifier_T,input.displacement);
 			}
 /*
