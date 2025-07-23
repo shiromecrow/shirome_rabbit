@@ -229,7 +229,23 @@ void reset_distance(void){
 	fusion_distanceR=0;
 	kalman_distance=0;
 
-    	kal_x_1_predict[0][0] = 0;
+	kal_x_1_predict[0][0] = 0;
+
+
+}
+
+void diff_distance(float comd_distance){
+	E_distanceL -= comd_distance;
+	E_distanceR -= comd_distance;
+	E_lpf_distanceL -= comd_distance;
+	E_lpf_distanceR -= comd_distance;
+	G_hpf_distanceL -= comd_distance;
+	G_hpf_distanceR -= comd_distance;
+	fusion_distanceL -= comd_distance;
+	fusion_distanceR -= comd_distance;
+	kalman_distance -= comd_distance;
+
+	kal_x_1_predict[0][0] -= comd_distance;
 
 
 }

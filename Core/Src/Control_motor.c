@@ -356,8 +356,7 @@ float straight_table_dis(float input_displacement, float input_start_velocity,
 	}
 //	modeacc = 0;
 
-	E_distanceL = E_distanceL - input_displacement;
-	E_distanceR = E_distanceR - input_displacement;
+	diff_distance(input_displacement);	
 
 
 
@@ -422,8 +421,7 @@ float straight_table_max(float input_displacement, float input_start_velocity,
 	}
 //	modeacc = 0;
 
-	E_distanceL = E_distanceL - input_displacement;
-	E_distanceR = E_distanceR - input_displacement;
+	diff_distance(input_displacement);
 
 
 
@@ -600,8 +598,9 @@ float straight_table2(float input_displacement, float input_start_velocity,
 	}
 //	modeacc = 0;
 
-	E_distanceL = E_distanceL - input_displacement;
-	E_distanceR = E_distanceR - input_displacement;
+	diff_distance(input_displacement);
+	
+
 
 
 	}
@@ -636,8 +635,7 @@ void End_straight(float input_displacement,MOTOR_MODE motor_mode,_Bool right_wal
 
 	}
 //	while(g_MotorEnd_flag==0){}
-	E_distanceL = E_distanceL - input_displacement;
-	E_distanceR = E_distanceR - input_displacement;
+	diff_distance(input_displacement);
 	pl_DriveMotor_stop();//これは必要か？
 }
 
@@ -948,8 +946,7 @@ float straight_table_ff(float input_displacement, float input_start_velocity,
 	}
 //	modeacc = 0;
 
-	E_distanceL = E_distanceL - input_displacement;
-	E_distanceR = E_distanceR - input_displacement;
+	diff_distance(input_displacement);
 	pl_DriveMotor_stop();//これは必要か？
 
 

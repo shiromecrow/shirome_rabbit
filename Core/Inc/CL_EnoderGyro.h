@@ -89,6 +89,7 @@ void reset_gyro();
 void reset_EncoderGyro_MeanVariance();
 void reset_gyro_integral();
 void reset_distance();
+void diff_distance(float);
 void reset_speed();
 
 void interupt_calEncoder();
