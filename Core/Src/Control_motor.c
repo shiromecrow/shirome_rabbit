@@ -757,7 +757,7 @@ void no_angle(void){
 	pl_DriveMotor_start();
 	while (g_sensor[0][0] <= SENSOR_FINGER_0 || g_sensor[2][0] <= SENSOR_FINGER_2 || g_sensor[4][0] <= SENSOR_FINGER_4) {
 		HAL_Delay(1);
-//		if(record_time >= max_record_time){
+//		if(record_time >= MAX_RECORD_TIME){
 //			break;
 //		}
 	}

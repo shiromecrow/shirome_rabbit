@@ -9,15 +9,33 @@
 #define INC_RECORD_H_
 
 
-#define max_record_num 4
-#define max_record_time 3000
+#include <stdbool.h>
+
+#define MAX_RECORD_NUM 4
+#define MAX_RECORD_TIME 3000
 
 #define RECORD_STOPNUM -1
 #define RECORD_STOPMODE 1000
 
+typedef struct {
+    const char* header[MAX_RECORD_NUM];
+    void (*record_func)(float*);
+} RecordMode;
+
+extern RecordMode record_modes[];
+extern int num_record_modes;
+
+
 extern short record_mode;
 extern int record_time;
 extern char record_rupe_flag;
+
+
+
+void record_start(int mode_index);
+void record_stop(void);
+void record_pause(void);
+void record_resume(void);
 
 void record_data(float *,int);
 void record_print();

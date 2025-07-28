@@ -13,6 +13,9 @@
  *      Author: sf199
  */
 
+#include <stdio.h>
+#include <math.h>
+
 #include "record.h"
 #include "PL_timer.h"
 #include "PL_encoder.h"
@@ -24,16 +27,16 @@
 #include "PID_wall.h"
 #include "stdio.h"
 #include "define.h"
-#include "math.h"
 #include "cal_acceleration.h"
 
 
 //#include "motor_control.h"
 //#include "PID_wall.h"
 
-float record_value[max_record_num][max_record_time];
+float record_value[MAX_RECORD_NUM][MAX_RECORD_TIME];
 
 short record_mode;
+short head_record_mode;
 
 int sample_time;/* サンプリング時間 [0.5ms] */
 int sample_count;/* サンプリング観測用のカウント値 */
@@ -48,6 +51,345 @@ char recordstop_count = 0;
 
 //int SEN_record[5][15];
 //int SEN_recordD[5][15];
+
+
+// ------------------------------------------------------------
+// 各モード定義（record_mode = 1〜36）
+// ------------------------------------------------------------
+
+// モード01: エンコーダ速度・距離
+void mode1(float* d) {
+    d[0] = E_speedR;
+    d[1] = E_speedL;
+    d[2] = E_distanceR;
+    d[3] = E_distanceL;
+}
+
+// モード02: 回転・直進・推定速度比較
+void mode2(float* d) {
+    d[0] = turning.velocity;
+    d[1] = angle_speed;
+    d[2] = straight.velocity;
+    d[3] = kalman_speed;
+}
+
+// モード03: 直進距離・速度と推定値比較
+void mode3(float* d) {
+    d[0] = straight.velocity;
+    d[1] = straight.displacement;
+    d[2] = kalman_speed;
+    d[3] = kalman_distance;
+}
+
+// モード04: 距離比較（直進 vs エンコーダ vs 推定）
+void mode4(float* d) {
+    d[0] = straight.displacement;
+    d[1] = (E_distanceR + E_distanceL) / 2.0f;
+    d[2] = gf_distance;
+    d[3] = (fusion_distanceR + fusion_distanceL) / 2.0f;
+}
+
+// モード05: 速度比較（直進 vs エンコーダ vs 推定）
+void mode5(float* d) {
+    d[0] = straight.velocity;
+    d[1] = (E_speedL + E_speedR) / 2.0f;
+    d[2] = gf_speed;
+    d[3] = kalman_speed;
+}
+
+// モード06: LPF速度比較
+void mode6(float* d) {
+    d[0] = straight.velocity;
+    d[1] = E_lpf_speedL;
+    d[2] = E_lpf_speedR;
+    d[3] = gf_speed;
+}
+
+// モード07: 左右壁センサの生値と差分
+void mode7(float* d) {
+    d[0] = g_sensor[SENSOR_LEFT][0];
+    d[1] = g_sensor_diff[SENSOR_LEFT];
+    d[2] = g_sensor[SENSOR_RIGHT][0];
+    d[3] = g_sensor_diff[SENSOR_RIGHT];
+}
+
+// モード08: 前壁センサの生値と差分
+void mode8(float* d) {
+    d[0] = g_sensor[SENSOR_FRONT_LEFT][0];
+    d[1] = g_sensor_diff_wallcut[SENSOR_FRONT_LEFT];
+    d[2] = g_sensor[SENSOR_FRONT_RIGHT][0];
+    d[3] = g_sensor_diff_wallcut[SENSOR_FRONT_RIGHT];
+}
+// モード09: 左右壁センサ値 + 壁なし変位（45°斜め）
+void mode9(float* d) {
+    d[0] = g_sensor[SENSOR_LEFT][0];
+    d[1] = g_sensor[SENSOR_RIGHT][0];
+    d[2] = NoWallDisplacementL45slant;
+    d[3] = NoWallDisplacementR45slant;
+}
+
+// モード10: 前左右センサ値 + 壁なし変位（45°斜め）
+void mode10(float* d) {
+    d[0] = g_sensor[SENSOR_FRONT_LEFT][0];
+    d[1] = g_sensor[SENSOR_FRONT_RIGHT][0];
+    d[2] = NoWallDisplacementL45slant;
+    d[3] = NoWallDisplacementR45slant;
+}
+
+
+// モード11: エンコーダ速度とカウント値比較（L/R）
+void mode11(float* d) {
+    d[0] = E_speedL;
+    d[1] = encoder_L;
+    d[2] = E_speedR;
+    d[3] = encoder_R;
+}
+
+// モード12: 回転系速度とモータ個別速度比較
+void mode12(float* d) {
+    d[0] = turning.velocity;
+    d[1] = angle_speed;
+    d[2] = g_V_L;
+    d[3] = g_V_R;
+}
+
+// モード13: 直進速度・エンコーダ速度・gf速度比較
+void mode13(float* d) {
+    d[0] = straight.velocity;
+    d[1] = E_speedR;
+    d[2] = E_speedL;
+    d[3] = gf_speed;
+}
+
+// モード14: 直進速度・Kalman・モータ速度比較
+void mode14(float* d) {
+    d[0] = straight.velocity;
+    d[1] = kalman_speed;
+    d[2] = g_V_L;
+    d[3] = g_V_R;
+}
+
+// モード15: 前左センサ + 壁切れ差分 + 壁なし変位＆回数
+void mode15(float* d) {
+    d[0] = g_sensor[SENSOR_FRONT_LEFT][0];
+    d[1] = g_sensor_diff_wallcut[SENSOR_FRONT_LEFT];
+    d[2] = NoWallDisplacementL45;
+    d[3] = NoWallCountL45;
+}
+
+// モード16: 前右センサ + 壁切れ差分 + 壁なし変位2種
+void mode16(float* d) {
+    d[0] = g_sensor[SENSOR_FRONT_RIGHT][0];
+    d[1] = g_sensor_diff_wallcut_slant[SENSOR_FRONT_RIGHT];
+    d[2] = NoWallDisplacementR45slant;
+    d[3] = NoWallDisplacementR45slant2;
+}
+
+// モード17: 前左センサ + 壁切れ差分 + 壁なし変位2種
+void mode17(float* d) {
+    d[0] = g_sensor[SENSOR_FRONT_LEFT][0];
+    d[1] = g_sensor_diff_wallcut_slant[SENSOR_FRONT_LEFT];
+    d[2] = NoWallDisplacementL45slant;
+    d[3] = NoWallDisplacementL45slant2;
+}
+
+// モード18: 斜め左右センサ距離 + 壁なし変位
+void mode18(float* d) {
+    d[0] = g_sensor_distance_slant[SENSOR_LEFT][0];
+    d[1] = g_sensor_distance_slant[SENSOR_RIGHT][0];
+    d[2] = NoWallDisplacementL45slant;
+    d[3] = NoWallDisplacementR45slant;
+}
+
+// モード19: 斜め前左右センサ距離 + 壁なし変位
+void mode19(float* d) {
+    d[0] = g_sensor_distance_slant[SENSOR_FRONT_LEFT][0];
+    d[1] = g_sensor_distance_slant[SENSOR_FRONT_RIGHT][0];
+    d[2] = NoWallDisplacementL45slant;
+    d[3] = NoWallDisplacementR45slant;
+}
+
+// モード20: 斜め左右センサ距離 + 90度中心補正ログ
+void mode20(float* d) {
+    d[0] = g_sensor_distance_slant[SENSOR_LEFT][0];
+    d[1] = g_sensor_distance_slant[SENSOR_RIGHT][0];
+    d[2] = g_log_CenterSlantL90;
+    d[3] = g_log_CenterSlantR90;
+}
+
+// モード21: 斜め前左右センサ距離 + 45度中心補正ログ
+void mode21(float* d) {
+    d[0] = g_sensor_distance_slant[SENSOR_FRONT_LEFT][0];
+    d[1] = g_sensor_distance_slant[SENSOR_FRONT_RIGHT][0];
+    d[2] = g_log_CenterSlantL45;
+    d[3] = g_log_CenterSlantR45;
+}
+
+
+// モード22: Lターン時のセンサと融合距離
+void mode22(float* d) {
+    float f = (fusion_distanceL + fusion_distanceR) / 2.0f / sqrtf(2.0f);
+    d[0] = g_sensor[SENSOR_LEFT][0];
+    d[1] = f;
+    d[2] = g_sensor[SENSOR_FRONT_LEFT][0];
+    d[3] = f;
+}
+
+// モード23: Rターン時のセンサと融合距離
+void mode23(float* d) {
+    float f = (fusion_distanceL + fusion_distanceR) / 2.0f / sqrtf(2.0f);
+    d[0] = g_sensor[SENSOR_RIGHT][0];
+    d[1] = f;
+    d[2] = g_sensor[SENSOR_FRONT_RIGHT][0];
+    d[3] = f;
+}
+
+// モード24: 複数速度推定の比較
+void mode24(float* d) {
+    d[0] = (E_speedL + E_speedR) / 2.0f;
+    d[1] = (fusion_speedL + fusion_speedR) / 2.0f;
+    d[2] = gf_speed;
+    d[3] = kalman_speed;
+}
+
+// モード25: FF加速度と実加速度の比較
+void mode25(float* d) {
+    d[0] = turning.velocity;
+    d[1] = angle_speed;
+    d[2] = turning.acceleration / 50.0f;
+    d[3] = (turning.velocity - record_buf) / INTERRUPT_TIME / 50.0f;
+    record_buf = turning.velocity;
+}
+
+// モード26: 旋回調整用ログ（回転・角速度・直進・融合速度）
+void mode26(float* d) {
+    d[0] = turning.velocity;
+    d[1] = angle_speed;
+    d[2] = straight.velocity;
+    d[3] = (fusion_speedL + fusion_speedR) / 2.0f;
+}
+
+// モード27: 前壁センサの記録（生値のみ）
+void mode27(float* d) {
+    d[0] = g_sensor[SENSOR_FRONT_L][0];
+    d[1] = g_sensor[SENSOR_FRONT_R][0];
+    d[2] = 0.0f;
+    d[3] = 0.0f;
+}
+
+// モード28: 前壁センサ + 壁切れ判定変位（L/R 45度）
+void mode28(float* d) {
+    d[0] = g_sensor[SENSOR_FRONT_LEFT][0];
+    d[1] = g_sensor[SENSOR_FRONT_RIGHT][0];
+    d[2] = NoWallDisplacementL45;
+    d[3] = NoWallDisplacementR45;
+}
+
+// モード29: 壁切れ差分 + 斜め変位（L/R 45度 Slant2）
+void mode29(float* d) {
+    d[0] = g_sensor_diff_wallcut_slant[SENSOR_FRONT_LEFT];
+    d[1] = g_sensor_diff_wallcut_slant[SENSOR_FRONT_RIGHT];
+    d[2] = NoWallDisplacementL45slant2;
+    d[3] = NoWallDisplacementR45slant2;
+}
+
+// モード30: 速度・角速度・ヨー角の変化（回転中の状態確認）
+void mode30(float* d) {
+    d[0] = (fusion_speedR + fusion_speedL) / 2.0f;
+    d[1] = angle_speed;
+    d[2] = yaw_angle;
+    d[3] = 0.0f;
+}
+
+// モード31: 直進・旋回速度と旋回変位
+void mode31(float* d) {
+    d[0] = straight.velocity;
+    d[1] = turning.velocity;
+    d[2] = turning.displacement;
+    d[3] = 0.0f;
+}
+
+// モード32: モータ左右速度と電圧情報
+void mode32(float* d) {
+    d[0] = g_V_L;
+    d[1] = g_V_R;
+    d[2] = g_Vol1;
+    d[3] = g_Vol2;
+}
+
+// モード33: 電圧と融合・直進速度の比較
+void mode33(float* d) {
+    d[0] = g_Vol1;
+    d[1] = (fusion_speedR + fusion_speedL) / 2.0f;
+    d[2] = straight.velocity;
+    d[3] = 0.0f;
+}
+
+// モード34: 各種速度と角速度の状態確認
+void mode34(float* d) {
+    d[0] = straight.velocity;
+    d[1] = (fusion_speedR + fusion_speedL) / 2.0f;
+    d[2] = turning.velocity;
+    d[3] = angle_speed;
+}
+
+// モード35: 回転速度と加速度・平均エンコーダ速度比較
+void mode35(float* d) {
+    d[0] = turning.velocity;
+    d[1] = angle_speed;
+    d[2] = gf_accel;
+    d[3] = (E_speedL + E_speedR) / 2.0f;
+}
+
+// モード36: モータ推定出力（拡張FF項の確認）
+void mode36(float* d) {
+    d[0] = turning.velocity;
+    d[1] = angle_speed;
+    d[2] = g_V_R * 100.0f;
+    d[3] = g_V_L * 100.0f;
+}
+
+
+RecordMode record_modes[] = {
+    { .header = { "speedR", "speedL", "distR", "distL" }, .record_func = mode1 },
+    { .header = { "turnVel", "angleSpd", "straightVel", "kalmanVel" }, .record_func = mode2 },
+    { .header = { "straightVel", "disp", "kalmanVel", "kalmanDist" }, .record_func = mode3 },
+    { .header = { "disp", "encAvg", "gfDist", "fusionDist" }, .record_func = mode4 },
+    { .header = { "straightVel", "encAvg", "gfSpeed", "kalmanSpeed" }, .record_func = mode5 },
+    { .header = { "straightVel", "LPF_L", "LPF_R", "gfSpeed" }, .record_func = mode6 },
+    { .header = { "leftVal", "leftDiff", "rightVal", "rightDiff" }, .record_func = mode7 },
+    { .header = { "frontL", "diffL", "frontR", "diffR" }, .record_func = mode8 },
+    { .header = { "left", "right", "dispL45S", "dispR45S" }, .record_func = mode9 },
+    { .header = { "frontL", "frontR", "dispL45S", "dispR45S" }, .record_func = mode10 },
+    { .header = { "speedL", "countL", "speedR", "countR" }, .record_func = mode11 },
+    { .header = { "turnVel", "angleSpd", "motorL", "motorR" }, .record_func = mode12 },
+    { .header = { "straightVel", "speedR", "speedL", "gfSpeed" }, .record_func = mode13 },
+    { .header = { "straightVel", "kalmanSpeed", "motorL", "motorR" }, .record_func = mode14 },
+    { .header = { "frontL", "diffL", "dispL45", "countL45" }, .record_func = mode15 },
+    { .header = { "frontR", "diffR", "dispR45S", "dispR45S2" }, .record_func = mode16 },
+    { .header = { "frontL", "diffL", "dispL45S", "dispL45S2" }, .record_func = mode17 },
+    { .header = { "slantL", "slantR", "dispL45S", "dispR45S" }, .record_func = mode18 },
+    { .header = { "slantFL", "slantFR", "dispL45S", "dispR45S" }, .record_func = mode19 },
+    { .header = { "slantL", "slantR", "centerL90", "centerR90" }, .record_func = mode20 },
+    { .header = { "slantFL", "slantFR", "centerL45", "centerR45" }, .record_func = mode21 },
+    { .header = { "left", "fusion", "frontL", "fusion" }, .record_func = mode22 },
+    { .header = { "right", "fusion", "frontR", "fusion" }, .record_func = mode23 },
+    { .header = { "encAvg", "fusionAvg", "gfSpeed", "kalmanSpeed" }, .record_func = mode24 },
+    { .header = { "turnVel", "angleSpd", "FFacc", "RealAcc" }, .record_func = mode25 },
+    { .header = { "turnVel", "angleSpd", "straightVel", "fusionVel" }, .record_func = mode26 },
+    { .header = { "frontL", "frontR", "zero", "zero" }, .record_func = mode27 },
+    { .header = { "frontL", "frontR", "dispL45", "dispR45" }, .record_func = mode28 },
+    { .header = { "diffFL", "diffFR", "dispL45S2", "dispR45S2" }, .record_func = mode29 },
+    { .header = { "fusionVel", "angleSpd", "yaw", "zero" }, .record_func = mode30 },
+    { .header = { "straightVel", "turnVel", "turnDisp", "zero" }, .record_func = mode31 },
+    { .header = { "motorL", "motorR", "vol1", "vol2" }, .record_func = mode32 },
+    { .header = { "vol1", "fusionVel", "straightVel", "zero" }, .record_func = mode33 },
+    { .header = { "straightVel", "fusionVel", "turnVel", "angleSpd" }, .record_func = mode34 },
+    { .header = { "turnVel", "angleSpd", "gfAccel", "encAvg" }, .record_func = mode35 },
+    { .header = { "turnVel", "angleSpd", "VR_100", "VL_100" }, .record_func = mode36 },
+};
+int num_record_modes = sizeof(record_modes) / sizeof(RecordMode);
+
 
 void record_reset(void) {
 	record_mode = 0;
@@ -71,7 +413,7 @@ void record_data(float *input_record_data, int numlen) {
 			record_end_point = record_time;
 		}
 		record_time++;
-		if (record_time >= max_record_time) {
+		if (record_time >= MAX_RECORD_TIME) {
 			record_time = 0;
 			record_rupe_flag = 1;
 		}
@@ -84,24 +426,33 @@ void record_data(float *input_record_data, int numlen) {
 
 void record_print(void) {
 	int a, time_index;
+
+	// ヘッダー行
+    printf("Time[s]");
+    for (int i = 0; i < MAX_RECORD_NUM; i++) {
+        printf(",%s", record_modes[head_record_mode - 1].header[i]);
+    }
+    printf("\n");
+
+
 	if (record_rupe_flag == 0) {
 		for (a = 0; a <= record_time - 1; a++) {
 
 			printf("%f", (float)(a*sample_time)*INTERRUPT_TIME);
-			for (int record_count = 0; record_count < max_record_num;
+			for (int record_count = 0; record_count < MAX_RECORD_NUM;
 					record_count++) {
 				printf(",%f", record_value[record_count][a]);
 			}
 			printf("\n");
 		}
 	} else {
-		for (a = 0; a <= max_record_time - 1; a++) {
+		for (a = 0; a <= MAX_RECORD_TIME - 1; a++) {
 			time_index = record_end_point + 1 + a;
-			if (time_index >= max_record_time) {
-				time_index -= max_record_time;
+			if (time_index >= MAX_RECORD_TIME) {
+				time_index -= MAX_RECORD_TIME;
 			}
 			printf("%f", (float)(a*sample_time)*INTERRUPT_TIME);
-			for (int record_count = 0; record_count < max_record_num;
+			for (int record_count = 0; record_count < MAX_RECORD_NUM;
 					record_count++) {
 				printf(",%f", record_value[record_count][time_index]);
 			}
@@ -112,275 +463,31 @@ void record_print(void) {
 }
 
 void interrupt_record(void) {
+	float r_data[MAX_RECORD_NUM];
 
-	float r_data[4];
-	
-	if (record_mode == 1) {
-			r_data[0] = E_speedR;
-			r_data[1] = E_speedL;
-			r_data[2] = E_distanceR;
-			r_data[3] = E_distanceL;
-			record_data(r_data, 4);
-		}
-	if (record_mode == 2) {
-		r_data[0] = turning.velocity;
-		r_data[1] = angle_speed;
-		r_data[2] = straight.velocity;
-		r_data[3] = kalman_speed;
-				record_data(r_data, 4);
-		}
-	if (record_mode == 3) {
-			r_data[0] = straight.velocity;
-			r_data[1] = straight.displacement;
-			r_data[2] = kalman_speed;
-			r_data[3] = kalman_distance;
-			record_data(r_data, 4);
-		}
-	if (record_mode == 4) { //距離の比較
-			r_data[0] = straight.displacement;
-			r_data[1] = (E_distanceR + E_distanceL) / 2;
-			r_data[2] = gf_distance;
-			r_data[3] = (fusion_distanceR + fusion_distanceL) / 2;
-			record_data(r_data, 4);
-		}
-	if (record_mode == 5) { //距離の比較
-			r_data[0] = straight.velocity;
-			r_data[1] = (E_speedL + E_speedR)/2;
-			r_data[2] = gf_speed;
-			r_data[3] = kalman_speed;//kalman_speed;
-			record_data(r_data, 4);
-		}
-	if (record_mode == 6) { //距離の比較
-				r_data[0] = straight.velocity;
-				r_data[1] = E_lpf_speedL;
-				r_data[2] = E_lpf_speedR;
-				r_data[3] = gf_speed;
-				record_data(r_data, 4);
-			}
-	if (record_mode == 7) {
-			r_data[0] = (float) g_sensor[SENSOR_LEFT][0];
-			r_data[1] = (float) g_sensor_diff[SENSOR_LEFT];
-			r_data[2] = (float) g_sensor[SENSOR_RIGHT][0];
-			r_data[3] = (float) g_sensor_diff[SENSOR_RIGHT];
-			record_data(r_data, 4);
-		}
-	if (record_mode == 8) {
-			r_data[0] = (float) g_sensor[SENSOR_FRONT_LEFT][0];
-			r_data[1] = (float) g_sensor_diff_wallcut[SENSOR_FRONT_LEFT];
-			r_data[2] = (float) g_sensor[SENSOR_FRONT_RIGHT][0];
-			r_data[3] = (float) g_sensor_diff_wallcut[SENSOR_FRONT_RIGHT];
-			record_data(r_data, 4);
-		}
-	if (record_mode == 9) { //90
-			r_data[0] = (float) g_sensor[SENSOR_LEFT][0];
-			r_data[1] = (float) g_sensor[SENSOR_RIGHT][0];
-			r_data[2] = NoWallDisplacementL45slant;
-			r_data[3] = NoWallDisplacementR45slant;
-			record_data(r_data, 4);
-		}
-	if (record_mode == 10) { //90
-			r_data[0] = (float) g_sensor[SENSOR_FRONT_LEFT][0];
-			r_data[1] = (float) g_sensor[SENSOR_FRONT_RIGHT][0];
-			r_data[2] = NoWallDisplacementL45slant;
-			r_data[3] = NoWallDisplacementR45slant;
-			record_data(r_data, 4);
-		}
-	if (record_mode == 11) { //距離の比較
-				r_data[0] = E_speedL;
-				r_data[1] = encoder_L;
-				r_data[2] = E_speedR;
-				r_data[3] = encoder_R;
-				record_data(r_data, 4);
-			}
-	if (record_mode == 12) {
-		r_data[0] = turning.velocity;
-		r_data[1] = angle_speed;
-		r_data[2] = g_V_L;
-		r_data[3] = g_V_R;
-				record_data(r_data, 4);
-		}
-	if (record_mode == 13) {
-			r_data[0] = straight.velocity;
-			r_data[1] = E_speedR;
-			r_data[2] = E_speedL;
-			r_data[3] = gf_speed;
-					record_data(r_data, 4);
-			}
-	if (record_mode == 14) {
-		r_data[0] = straight.velocity;
-		r_data[1] = kalman_speed;
-		r_data[2] = g_V_L;
-		r_data[3] = g_V_R;
-					record_data(r_data, 4);
-			}
+	if (record_mode == 0) {
+		return;
+	}else{
+		head_record_mode = record_mode;
+	}
 
-	if (record_mode == 15) {
-			r_data[0] = (float) g_sensor[SENSOR_FRONT_LEFT][0];
-			r_data[1] = (float) g_sensor_diff_wallcut[SENSOR_FRONT_LEFT];
-			r_data[2] = (float) NoWallDisplacementL45;
-			r_data[3] = (float) NoWallCountL45;
-			record_data(r_data, 4);
-		}
+	if (record_mode == RECORD_STOPMODE && recordstop_count == 0 ) {
+		r_data[0] = RECORD_STOPNUM;
+		r_data[1] = RECORD_STOPNUM;
+		r_data[2] = RECORD_STOPNUM;
+		r_data[3] = RECORD_STOPNUM;
+		record_data(r_data, 4);	
+		return;		
+	}
 
-	if (record_mode == 16) {
-			r_data[0] = (float) g_sensor[SENSOR_FRONT_RIGHT][0];
-			r_data[1] = (float) g_sensor_diff_wallcut_slant[SENSOR_FRONT_RIGHT];
-			r_data[2] = (float) NoWallDisplacementR45slant;
-			r_data[3] = (float) NoWallDisplacementR45slant2;
-			record_data(r_data, 4);
-		}
-	if (record_mode == 17) {
-			r_data[0] = (float) g_sensor[SENSOR_FRONT_LEFT][0];
-			r_data[1] = (float) g_sensor_diff_wallcut_slant[SENSOR_FRONT_LEFT];
-			r_data[2] = (float) NoWallDisplacementL45slant;
-			r_data[3] = (float) NoWallDisplacementL45slant2;
-			record_data(r_data, 4);
-		}
-	if (record_mode == 18) { //90
-			r_data[0] = g_sensor_distance_slant[SENSOR_LEFT][0];
-			r_data[1] = g_sensor_distance_slant[SENSOR_RIGHT][0];
-			r_data[2] = NoWallDisplacementL45slant;
-			r_data[3] = NoWallDisplacementR45slant;
-			record_data(r_data, 4);
-		}
-	if (record_mode == 19) { //90
-			r_data[0] = g_sensor_distance_slant[SENSOR_FRONT_LEFT][0];
-			r_data[1] = g_sensor_distance_slant[SENSOR_FRONT_RIGHT][0];
-			r_data[2] = NoWallDisplacementL45slant;
-			r_data[3] = NoWallDisplacementR45slant;
-			record_data(r_data, 4);
-		}
-	if (record_mode == 20) { //90
-			r_data[0] = g_sensor_distance_slant[SENSOR_LEFT][0];
-			r_data[1] = g_sensor_distance_slant[SENSOR_RIGHT][0];
-			r_data[2] = g_log_CenterSlantL90;
-			r_data[3] = g_log_CenterSlantR90;
-			record_data(r_data, 4);
-		}
-	if (record_mode == 21) { //90
-			r_data[0] = g_sensor_distance_slant[SENSOR_FRONT_LEFT][0];
-			r_data[1] = g_sensor_distance_slant[SENSOR_FRONT_RIGHT][0];
-			r_data[2] = g_log_CenterSlantL45;
-			r_data[3] = g_log_CenterSlantR45;
-			record_data(r_data, 4);
-		}
-	if (record_mode == 22) { //L
-			r_data[0] = (float) g_sensor[SENSOR_LEFT][0];
-			r_data[1] = (fusion_distanceL + fusion_distanceR) / 2 / sqrt(2);
-			r_data[2] = (float) g_sensor[SENSOR_FRONT_LEFT][0];
-			r_data[3] = (fusion_distanceL + fusion_distanceR) / 2 / sqrt(2);
-			record_data(r_data, 4);
-		}
-	if (record_mode == 23) { //R
-			r_data[0] = (float) g_sensor[SENSOR_RIGHT][0];
-			r_data[1] = (fusion_distanceL + fusion_distanceR) / 2 / sqrt(2);
-			r_data[2] = (float) g_sensor[SENSOR_FRONT_RIGHT][0];
-			r_data[3] = (fusion_distanceL + fusion_distanceR) / 2 / sqrt(2);
-			record_data(r_data, 4);
-		}
-	if (record_mode == 24) { //距離の比較
-			r_data[0] = (E_speedL + E_speedR)/2;
-			r_data[1] = (fusion_speedL + fusion_speedR) / 2;
-			r_data[2] = gf_speed;
-			r_data[3] = kalman_speed;
-			record_data(r_data, 4);
-		}
-	if (record_mode == 25) {// 旋回加速度FFの確認
-		
-		r_data[0] = turning.velocity;
-		r_data[1] = angle_speed;
-		r_data[2] = turning.acceleration / 50;
-		r_data[3] = (turning.velocity - record_buf)/INTERRUPT_TIME / 50;
-		record_buf = turning.velocity;
-		record_data(r_data, 4);
-		}
-	if (record_mode == 26) { //ターン調整用
-		r_data[0] = turning.velocity;
-		r_data[1] = angle_speed;
-		r_data[2] = straight.velocity;
-		r_data[3] = (fusion_speedL + fusion_speedR) / 2;
-				record_data(r_data, 4);
-		}
-	if (record_mode == 27) { //前壁制御
-			r_data[0] = (float) g_sensor[SENSOR_FRONT_L][0];
-			r_data[1] = (float) g_sensor[SENSOR_FRONT_R][0];;
-			r_data[2] = 0;
-			r_data[3] = 0;
-			record_data(r_data, 4);
-		}
-		if (record_mode == 28) { //壁切れ計測
-			r_data[0] = g_sensor[SENSOR_FRONT_LEFT][0];
-			r_data[1] = g_sensor[SENSOR_FRONT_RIGHT][0];
-			r_data[2] = NoWallDisplacementL45;
-			r_data[3] = NoWallDisplacementR45;
-			record_data(r_data, 4);
-		}
-		if (record_mode == 29) { //壁切れ計測
-			r_data[0] = g_sensor_diff_wallcut_slant[SENSOR_FRONT_LEFT];
-			r_data[1] = g_sensor_diff_wallcut_slant[SENSOR_FRONT_RIGHT];
-			r_data[2] = NoWallDisplacementL45slant2;
-			r_data[3] = NoWallDisplacementR45slant2;
-			record_data(r_data, 4);
-		}
-		if (record_mode == 30) { //壁切れ計測
-			r_data[0] = (fusion_speedR + fusion_speedL) / 2;
-			r_data[1] = angle_speed;
-			r_data[2] = yaw_angle;
-			r_data[3] = 0;
-			record_data(r_data, 4);
-		}
-		if (record_mode == 31) { //壁切れ計測
-			r_data[0] = straight.velocity;
-			r_data[1] = turning.velocity;
-			r_data[2] = turning.displacement;
-			r_data[3] = 0;
-			record_data(r_data, 4);
-		}
-		if (record_mode == 32) { //壁切れ計測
-			r_data[0] = g_V_L;
-			r_data[1] = g_V_R;
-			r_data[2] = g_Vol1;
-			r_data[3] = g_Vol2;
-			record_data(r_data, 4);
-		}
-		if (record_mode == 33) { //壁切れ計測
-			r_data[0] = g_Vol1;
-			r_data[1] = (fusion_speedR + fusion_speedL) / 2;
-			r_data[2] = straight.velocity;
-			r_data[3] = 0;
-			record_data(r_data, 4);
-		}
-		if (record_mode == 34) { //壁切れ計測
-			r_data[0] = straight.velocity;
-			r_data[1] = (fusion_speedR + fusion_speedL) / 2;
-			r_data[2] = turning.velocity;
-			r_data[3] = angle_speed;
-			record_data(r_data, 4);
-		}
-		if (record_mode == 35) {
-			r_data[0] = turning.velocity;
-			r_data[1] = angle_speed;
-			r_data[2] = gf_accel;
-			r_data[3] = (E_speedL + E_speedR)/2;
-					record_data(r_data, 4);
-			}
-		if (record_mode == 36) { //FF項デバック
-			r_data[0] = turning.velocity;
-			r_data[1] = angle_speed;
-			r_data[2] = g_V_R*100;
-			r_data[3] = g_V_L*100;
-						record_data(r_data, 4);
-		}
-			if (record_mode == RECORD_STOPMODE && recordstop_count == 0 ) {
-			r_data[0] = RECORD_STOPNUM;
-			r_data[1] = RECORD_STOPNUM;
-			r_data[2] = RECORD_STOPNUM;
-			r_data[3] = RECORD_STOPNUM;
-			record_data(r_data, 4);			
-		}
-		if (record_mode != RECORD_STOPMODE){
-			recordstop_count=0;
-		}
+	if(record_mode < num_record_modes){
+    	record_modes[record_mode - 1].record_func(r_data);
+    	record_data(r_data, MAX_RECORD_NUM);
+	}
+
+	if (record_mode != RECORD_STOPMODE){
+		recordstop_count=0;
+	}
 
 
 }
