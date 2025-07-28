@@ -86,7 +86,7 @@ void interrupt_FailSafe(void){
 			//ジャイロの誤差が一定以上
 					if (fabs(turning.velocity - angle_speed) >= gyro_PID_error_in ) {
 						error_count1++;
-						if(error_count1>=35){
+						if(error_count1>=25){
 							stop_fun();
 							g_WallControl_mode =0;
 							error_mode = 1;
