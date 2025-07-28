@@ -18,7 +18,8 @@
 			"maze_wall.h": "c",
 			"stdio.h": "c",
 			"ff_motor.h": "c",
-			"control_motor.h": "c"
+			"control_motor.h": "c",
+			"pl_encoder.h": "c"
 		}
 	}
 }

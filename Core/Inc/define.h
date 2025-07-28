@@ -43,8 +43,8 @@
 
 // 16対応
 #define GOAL_SIZE 2
-#define GOAL_X 6
-#define GOAL_Y 6
+#define GOAL_X 7
+#define GOAL_Y 7
 #define GOAL_ALL ((x == GOAL_X || x == GOAL_X + 1) && (y == GOAL_Y || y == GOAL_Y + 1))
 #define GOAL_ALL_D ((xd == GOAL_X || xd == GOAL_X + 1) && (yd == GOAL_Y || yd == GOAL_Y + 1))
 #define MAZE_TIMER 4

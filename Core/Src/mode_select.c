@@ -874,7 +874,7 @@ void mode_Tuning2(unsigned char main_modeR){
 		break;
 		case 15://直線
 			highspeed_mode = 1;
-			start_fun(8);
+			start_fun(8.1);
 			//reset_gyro();
 			reset_gyro_integral();
 			reset_speed();
@@ -887,7 +887,7 @@ void mode_Tuning2(unsigned char main_modeR){
 			mode.WallControlMode=1;
 //			straight_table2(BACK_TO_CENTER_FRONT,0,1000,1000,1000*1000/ BACK_TO_CENTER_FRONT/2, mode);
 			//straight_table2(90*8, 0, 0, 6000, 60000,mode);
-			straight_table_max(90*8, 0, 0, 6000, 60000,60000,mode);
+			straight_table_max(90*8, 0, 0, 6000,55000,55000,mode);
 		break;
 	}
 	record_mode=0;
@@ -1165,7 +1165,7 @@ void mode_Tuning1(unsigned char main_modeR){
 		break;
 		case 15://直線
 			highspeed_mode = 1;
-			start_fun(6.12);
+			start_fun(8.1);
 			//reset_gyro();
 			reset_gyro_integral();
 			reset_speed();
@@ -1179,7 +1179,7 @@ void mode_Tuning1(unsigned char main_modeR){
 			mode.WallControlMode=1;
 //			straight_table2(BACK_TO_CENTER_FRONT,0,1000,1000,1000*1000/ BACK_TO_CENTER_FRONT/2, mode);
 			// straight_table2(90*8, 0, 0, 4000, 50000,mode);
-			straight_table2(90*8, 0, 0, 4000, 17000,mode);
+			straight_table2(90*8, 0, 0, 3500, 25000,mode);
 			//straight_table_dis(90*8, 0, 0, 4000,30000,11000,mode);
 		break;
 	}
