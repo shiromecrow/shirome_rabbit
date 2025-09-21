@@ -102,7 +102,7 @@ void run_movement_continuity(int *direction,unsigned short front_count,unsigned 
 		mode.WallCutMode=0;
 		straight_table2(MAZE_SECTION / 2 - MAZE_OFFSET + (BACK_TO_CENTER - BACK_TO_CENTER_FRONT), input_StraightVelocity, 0, input_StraightVelocity, input_StraightAcceleration, mode);
 
-		create_DijkstraMap();
+		create_DijkstraMap3();
 		backTurn_controlWall(input_TurningVelocity, input_TurningAcceleration, front_wall, left_wall, right_wall);
 		//backTurn_hitWall(input_TurningVelocity, input_TurningAcceleration, front_wall, left_wall, right_wall);
 		//wait_ms_NoReset(200);
@@ -152,7 +152,7 @@ void run_movement_suspension(int *direction, unsigned short front_count,
 	//enc.sigma_error = 0;
 
 	if(Dijkstra_mode==1){
-		create_DijkstraMap();
+		create_DijkstraMap3();
 		route_Dijkstra(); //ダイクストラ法の結果から最短ルートをスタックに入れる
 		create_StepCountMap_unknown();
 		search_AroundWalkCount(&front_count, &right_count, &back_count, &left_count, x, y, *direction);
@@ -589,8 +589,8 @@ void pass_maker_Dijkstra(void){
 	int y = 0;
 	int direction = 1;
 	pass_count = 0;
-	create_DijkstraMap();
-	//maze_display_Dijkstra();
+	create_DijkstraMap3();
+	maze_display_Dijkstra();
 	pass[0] = 1;
 	while (1) {
 //		if (mode_safty == 1) {break;}
@@ -726,6 +726,11 @@ void run_shortest(float inspeed, float inacc, float indec, char pass_mode, char 
 	float first_v;//,last_v
 	float end_velocity;
 
+	g_dijkstra_parameter.max_velocity=inspeed;
+    g_dijkstra_parameter.acceleration=inacc;
+    g_dijkstra_parameter.Turn_parameter=howspeed;
+	g_dijkstra_parameter.Turn_parameter_corrtime = convert_parameter_speed_to_corrtime(&g_dijkstra_parameter.Turn_parameter);
+
 //	unsigned short front_count, right_count, back_count, left_count;
 //
 //	_Bool front_wall;
@@ -757,6 +762,7 @@ void run_shortest(float inspeed, float inacc, float indec, char pass_mode, char 
 	}
 	//pass_maker();
    pass_maker_Dijkstra();
+   //maze_display_Dijkstra();
 
 	pass_count = 1;
 if(pass_mode==1){

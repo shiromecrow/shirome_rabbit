@@ -484,7 +484,7 @@ void mode_Running(unsigned char main_modeR){
 			create_StepCountMap_queue();
 			maze_display(&wall);
 
-			create_DijkstraMap();
+			create_DijkstraMap3();
 			maze_display_Dijkstra();
 
 			route_Dijkstra();
@@ -492,15 +492,15 @@ void mode_Running(unsigned char main_modeR){
 			maze_display(&wall);
 
 			tic_timer();
-			for(int j=0;j<1000;j++){
+			for(int j=0;j<10;j++){
 			create_StepCountMap_queue();
 			}
 			float tim2 = toc_timer();
 			maze_display(&wall);
 			printf("tim2=%f\n", tim2);
 			tic_timer();
-			create_DijkstraMap();
-			for(int j=0;j<100;j++){
+			create_DijkstraMap3();
+			for(int j=0;j<10;j++){
 			//create_StepCountMap();
 			//maze_clear();
 			//create_DijkstraMap();

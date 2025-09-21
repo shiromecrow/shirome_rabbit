@@ -16,10 +16,12 @@
 
 #include "maze_wall.h"
 #include "fail_safe.h"
-#include"maze_strategy.h"
-#include"define.h"
-#include "stdio.h"
+#include "maze_strategy.h"
+#include "define.h"
+#include <stdio.h>
 #include <inttypes.h>
+#include <math.h>
+
 
 
 WALL wall;
@@ -34,6 +36,7 @@ uint16_t walk_count[MAZE_SQUARE_NUM][MAZE_SQUARE_NUM]; //歩数いれる箱
 DIJKSTRA Dijkstra;
 STACK_T g_Goal_x;
 STACK_T g_Goal_y;
+Dijkstra_parameter g_dijkstra_parameter;
 
 //int16_t discount_v[V_NUM_MAX]={129,74,61,53,45};//5
 // int16_t discount_d[D_NUM_MAX]={91,58,49,43,32};//5
@@ -66,6 +69,11 @@ void maze_clear(void) { //初期化
 		tt++;
 	}
 	tt = 0;
+
+	g_dijkstra_parameter.max_velocity=5000;
+    g_dijkstra_parameter.acceleration=35000;
+    g_dijkstra_parameter.Turn_parameter=speed1600_shortest_mollifier;
+	g_dijkstra_parameter.Turn_parameter_corrtime = convert_parameter_speed_to_corrtime(&g_dijkstra_parameter.Turn_parameter);
 //	wall.row[0]=0;wall.row[1]=2;wall.row[2]=32762;wall.row[3]=50;wall.row[4]=16320;wall.row[5]=423;wall.row[6]=105;wall.row[7]=32490;
 //	wall.row[8]=469;wall.row[9]=533;wall.row[10]=1258;wall.row[11]=3182;wall.row[12]=7837;wall.row[13]=13818;wall.row[14]=57342;
 //	wall.column[0] = 20499;wall.column[1] = 8301;wall.column[2] = 61;wall.column[3] = 50;wall.column[4] = 6261;wall.column[5] = 10130;wall.column[6] = 4117;wall.column[7] = 3149;
@@ -287,6 +295,171 @@ void get_wall_look(int x,int y,int direction,_Bool* front_wall,_Bool* right_wall
 }
 
 
+int16_t add_or_zero(int16_t a, int16_t b) {
+	int16_t c;
+	c = a + b;
+    if (c > 0) {
+        return c;
+    } else {
+        return 0;
+    }
+}
+
+/**
+ * @brief 1ステップ分の移動コスト差分を計算する
+ * 
+ * @param step_index  移動ステップ番号（1以上）
+ * @param is_diagonal 0:直進移動, 1:斜め移動
+ * @param Turn_velocity 旋回速度
+ * @param max_velocity 直進最高速
+ * @param acc 加速度
+ * @return 差分コスト（整数値）
+ */
+uint16_t compute_step_cost_diff(int step_index,uint8_t is_diagonal,float Turn_velocity,float max_velocity,float acc,int16_t correction_time){
+    float secTOcost=1000;
+    if (step_index < 0) return 0;
+	// if(g_Dijkstra_ver3==OFF){
+	// 	if(is_diagonal==0){return discount_v[step_index];}else{return discount_d[step_index];}
+	// }
+	
+    float unit_distance = is_diagonal ? 63.6396f : 90.0f;//is_diagonalなら距離変更
+
+    if (step_index == 0) {
+        // 初期コスト：加速しない（旋回のみ）
+        float start_cost = unit_distance / Turn_velocity * secTOcost;
+		uint16_t time_cost=(uint16_t)roundf(add_or_zero(start_cost, correction_time));
+        return time_cost;
+    }
+
+
+    float dist_prev = unit_distance * step_index;
+    float dist_curr = unit_distance * (step_index + 1);
+
+
+    float threshold = (max_velocity * max_velocity - Turn_velocity * Turn_velocity) / acc;//十分に加速できる距離があるか
+
+    // 前ステップの移動時間
+    float time_prev;
+    if (dist_prev < threshold) {
+        float peak_v_prev = sqrtf(Turn_velocity*Turn_velocity + acc * dist_prev);
+        time_prev = 2.0f * (peak_v_prev - Turn_velocity) / acc * secTOcost;
+    } else {
+        float const_dist_prev = dist_prev - threshold;
+        time_prev = (2.0f * (max_velocity - Turn_velocity) / acc + const_dist_prev / max_velocity) * secTOcost;
+    }
+
+    // 現ステップの移動時間
+    float time_curr;
+    if (dist_curr < threshold) {
+        float peak_v_curr = sqrtf(Turn_velocity*Turn_velocity + acc * dist_curr);
+        time_curr = 2.0f * (peak_v_curr - Turn_velocity) / acc * secTOcost;
+    } else {
+        float const_dist_curr = dist_curr - threshold;
+        time_curr = (2.0f * (max_velocity - Turn_velocity) / acc + const_dist_curr / max_velocity) * secTOcost;
+    }
+
+    return (uint16_t)roundf(time_curr - time_prev);
+}
+
+
+/**
+ * @brief 方向履歴に応じたターン速度を返す関数
+ *
+ * 指定された方向バッファ（dir_buf2, dir_buf1, dir）を元に、
+ * 移動タイプ（直進・斜め）とターンパターン（45in/out, 90, 135in/out, 180, V90）を判定し、
+ * それぞれに対応するターン中心速度を返す。
+ * 
+ * 使用例：経路探索中の動的コスト計算、走行制御フェーズの速度選択などに活用可能。
+ * 
+ * @param dir_buf2    2つ前の方向（0〜7: 方位定数）
+ * @param dir_buf1    1つ前の方向（0〜7: 方位定数）
+ * @param dir         現在の方向（0〜7: 方位定数、8はエラー）
+ * @param dir_next    次の方向（0〜7: 方位定数、8はエラー）
+ * @param param       Dijkstra_parameter 構造体ポインタ（ターンプロファイル含む）
+ * @param turn_velocity 出力：ターン時の中心速度 [mm/s]
+ * @param correction_time 出力：ターン前の補正時間 [ms]
+ * @return ターン速度（float型, mm/s）
+ */
+
+void calculate_turn_profile(uint8_t dir_next,volatile uint8_t dir,uint8_t dir_buf1,uint8_t dir_buf2,float *turn_velocity,int16_t *correction_time) {
+	*turn_velocity = g_dijkstra_parameter.Turn_parameter.TurnCentervelocity;
+	*correction_time = 0;
+	// if(g_Dijkstra_ver3==OFF){
+	// 	return;
+    // }
+    // 異常値チェック
+    if (dir >= 8) {
+		return;
+    }
+
+    if ((dir_next & 1) == 0) {
+        // 偶数方向 → 直進
+        if (dir_buf1 == dir) {
+            // 45inターン処理
+			*turn_velocity = g_dijkstra_parameter.Turn_parameter.turn45in_R.g_speed;
+			*correction_time = 0;
+            return;
+        }
+		if((dir_buf1 & 1) == 0){
+			// 90ターン処理(90 + 45.0f * sqrtf(2.0f))*1000
+			*turn_velocity = g_dijkstra_parameter.Turn_parameter.turn90_R.g_speed;
+			*correction_time = g_dijkstra_parameter.Turn_parameter_corrtime.turn90_corrtime;
+            return;
+		}
+        if (dir_buf1 == dir_buf2) {
+            // 135inターン処理(90 + 2 * 45.0f * sqrtf(2.0f))
+			*turn_velocity = g_dijkstra_parameter.Turn_parameter.turn135in_R.g_speed;
+			*correction_time = g_dijkstra_parameter.Turn_parameter_corrtime.turn135in_corrtime;
+            return;
+		}
+        
+		// 180ターン処理(2 * 90 + 2 * 45.0f * sqrtf(2.0f))
+		*turn_velocity = g_dijkstra_parameter.Turn_parameter.turn180_R.g_speed;
+		*correction_time = g_dijkstra_parameter.Turn_parameter_corrtime.turn180_corrtime;
+        return;
+            
+		
+    } else {
+        // 奇数方向 → 斜め
+        if ((dir & 1) == 0) {
+            // 直進へ → 45outターン
+			*turn_velocity = g_dijkstra_parameter.Turn_parameter.turn45out_R.g_speed;
+			*correction_time = 0;
+            return;
+        }
+        if (dir_buf1 == dir) {
+            // V90ターン処理(45.0f * sqrtf(2.0f))
+			*turn_velocity = g_dijkstra_parameter.Turn_parameter.V90_R.g_speed;
+			*correction_time = g_dijkstra_parameter.Turn_parameter_corrtime.V90_corrtime;
+            return;
+        }
+
+        // 135outターン処理(2 * 45.0f * sqrtf(2.0f))
+		*turn_velocity = g_dijkstra_parameter.Turn_parameter.turn135out_R.g_speed;
+		*correction_time = g_dijkstra_parameter.Turn_parameter_corrtime.turn135out_corrtime;
+        return;
+            
+    }
+
+}
+
+parameter_speed_corrtime convert_parameter_speed_to_corrtime(const parameter_speed *src) {
+    parameter_speed_corrtime corrtime;
+	float secTOcost=1000;//defineのほうがいいかも
+
+    corrtime.turn90_corrtime = (int16_t)roundf((90 + 45.0f * sqrtf(2.0f))*(1/g_dijkstra_parameter.Turn_parameter.turn90_R.g_speed-1/g_dijkstra_parameter.Turn_parameter.turn45in_R.g_speed) * secTOcost);
+    corrtime.turn180_corrtime  =(int16_t)roundf((2 * 90 + 2 * 45.0f * sqrtf(2.0f))*(1/g_dijkstra_parameter.Turn_parameter.turn180_R.g_speed-1/g_dijkstra_parameter.Turn_parameter.turn45in_R.g_speed) * secTOcost);
+    corrtime.turn135in_corrtime  =(int16_t)roundf((90 + 2 * 45.0f * sqrtf(2.0f))*(1/g_dijkstra_parameter.Turn_parameter.turn135in_R.g_speed-1/g_dijkstra_parameter.Turn_parameter.turn45in_R.g_speed) * secTOcost);
+    corrtime.turn135out_corrtime   = (int16_t)roundf(2 * 45.0f * sqrtf(2.0f)*(1/g_dijkstra_parameter.Turn_parameter.turn135out_R.g_speed-1/g_dijkstra_parameter.Turn_parameter.turn45out_R.g_speed) * secTOcost);
+    corrtime.V90_corrtime           = (int16_t)roundf(45.0f * sqrtf(2.0f)*(1/g_dijkstra_parameter.Turn_parameter.V90_R.g_speed-1/g_dijkstra_parameter.Turn_parameter.turn45out_R.g_speed) * secTOcost);
+
+    return corrtime;
+}
+
+
+
+
+
 void search_AroundWalkCount(unsigned short *front_count,unsigned short *right_count,unsigned short *back_count,unsigned short *left_count,int x,int y,int direction){
 //int direction,int x_coordinate,int y_coordinate
 	unsigned short north_count,east_count,south_count,west_count;
@@ -402,8 +575,6 @@ void create_DijkstraMap(void){
 	int16_t VerticalCost=VERTICALCOST;
 	int16_t DiagonalCost=DIAGONALCOST;
 	int16_t dis_cost_in;
-	//printf("%d,%d,%d,%d,%d\n",discount_v[0],discount_v[1],discount_v[2],discount_v[3],discount_v[4]);
-	//printf("%d,%d,%d,%d,%d,%d\n",discount_d[0],discount_d[1],discount_d[2],discount_d[3],discount_d[4],discount_d[5]);
 	initStack_walk(&stack_x);
 	initStack_walk(&stack_y);
 	initStack_walk(&stack_matrix);
@@ -633,7 +804,326 @@ void create_DijkstraMap(void){
 }
 
 
+void create_DijkstraMap3(void){
+	MinHeap heap;
+	int16_t VerticalCost=VERTICALCOST;
+	int16_t DiagonalCost=DIAGONALCOST;
+	int16_t dis_cost_in;
+	
+	initHeap(&heap);
 
+	for(int i=0;i<=MAZE_SQUARE_NUM-1;i++){
+		for(int j=0;j<=MAZE_SQUARE_NUM-2;j++){
+			Dijkstra.column_count[i][j]=MAX_WALKCOUNT_DIJKSTRA;
+			Dijkstra.row_count[i][j]=MAX_WALKCOUNT_DIJKSTRA;
+		}
+	}
+// 初期ノード群（GOALまわり）を pushHeap で入れる
+DijkstraNode in_node;
+
+	for(int i=0;i<=GOAL_SIZE-1;i++){
+		Dijkstra.row_count[GOAL_X+i][GOAL_Y]=0;
+		Dijkstra.column_count[GOAL_Y+i][GOAL_X]=0;
+		in_node = (DijkstraNode){	
+			.x = GOAL_X + i, .y = GOAL_Y, .matrix = ROW,
+			.direction = 8, .direction_buf1 = 8, .direction_buf2 = 8,
+			.dis_cost = 0, .total_cost = 0
+			};
+		pushHeap(&heap, in_node);
+		in_node = (DijkstraNode){	
+			.x = GOAL_X, .y = GOAL_Y + i, .matrix = COLUMN,
+			.direction = 8, .direction_buf1 = 8, .direction_buf2 = 8,
+			.dis_cost = 0, .total_cost = 0
+			};
+		pushHeap(&heap, in_node);
+	}
+
+
+
+
+	DijkstraNode out_node;
+	unsigned short Direction_next;
+	float Turn_speed=g_dijkstra_parameter.Turn_parameter.TurnCentervelocity;
+	int16_t correction_time=0;
+	while (!isHeapEmpty(&heap)) {
+		out_node = popHeap(&heap);
+		Direction_next = 8;
+		correction_time=0;		
+		//printf("x %d,y %d,C(0)R(1) %d\n",out_node.x,out_node.y,out_node.matrix);
+		//printf("cost_num %d\n",out_node.dis_cost);
+		//printf("x head %d tail %d\n y head %d tail %d\n",stack_x.head,stack_x.tail,stack_y.head,stack_y.tail);
+		if (error_mode >= 1) {
+			//printf("stack_end\n");
+			break;
+		}
+		if(out_node.matrix==ROW){// 横壁の位置
+			if(out_node.y <= MAZE_SQUARE_NUM-3){
+				// 北向きの計算(上)
+				Direction_next = SLANT_NORTH;
+				if(out_node.direction==Direction_next){
+					dis_cost_in=out_node.dis_cost+DISCOUNTCOST_V;
+					if(dis_cost_in>=V_NUM_MAX){dis_cost_in=V_NUM_MAX-1;}
+				}else{
+                    dis_cost_in=0;
+					calculate_turn_profile(Direction_next,out_node.direction,out_node.direction_buf1,out_node.direction_buf2,&Turn_speed,&correction_time);
+                }
+                VerticalCost=compute_step_cost_diff(dis_cost_in,0,Turn_speed,g_dijkstra_parameter.max_velocity,g_dijkstra_parameter.acceleration,correction_time);
+				if((wall.row[out_node.y+1] & (1 << out_node.x))==0 && Dijkstra.row_count[out_node.x][out_node.y+1]>Dijkstra.row_count[out_node.x][out_node.y]+VerticalCost){
+					Dijkstra.row_count[out_node.x][out_node.y+1]=Dijkstra.row_count[out_node.x][out_node.y]+VerticalCost;
+                    Dijkstra.row_direction[out_node.x][out_node.y+1]=out_node.direction;
+					in_node = (DijkstraNode){	
+					.x = out_node.x, .y = out_node.y + 1, .matrix = ROW,
+					.direction = Direction_next, .direction_buf1 = out_node.direction, .direction_buf2 = out_node.direction_buf1,
+					.dis_cost = dis_cost_in, .total_cost = Dijkstra.row_count[out_node.x][out_node.y+1]
+					};
+					pushHeap(&heap, in_node);
+				}
+			}
+			if (out_node.y >= 1) {
+				// 南向きの計算(下)
+				Direction_next = SLANT_SOUTH;
+				if(out_node.direction==Direction_next){
+					dis_cost_in=out_node.dis_cost+DISCOUNTCOST_V;
+					if(dis_cost_in>=V_NUM_MAX){dis_cost_in=V_NUM_MAX-1;}
+				}else{
+                    dis_cost_in=0;
+					calculate_turn_profile(Direction_next,out_node.direction,out_node.direction_buf1,out_node.direction_buf2,&Turn_speed,&correction_time);
+                }
+                VerticalCost=compute_step_cost_diff(dis_cost_in,0,Turn_speed,g_dijkstra_parameter.max_velocity,g_dijkstra_parameter.acceleration,correction_time);
+				if((wall.row[out_node.y-1] & (1 << out_node.x))==0 && Dijkstra.row_count[out_node.x][out_node.y-1]>Dijkstra.row_count[out_node.x][out_node.y]+VerticalCost){
+					Dijkstra.row_count[out_node.x][out_node.y-1]=Dijkstra.row_count[out_node.x][out_node.y]+VerticalCost;
+                    Dijkstra.row_direction[out_node.x][out_node.y-1]=out_node.direction;
+					in_node = (DijkstraNode){	
+					.x = out_node.x, .y = out_node.y - 1, .matrix = ROW,
+					.direction = Direction_next, .direction_buf1 = out_node.direction, .direction_buf2 = out_node.direction_buf1,
+					.dis_cost = dis_cost_in, .total_cost = Dijkstra.row_count[out_node.x][out_node.y-1]
+					};
+					pushHeap(&heap, in_node);
+				}
+			}
+			if (out_node.x <= MAZE_SQUARE_NUM-2) {
+				// 南東向きの計算(右下)
+				Direction_next = SLANT_SOUTH_EAST;
+				if(out_node.direction==Direction_next){
+					dis_cost_in=out_node.dis_cost+DISCOUNTCOST_D;
+					if(dis_cost_in>=D_NUM_MAX){dis_cost_in=D_NUM_MAX-1;}
+				}else{
+                    dis_cost_in=0;
+					calculate_turn_profile(Direction_next,out_node.direction,out_node.direction_buf1,out_node.direction_buf2,&Turn_speed,&correction_time);
+                }
+                DiagonalCost=compute_step_cost_diff(dis_cost_in,1,Turn_speed,g_dijkstra_parameter.max_velocity,g_dijkstra_parameter.acceleration,correction_time);
+				if((wall.column[out_node.x] & (1 << out_node.y))==0 && Dijkstra.column_count[out_node.y][out_node.x]>Dijkstra.row_count[out_node.x][out_node.y]+DiagonalCost){
+					Dijkstra.column_count[out_node.y][out_node.x]=Dijkstra.row_count[out_node.x][out_node.y]+DiagonalCost;
+                    Dijkstra.column_direction[out_node.y][out_node.x]=out_node.direction;
+					in_node = (DijkstraNode){	
+					.x = out_node.x, .y = out_node.y, .matrix = COLUMN,
+					.direction = Direction_next, .direction_buf1 = out_node.direction, .direction_buf2 = out_node.direction_buf1,
+					.dis_cost = dis_cost_in, .total_cost = Dijkstra.column_count[out_node.y][out_node.x]
+					};
+					pushHeap(&heap, in_node);
+				}
+				// 北東向きの計算(右上)
+				Direction_next = SLANT_NORTH_EAST;
+				if(out_node.direction==Direction_next){
+					dis_cost_in=out_node.dis_cost+DISCOUNTCOST_D;
+					if(dis_cost_in>=D_NUM_MAX){dis_cost_in=D_NUM_MAX-1;}
+				}else{
+                    dis_cost_in=0;
+					calculate_turn_profile(Direction_next,out_node.direction,out_node.direction_buf1,out_node.direction_buf2,&Turn_speed,&correction_time);
+                }
+                DiagonalCost=compute_step_cost_diff(dis_cost_in,1,Turn_speed,g_dijkstra_parameter.max_velocity,g_dijkstra_parameter.acceleration,correction_time);
+				if((wall.column[out_node.x] & (1 << (out_node.y+1)))==0 && Dijkstra.column_count[out_node.y+1][out_node.x]>Dijkstra.row_count[out_node.x][out_node.y]+DiagonalCost){
+					Dijkstra.column_count[out_node.y+1][out_node.x]=Dijkstra.row_count[out_node.x][out_node.y]+DiagonalCost;
+                    Dijkstra.column_direction[out_node.y+1][out_node.x]=out_node.direction;
+					in_node = (DijkstraNode){	
+					.x = out_node.x, .y = out_node.y+1, .matrix = COLUMN,
+					.direction = Direction_next, .direction_buf1 = out_node.direction, .direction_buf2 = out_node.direction_buf1,
+					.dis_cost = dis_cost_in, .total_cost = Dijkstra.column_count[out_node.y+1][out_node.x]
+					};
+					pushHeap(&heap, in_node);
+				}
+			}
+			if (out_node.x >= 1) {
+				// 南西向きの計算(左下)
+				Direction_next = SLANT_SOUTH_WEST;
+				if(out_node.direction==Direction_next){
+					dis_cost_in=out_node.dis_cost+DISCOUNTCOST_D;
+					if(dis_cost_in>=D_NUM_MAX){dis_cost_in=D_NUM_MAX-1;}
+				}else{
+                    dis_cost_in=0;
+					calculate_turn_profile(Direction_next,out_node.direction,out_node.direction_buf1,out_node.direction_buf2,&Turn_speed,&correction_time);
+                }
+                DiagonalCost=compute_step_cost_diff(dis_cost_in,1,Turn_speed,g_dijkstra_parameter.max_velocity,g_dijkstra_parameter.acceleration,correction_time);
+				if((wall.column[out_node.x-1] & (1 << out_node.y))==0 && Dijkstra.column_count[out_node.y][out_node.x-1]>Dijkstra.row_count[out_node.x][out_node.y]+DiagonalCost){
+					Dijkstra.column_count[out_node.y][out_node.x-1]=Dijkstra.row_count[out_node.x][out_node.y]+DiagonalCost;
+                    Dijkstra.column_direction[out_node.y][out_node.x-1]=out_node.direction;
+					in_node = (DijkstraNode){	
+					.x = out_node.x-1, .y = out_node.y, .matrix = COLUMN,
+					.direction = Direction_next, .direction_buf1 = out_node.direction, .direction_buf2 = out_node.direction_buf1,
+					.dis_cost = dis_cost_in, .total_cost = Dijkstra.column_count[out_node.y][out_node.x-1]
+					};
+					pushHeap(&heap, in_node);
+				}
+				// 北西向きの計算(左上)
+				Direction_next = SLANT_NORTH_WEST;
+				if(out_node.direction==Direction_next){
+					dis_cost_in=out_node.dis_cost+DISCOUNTCOST_D;
+					if(dis_cost_in>=D_NUM_MAX){dis_cost_in=D_NUM_MAX-1;}
+				}else{
+                    dis_cost_in=0;
+					calculate_turn_profile(Direction_next,out_node.direction,out_node.direction_buf1,out_node.direction_buf2,&Turn_speed,&correction_time);
+                }
+                DiagonalCost=compute_step_cost_diff(dis_cost_in,1,Turn_speed,g_dijkstra_parameter.max_velocity,g_dijkstra_parameter.acceleration,correction_time);
+				if((wall.column[out_node.x-1] & (1 << (out_node.y+1)))==0 && Dijkstra.column_count[out_node.y+1][out_node.x-1]>Dijkstra.row_count[out_node.x][out_node.y]+DiagonalCost){
+					Dijkstra.column_count[out_node.y+1][out_node.x-1]=Dijkstra.row_count[out_node.x][out_node.y]+DiagonalCost;
+                    Dijkstra.column_direction[out_node.y+1][out_node.x-1]=out_node.direction;
+					in_node = (DijkstraNode){	
+					.x = out_node.x-1, .y = out_node.y+1, .matrix = COLUMN,
+					.direction = Direction_next, .direction_buf1 = out_node.direction, .direction_buf2 = out_node.direction_buf1,
+					.dis_cost = dis_cost_in, .total_cost = Dijkstra.column_count[out_node.y+1][out_node.x-1]
+					};
+					pushHeap(&heap, in_node);
+				}
+			}
+
+		}
+		if(out_node.matrix==COLUMN){
+					if(out_node.x <= MAZE_SQUARE_NUM-3){
+						// 東向きの計算(右)
+						Direction_next = SLANT_EAST;
+						if(out_node.direction==Direction_next){
+							dis_cost_in=out_node.dis_cost+DISCOUNTCOST_V;
+							if(dis_cost_in>=V_NUM_MAX){dis_cost_in=V_NUM_MAX-1;}
+						}else{
+                            dis_cost_in=0;
+							calculate_turn_profile(Direction_next,out_node.direction,out_node.direction_buf1,out_node.direction_buf2,&Turn_speed,&correction_time);
+                        }
+                        VerticalCost=compute_step_cost_diff(dis_cost_in,0,Turn_speed,g_dijkstra_parameter.max_velocity,g_dijkstra_parameter.acceleration,correction_time);
+						if((wall.column[out_node.x+1] & (1 << out_node.y))==0 && Dijkstra.column_count[out_node.y][out_node.x+1]>Dijkstra.column_count[out_node.y][out_node.x]+VerticalCost){
+							Dijkstra.column_count[out_node.y][out_node.x+1]=Dijkstra.column_count[out_node.y][out_node.x]+VerticalCost;
+                            Dijkstra.column_direction[out_node.y][out_node.x+1]=out_node.direction;
+							in_node = (DijkstraNode){	
+							.x = out_node.x+1, .y = out_node.y, .matrix = COLUMN,
+							.direction = Direction_next, .direction_buf1 = out_node.direction, .direction_buf2 = out_node.direction_buf1,
+							.dis_cost = dis_cost_in, .total_cost = Dijkstra.column_count[out_node.y][out_node.x+1]
+							};
+							pushHeap(&heap, in_node);
+						}
+					}
+					if (out_node.x >= 1) {
+						// 西向きの計算(左)
+						Direction_next = SLANT_WEST;
+						if(out_node.direction==Direction_next){
+							dis_cost_in=out_node.dis_cost+DISCOUNTCOST_V;
+							if(dis_cost_in>=V_NUM_MAX){dis_cost_in=V_NUM_MAX-1;}
+						}else{
+                            dis_cost_in=0;
+							calculate_turn_profile(Direction_next,out_node.direction,out_node.direction_buf1,out_node.direction_buf2,&Turn_speed,&correction_time);
+                        }
+                        VerticalCost=compute_step_cost_diff(dis_cost_in,0,Turn_speed,g_dijkstra_parameter.max_velocity,g_dijkstra_parameter.acceleration,correction_time);
+						if((wall.column[out_node.x-1] & (1 << out_node.y))==0 && Dijkstra.column_count[out_node.y][out_node.x-1]>Dijkstra.column_count[out_node.y][out_node.x]+VerticalCost){
+							Dijkstra.column_count[out_node.y][out_node.x-1]=Dijkstra.column_count[out_node.y][out_node.x]+VerticalCost;
+                            Dijkstra.column_direction[out_node.y][out_node.x-1]=out_node.direction;
+							in_node = (DijkstraNode){	
+							.x = out_node.x-1, .y = out_node.y, .matrix = COLUMN,
+							.direction = Direction_next, .direction_buf1 = out_node.direction, .direction_buf2 = out_node.direction_buf1,
+							.dis_cost = dis_cost_in, .total_cost = Dijkstra.column_count[out_node.y][out_node.x-1]
+							};
+							pushHeap(&heap, in_node);
+						}
+					}
+					if (out_node.y <= MAZE_SQUARE_NUM-2) {
+						// 北西向きの計算(左上)
+						Direction_next = SLANT_NORTH_WEST;
+						if(out_node.direction==Direction_next){
+							dis_cost_in=out_node.dis_cost+DISCOUNTCOST_D;
+							if(dis_cost_in>=D_NUM_MAX){dis_cost_in=D_NUM_MAX-1;}
+						}else{
+                            dis_cost_in=0;
+							calculate_turn_profile(Direction_next,out_node.direction,out_node.direction_buf1,out_node.direction_buf2,&Turn_speed,&correction_time);
+                        }
+                        DiagonalCost=compute_step_cost_diff(dis_cost_in,1,Turn_speed,g_dijkstra_parameter.max_velocity,g_dijkstra_parameter.acceleration,correction_time);
+						if((wall.row[out_node.y] & (1 << out_node.x))==0 && Dijkstra.row_count[out_node.x][out_node.y]>Dijkstra.column_count[out_node.y][out_node.x]+DiagonalCost){
+							Dijkstra.row_count[out_node.x][out_node.y]=Dijkstra.column_count[out_node.y][out_node.x]+DiagonalCost;
+                            Dijkstra.row_direction[out_node.x][out_node.y]=out_node.direction;
+							in_node = (DijkstraNode){	
+							.x = out_node.x, .y = out_node.y, .matrix = ROW,
+							.direction = Direction_next, .direction_buf1 = out_node.direction, .direction_buf2 = out_node.direction_buf1,
+							.dis_cost = dis_cost_in, .total_cost = Dijkstra.row_count[out_node.x][out_node.y]
+							};
+							pushHeap(&heap, in_node);
+						}
+						// 北東向きの計算(右上)
+						Direction_next = SLANT_NORTH_EAST;
+						if(out_node.direction==Direction_next){
+							dis_cost_in=out_node.dis_cost+DISCOUNTCOST_D;
+							if(dis_cost_in>=D_NUM_MAX){dis_cost_in=D_NUM_MAX-1;}
+						}else{
+                            dis_cost_in=0;
+							calculate_turn_profile(Direction_next,out_node.direction,out_node.direction_buf1,out_node.direction_buf2,&Turn_speed,&correction_time);
+                        }
+                        DiagonalCost=compute_step_cost_diff(dis_cost_in,1,Turn_speed,g_dijkstra_parameter.max_velocity,g_dijkstra_parameter.acceleration,correction_time);
+						if((wall.row[out_node.y] & (1 << (out_node.x+1)))==0 && Dijkstra.row_count[out_node.x+1][out_node.y]>Dijkstra.column_count[out_node.y][out_node.x]+DiagonalCost){
+							Dijkstra.row_count[out_node.x+1][out_node.y]=Dijkstra.column_count[out_node.y][out_node.x]+DiagonalCost;
+                            Dijkstra.row_direction[out_node.x+1][out_node.y]=out_node.direction;
+							in_node = (DijkstraNode){	
+							.x = out_node.x+1, .y = out_node.y, .matrix = ROW,
+							.direction = Direction_next, .direction_buf1 = out_node.direction, .direction_buf2 = out_node.direction_buf1,
+							.dis_cost = dis_cost_in, .total_cost = Dijkstra.row_count[out_node.x+1][out_node.y]
+							};
+							pushHeap(&heap, in_node);
+						}
+					}
+					if (out_node.y >= 1) {
+						// 南西向きの計算(左下)
+						Direction_next = SLANT_SOUTH_WEST;
+						if(out_node.direction==Direction_next){
+							dis_cost_in=out_node.dis_cost+DISCOUNTCOST_D;
+							if(dis_cost_in>=D_NUM_MAX){dis_cost_in=D_NUM_MAX-1;}
+						}else{
+                            dis_cost_in=0;
+							calculate_turn_profile(Direction_next,out_node.direction,out_node.direction_buf1,out_node.direction_buf2,&Turn_speed,&correction_time);
+                        }
+                        DiagonalCost=compute_step_cost_diff(dis_cost_in,1,Turn_speed,g_dijkstra_parameter.max_velocity,g_dijkstra_parameter.acceleration,correction_time);
+						if((wall.row[out_node.y-1] & (1 << out_node.x))==0 && Dijkstra.row_count[out_node.x][out_node.y-1]>Dijkstra.column_count[out_node.y][out_node.x]+DiagonalCost){
+							Dijkstra.row_count[out_node.x][out_node.y-1]=Dijkstra.column_count[out_node.y][out_node.x]+DiagonalCost;
+                            Dijkstra.row_direction[out_node.x][out_node.y-1]=out_node.direction;
+							in_node = (DijkstraNode){	
+							.x = out_node.x, .y = out_node.y-1, .matrix = ROW,
+							.direction = Direction_next, .direction_buf1 = out_node.direction, .direction_buf2 = out_node.direction_buf1,
+							.dis_cost = dis_cost_in, .total_cost = Dijkstra.row_count[out_node.x][out_node.y-1]
+							};
+							pushHeap(&heap, in_node);
+						}
+						// 南東向きの計算(右下)
+						Direction_next = SLANT_SOUTH_EAST;
+						if(out_node.direction==Direction_next){
+							dis_cost_in=out_node.dis_cost+DISCOUNTCOST_D;
+							if(dis_cost_in>=D_NUM_MAX){dis_cost_in=D_NUM_MAX-1;}
+						}else{
+                            dis_cost_in=0;
+							calculate_turn_profile(Direction_next,out_node.direction,out_node.direction_buf1,out_node.direction_buf2,&Turn_speed,&correction_time);
+                        }
+                        DiagonalCost=compute_step_cost_diff(dis_cost_in,1,Turn_speed,g_dijkstra_parameter.max_velocity,g_dijkstra_parameter.acceleration,correction_time);
+						if((wall.row[out_node.y-1] & (1 << (out_node.x+1)))==0 && Dijkstra.row_count[out_node.x+1][out_node.y-1]>Dijkstra.column_count[out_node.y][out_node.x]+DiagonalCost){
+							Dijkstra.row_count[out_node.x+1][out_node.y-1]=Dijkstra.column_count[out_node.y][out_node.x]+DiagonalCost;
+                            Dijkstra.row_direction[out_node.x+1][out_node.y-1]=out_node.direction;
+							in_node = (DijkstraNode){	
+							.x = out_node.x+1, .y = out_node.y-1, .matrix = ROW,
+							.direction = Direction_next, .direction_buf1 = out_node.direction, .direction_buf2 = out_node.direction_buf1,
+							.dis_cost = dis_cost_in, .total_cost = Dijkstra.row_count[out_node.x+1][out_node.y-1]
+							};
+							pushHeap(&heap, in_node);
+						}
+					}
+
+				}
+
+		}
+
+
+
+}
 
 
 
@@ -1114,8 +1604,39 @@ unsigned short popStack_walk(STACK_T *stack){
 
 
 
+void initHeap(MinHeap* heap) {
+    heap->size = 0;
+}
+
+_Bool isHeapEmpty(MinHeap* heap) {
+    return heap->size == 0;
+}
+
+void pushHeap(MinHeap* heap, DijkstraNode node) {
+    int i = heap->size++;
+    while (i > 0 && heap->data[(i - 1) / 2].total_cost > node.total_cost) {
+        heap->data[i] = heap->data[(i - 1) / 2];
+        i = (i - 1) / 2;
+    }
+    heap->data[i] = node;
+}
 
 
+DijkstraNode popHeap(MinHeap* heap) {
+    DijkstraNode top = heap->data[0];
+    DijkstraNode last = heap->data[--heap->size];
+    int i = 0;
+    while (2*i + 1 < heap->size) {
+        int child = 2*i + 1;
+        if (child + 1 < heap->size && heap->data[child + 1].total_cost < heap->data[child].total_cost)
+            child++;
+        if (heap->data[child].total_cost >= last.total_cost) break;
+        heap->data[i] = heap->data[child];
+        i = child;
+    }
+    heap->data[i] = last;
+    return top;
+}
 
 
 
