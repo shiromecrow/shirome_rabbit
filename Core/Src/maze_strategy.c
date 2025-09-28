@@ -6,22 +6,26 @@
  */
 
 #include"maze_strategy.h"
-#include"Control_motor.h"
-#include"define.h"
-#include"maze_Turning.h"
-#include "PID_EncoderGyro.h"
-#include "PID_wall.h"
-#include "stdio.h"
 
-#include"maze_wall.h"
-#include"PL_flash.h"
-#include "CL_EnoderGyro.h"
-#include "CL_sensor.h"
+#include <stdio.h>
+#include <math.h>
+
+#include"define.h"
+
 #include "PL_motor.h"
 #include "PL_LED.h"
 #include "PL_timer.h"
+#include "PL_flash.h"
+
+#include "CL_EnoderGyro.h"
+#include "CL_sensor.h"
+#include "Control_motor.h"
+#include "PID_EncoderGyro.h"
+#include "PID_wall.h"
+
+#include "maze_Turning.h"
+#include"maze_wall.h"
 #include "fail_safe.h"
-#include "math.h"
 #include "record.h"
 
 
@@ -142,7 +146,7 @@ void run_movement_suspension(int *direction, unsigned short front_count,
 
 	if(MazeRecord_mode==1){
 		if(error_mode==0){
-		record_in();
+		flash_in();
 		}
 		maze_mode = 1;
 	}
@@ -456,7 +460,7 @@ void AdatiWayReturn(float input_StraightVelocity, float input_TurningVelocity, f
 		pl_yellow_LED_count(error_mode);
 	}
 	if (error_mode == 0) {
-		record_in();
+		flash_in();
 	} else if(timer_end_mode==0) {
 		int t = 0;
 		while (t <= MAZE_SQUARE_NUM-2) {
@@ -472,9 +476,9 @@ void AdatiWayReturn(float input_StraightVelocity, float input_TurningVelocity, f
 		}
 
 		t = 0;
-		record_out();
+		flash_out();
 	}else{
-		record_in();
+		flash_in();
 	}
 
 }
@@ -1299,7 +1303,7 @@ void compress_kitiku(int *x,int *y,int *direction,int *kitiku_distance) {
 		if (front_count==MAX_WALKCOUNT && right_count==MAX_WALKCOUNT && left_count==MAX_WALKCOUNT && back_count==MAX_WALKCOUNT){
 		// 迷路破損のため停止(一時停止後に周辺の地図情報を初期化して再探索に変更予定)
 			error_mode=20;
-			record_in();
+			flash_in();
 		break;
 		}
 		if (front_count <= right_count && front_count <= left_count && front_count <= back_count){

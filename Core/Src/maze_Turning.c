@@ -13,17 +13,22 @@
  *      Author: sf199
  */
 #include "maze_Turning.h"
-#include "Control_motor.h"
-#include "PL_motor.h"
-#include "fail_safe.h"
-#include "PL_timer.h"
+
+#include <math.h>
+
 #include "define.h"
-#include "record.h"
+
+#include "PL_timer.h"
+#include "PL_motor.h"
+
 #include "CL_EnoderGyro.h"
 #include "PID_EncoderGyro.h"
+#include "Control_motor.h"
+
+#include "fail_safe.h"
+#include "record.h"
 #include"maze_strategy.h"
 
-#include "math.h"
 
 
 

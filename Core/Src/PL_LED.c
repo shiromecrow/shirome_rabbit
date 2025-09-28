@@ -23,10 +23,9 @@
 // LEDのPeripheral．
 
 #include "PL_LED.h"
-#include "gpio.h"
+
 #include "main.h"
-
-
+#include "gpio.h"
 
 void pl_yellow_LED_1(int pin){
 	HAL_GPIO_WritePin(LED1_GPIO_Port,LED1_Pin,pin);

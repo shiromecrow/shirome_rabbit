@@ -7,22 +7,21 @@
 
 
 #include "Control_motor.h"
-#include "CL_sensor.h"
-#include "CL_EnoderGyro.h"
+
+#include <math.h>
+
+#include "define.h"
+
 #include "PL_motor.h"
 #include "PL_LED.h"
 #include "PL_timer.h"
-#include "fail_safe.h"
+#include "CL_sensor.h"
+#include "CL_EnoderGyro.h"
 #include "FF_motor.h"
-
-#include "math.h"
-
-#include "PID_wall.h"
 #include "PID_EncoderGyro.h"
+#include "PID_wall.h"
+#include "fail_safe.h"
 
-#include "define.h"
-//#include "maze_wall.h"
-//#include "maze_strategy.h"
 
 TARGET straight;
 TARGET turning;
@@ -756,7 +755,7 @@ void no_angle(void){
 
 	pl_DriveMotor_start();
 	while (g_sensor[0][0] <= SENSOR_FINGER_0 || g_sensor[2][0] <= SENSOR_FINGER_2 || g_sensor[4][0] <= SENSOR_FINGER_4) {
-		HAL_Delay(1);
+		wait_ms_NoReset(1);
 //		if(record_time >= MAX_RECORD_TIME){
 //			break;
 //		}

@@ -8,8 +8,7 @@
 #ifndef INC_MATRIX_CALCULATION_H_
 #define INC_MATRIX_CALCULATION_H_
 
-#include "stm32g4xx_hal.h"
-
+#include <stdint.h>
 
 
 void mat_add(float *, float *, float *, int, int);

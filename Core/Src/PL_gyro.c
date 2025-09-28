@@ -15,9 +15,10 @@
 
 
 #include "PL_gyro.h"
-#include "spi.h"
+
 #include <stdio.h>
 
+#include "spi.h"
 
 static uint8_t set_flag = 0;
 

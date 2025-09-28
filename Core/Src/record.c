@@ -13,10 +13,14 @@
  *      Author: sf199
  */
 
+
+#include "record.h"
+
 #include <stdio.h>
 #include <math.h>
 
-#include "record.h"
+#include "define.h"
+
 #include "PL_timer.h"
 #include "PL_encoder.h"
 #include "PL_sensor.h"
@@ -25,8 +29,6 @@
 #include "Control_motor.h"
 #include "FF_motor.h"
 #include "PID_wall.h"
-#include "stdio.h"
-#include "define.h"
 #include "cal_acceleration.h"
 
 

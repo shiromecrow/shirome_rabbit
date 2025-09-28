@@ -7,13 +7,16 @@
 
 
 #include "CL_sensor.h"
+
+#include <stdio.h>
+#include <math.h>
+
+#include "define.h"
+
 #include "PL_sensor.h"
 #include "PL_timer.h"
 #include "PL_LED.h"
-//#include "record.h"
-#include "define.h"
-#include "stdio.h"
-#include "math.h"
+
 
 short g_sensor[SENSOR_NUM][20];
 short g_sensor_diff[SENSOR_NUM];
@@ -222,16 +225,16 @@ void sensor_line(void){
 
 	for(int d=0;d<len;d++){
 	while (g_sensor[SENSOR_FRONT_L][0] <= SENSOR_FINGER_0 || g_sensor[SENSOR_FRONT_R][0] <= SENSOR_FINGER_5) {
-					HAL_Delay(1);
+					wait_ms(1);
 				}
 	pl_yellow_LED_count(d+1);
 	printf("SEN1=%d,SEN2=%d,SEN3=%d,SEN4=%d,SEN5=%d,SEN6=%d\n", g_sensor[0][0],
 											g_sensor[1][0], g_sensor[2][0], g_sensor[3][0], g_sensor[4][0], g_sensor[5][0]);
-	HAL_Delay(500);
+	wait_ms(500);
 	while (g_sensor[SENSOR_FRONT_L][0] > SENSOR_FINGER_0 && g_sensor[SENSOR_FRONT_R][0] > SENSOR_FINGER_5) {
-					HAL_Delay(1);
+					wait_ms(1);
 	}
-	HAL_Delay(2000);
+	wait_ms(2000);
 	disL[d]= -20 + 5*d;
 	disR[d]= 20 - 5*d;
 	senL90[d] = g_sensor_mean[SENSOR_LEFT];
@@ -244,7 +247,7 @@ void sensor_line(void){
 
 	while(1){
 	while (g_sensor[SENSOR_FRONT_L][0] <= SENSOR_FINGER_0 || g_sensor[SENSOR_FRONT_R][0] <= SENSOR_FINGER_5) {
-							HAL_Delay(1);
+							wait_ms(1);
 						}
 
 
@@ -252,7 +255,7 @@ void sensor_line(void){
 	for(int d=0;d<len;d++){
 	printf("%d,%f,%d,%f,%d,%f,%d,%f\n",senL90[d],disL[d], senR90[d], disR[d], senL45[d],disL[d], senR45[d], disR[d]);
 	while (g_sensor[SENSOR_FRONT_L][0] > SENSOR_FINGER_0 && g_sensor[SENSOR_FRONT_R][0] > SENSOR_FINGER_5) {
-					HAL_Delay(1);
+					wait_ms(1);
 				}
 	}
 	}
@@ -269,16 +272,16 @@ void sensor_line_slant(void){
 
 	for(int d=0;d<len;d++){
 	while (g_sensor[SENSOR_FRONT_L][0] <= SENSOR_FINGER_0 || g_sensor[SENSOR_FRONT_R][0] <= SENSOR_FINGER_5) {
-					HAL_Delay(1);
+					wait_ms(1);
 				}
 	pl_yellow_LED_count(d+1);
 	printf("SEN1=%d,SEN2=%d,SEN3=%d,SEN4=%d,SEN5=%d,SEN6=%d\n", g_sensor[0][0],
 											g_sensor[1][0], g_sensor[2][0], g_sensor[3][0], g_sensor[4][0], g_sensor[5][0]);
-	HAL_Delay(500);
+	wait_ms(500);
 	while (g_sensor[SENSOR_FRONT_L][0] > SENSOR_FINGER_0 && g_sensor[SENSOR_FRONT_R][0] > SENSOR_FINGER_5) {
-					HAL_Delay(1);
+					wait_ms(1);
 	}
-	HAL_Delay(2000);
+	wait_ms(2000);
 	disL[d]= 5*d;
 	senL90[d] = g_sensor_mean[SENSOR_LEFT];
 	senL45[d] = g_sensor_mean[SENSOR_FRONT_LEFT];
@@ -289,16 +292,16 @@ void sensor_line_slant(void){
 
 	for(int d=0;d<len;d++){
 	while (g_sensor[SENSOR_FRONT_L][0] <= SENSOR_FINGER_0 || g_sensor[SENSOR_FRONT_R][0] <= SENSOR_FINGER_5) {
-					HAL_Delay(1);
+					wait_ms(1);
 				}
 	pl_yellow_LED_count(d+1);
 	printf("SEN1=%d,SEN2=%d,SEN3=%d,SEN4=%d,SEN5=%d,SEN6=%d\n", g_sensor[0][0],
 											g_sensor[1][0], g_sensor[2][0], g_sensor[3][0], g_sensor[4][0], g_sensor[5][0]);
-	HAL_Delay(500);
+	wait_ms(500);
 	while (g_sensor[SENSOR_FRONT_L][0] > SENSOR_FINGER_0 && g_sensor[SENSOR_FRONT_R][0] > SENSOR_FINGER_5) {
-					HAL_Delay(1);
+					wait_ms(1);
 	}
-	HAL_Delay(2000);
+	wait_ms(2000);
 	disR[d]= 5*d;
 	senR90[d] = g_sensor_mean[SENSOR_RIGHT];
 	senR45[d] = g_sensor_mean[SENSOR_FRONT_RIGHT];
@@ -309,7 +312,7 @@ void sensor_line_slant(void){
 
 	while(1){
 	while (g_sensor[SENSOR_FRONT_L][0] <= SENSOR_FINGER_0 || g_sensor[SENSOR_FRONT_R][0] <= SENSOR_FINGER_5) {
-							HAL_Delay(1);
+							wait_ms(1);
 						}
 
 
@@ -317,7 +320,7 @@ void sensor_line_slant(void){
 	for(int d=0;d<len;d++){
 	printf("%d,%f,%d,%f,%d,%f,%d,%f\n",senL90[d],disL[d], senR90[d], disR[d], senL45[d],disL[d], senR45[d], disR[d]);
 	while (g_sensor[SENSOR_FRONT_L][0] > SENSOR_FINGER_0 && g_sensor[SENSOR_FRONT_R][0] > SENSOR_FINGER_5) {
-					HAL_Delay(1);
+					wait_ms(1);
 				}
 	}
 	}

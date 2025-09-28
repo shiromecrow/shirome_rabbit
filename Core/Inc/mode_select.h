@@ -8,7 +8,7 @@
 #ifndef INC_MODE_SELECT_H_
 #define INC_MODE_SELECT_H_
 
-#include "stm32g4xx_hal.h"
+#include <stdint.h>
 
 #define MODE_SENSOR_DEC (g_sensor[0][0] <= SENSOR_FINGER_0 || g_sensor[2][0] <= SENSOR_FINGER_2 || g_sensor[3][0] <= SENSOR_FINGER_3 || g_sensor[5][0] <= SENSOR_FINGER_5)
 

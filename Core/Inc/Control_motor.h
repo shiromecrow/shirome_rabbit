@@ -8,8 +8,8 @@
 #ifndef INC_CONTROL_MOTOR_H_
 #define INC_CONTROL_MOTOR_H_
 
+#include <stdint.h>
 #include "cal_acceleration.h"
-#include "stm32g4xx_hal.h"
 
 #define MAX_DUTY_RATIO 0.999
 #define MAX_DUTY_RATIO_ST 0.999

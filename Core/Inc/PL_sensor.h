@@ -8,7 +8,7 @@
 #ifndef INC_PL_SENSOR_H_
 #define INC_PL_SENSOR_H_
 
-#include "stm32g4xx_hal.h"
+#include <stdint.h>
 
 #define SENSOR_NUM 6
 

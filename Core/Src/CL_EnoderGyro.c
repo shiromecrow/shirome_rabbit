@@ -5,15 +5,19 @@
  *      Author: sf199
  */
 
-
 #include "CL_EnoderGyro.h"
+
+#include <math.h>
+
+#include "define.h"
+
 #include "PL_gyro.h"
 #include "PL_encoder.h"
 #include "PL_timer.h"
 #include "PL_motor.h"
-#include "math.h"
 #include "matrix_calculation.h"
-#include "Control_motor.h" //指令値補正
+
+#include "Control_motor.h" //指令値補正(どうにかしたい。)
 
 
 float yaw_angle,angle_speed;

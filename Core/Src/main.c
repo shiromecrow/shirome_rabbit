@@ -27,7 +27,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "stdio.h"
+#include <stdio.h>
+#include <stdlib.h>
 #include "PL_LED.h"
 #include "PL_timer.h"
 #include "PL_motor.h"
@@ -43,9 +44,9 @@
 #include "record.h"
 #include "mode_select.h"
 #include "turning_parameter.h"
+#include "maze_wall.h"
 #include "fail_safe.h"
-#include "stdio.h"
-#include "stdlib.h"
+
 
 /* USER CODE END Includes */
 

@@ -6,16 +6,18 @@
  */
 
 #include "PID_wall.h"
-#include "PID_EncoderGyro.h"
-#include "CL_sensor.h"
-#include "CL_EnoderGyro.h"
+
 #include "PL_motor.h"
 #include "PL_timer.h"
 #include "PL_LED.h"
-#include "tim.h"
+
+#include "CL_sensor.h"
+#include "CL_EnoderGyro.h"
 #include "define.h"
 #include "Control_motor.h"//やりたくなかったけどしょうがない
 #include "fail_safe.h"
+#include "PID_EncoderGyro.h"
+
 
 #include "stdio.h"
 #include "math.h"

@@ -8,9 +8,8 @@
 #ifndef INC_MAZE_STRATEGY_H_
 #define INC_MAZE_STRATEGY_H_
 
-
+#include <stdint.h>
 #include "turning_parameter.h"
-#include "stm32g4xx_hal.h"
 
 #define TURN_ON 1
 #define TURN_OFF 0

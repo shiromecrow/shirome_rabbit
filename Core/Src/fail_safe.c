@@ -7,20 +7,23 @@
 
 
 #include "fail_safe.h"
-#include "CL_EnoderGyro.h"
-#include "Control_motor.h"
-#include "PID_EncoderGyro.h"
-#include"CL_sensor.h"
+
+#include <math.h>
+
+#include "define.h"
 
 #include "PL_LED.h"
 #include "PL_motor.h"
+
+#include "CL_EnoderGyro.h"
+#include"CL_sensor.h"
+#include "Control_motor.h"
+#include "PID_EncoderGyro.h"
 #include "PID_wall.h"
 
 #include "record.h"
-//#include"maze_strategy.h"
-//#include"maze_wall.h"
 #include "mode_select.h"
-#include "math.h"
+
 
 char no_safty;
 volatile unsigned char error_mode;

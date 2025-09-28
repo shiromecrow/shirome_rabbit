@@ -15,9 +15,12 @@
 
 
 #include "PL_motor.h"
+
+#include "define.h"
+
 #include "tim.h"
 #include "gpio.h"
-#include "define.h"
+
 
 uint8_t g_fan_mode;
 

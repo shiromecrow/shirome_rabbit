@@ -15,12 +15,16 @@
 
 
 #include "maze_wall.h"
-#include "fail_safe.h"
-#include "maze_strategy.h"
-#include "define.h"
+
 #include <stdio.h>
 #include <inttypes.h>
 #include <math.h>
+
+#include "define.h"
+
+#include "fail_safe.h"
+#include "maze_strategy.h"
+
 
 
 

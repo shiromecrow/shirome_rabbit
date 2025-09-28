@@ -9,8 +9,8 @@
 #define INC_PID_WALL_H_
 
 
-#include "stm32g4xx_hal.h"
-#include "define.h"
+#include <stdint.h>
+
 //#define CONTROLLEFTWALL 1
 //#define CONTROLRIGHTWALL 2
 

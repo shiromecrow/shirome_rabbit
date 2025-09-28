@@ -8,7 +8,7 @@
 #ifndef INC_MAZE_WALL_H_
 #define INC_MAZE_WALL_H_
 
-#include "main.h"
+#include <stdint.h>
 #include "turning_parameter.h"
 
 #define MAZE_SQUARE_NUM 32

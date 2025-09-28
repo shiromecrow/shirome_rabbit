@@ -8,7 +8,7 @@
 #ifndef INC_PL_MOTOR_H_
 #define INC_PL_MOTOR_H_
 
-#include "stm32g4xx_hal.h"
+#include <stdint.h>
 
 #define MOTOR_STOP 0
 #define MOTOR_FRONT 1

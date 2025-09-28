@@ -8,7 +8,7 @@
 #ifndef INC_CL_SENSOR_H_
 #define INC_CL_SENSOR_H_
 
-#include "stm32g4xx_hal.h"
+#include <stdint.h>
 #include "PL_sensor.h"
 
 #define BATTLIMIT 7.7

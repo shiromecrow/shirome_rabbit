@@ -14,14 +14,19 @@
  */
 
 
-#include "stm32g4xx_hal.h"
+
 #include "PL_flash.h"
 #include <string.h>
 #include <stdint.h>
-#include "stdio.h"
-#include "define.h"
-#include "maze_wall.h"
 #include <inttypes.h>
+#include <stdio.h>
+
+#include "stm32g4xx_hal.h"
+
+#include "define.h"
+
+#include "maze_wall.h"
+
 
 
 
@@ -30,10 +35,10 @@ const uint32_t start_address = 0x807F000; //bank1 page last start address
 const uint32_t end_adress = 0x807FFFF; // bank1 page last end address
 
 void test_flash(void){
-		  record_out();
+		  flash_out();
 		  maze_display(&wall);
 		  flash_record_init();
-		  record_in();
+		  flash_in();
 }
 
 
@@ -77,7 +82,7 @@ void loadFlash(uint32_t address, uint64_t *data, uint32_t size )
 }
 
 
-void record_in(void) {
+void flash_in(void) {
 	int t = 0;
 	uint32_t address=start_address;
 
@@ -141,7 +146,7 @@ void record_in(void) {
 }
 
 
-void record_out(void) {
+void flash_out(void) {
 //	for (int i=0;i<200;i++){
 //		printf("nowpage%x=%x\n\r",((start_address+i)&65535), (*(uint8_t*)(start_address+i)));
 //	}

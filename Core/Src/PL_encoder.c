@@ -7,8 +7,11 @@
 
 
 #include "PL_encoder.h"
-#include "spi.h"
+
 #include <stdio.h>
+
+#include "spi.h"
+
 
 float encoder_R,encoder_L;
 

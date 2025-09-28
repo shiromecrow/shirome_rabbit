@@ -21,7 +21,20 @@
 			"control_motor.h": "c",
 			"pl_encoder.h": "c",
 			"inttypes.h": "c",
-			"compare": "c"
+			"compare": "c",
+			"stdint.h": "c",
+			"string.h": "c",
+			"fail_safe.h": "c",
+			"pid_wall.h": "c",
+			"cl_enodergyro.h": "c",
+			"pl_flash.h": "c",
+			"pl_sensor.h": "c",
+			"pl_led.h": "c",
+			"mode_select.h": "c",
+			"pl_timer.h": "c",
+			"main.h": "c",
+			"tim.h": "c",
+			"record.h": "c"
 		}
 	}
 }

@@ -6,19 +6,22 @@
  */
 
 #include "PID_EncoderGyro.h"
-#include "PID_wall.h"
-#include "PL_timer.h"
-#include "fail_safe.h"
-#include "CL_EnoderGyro.h"
-#include "CL_sensor.h"
-#include "PL_LED.h"
-#include "Control_motor.h"
+
+#include <stdio.h>
+#include <math.h>
+
 #include "define.h"
 
-//#include "fail_safe.h"
+#include "PL_timer.h"
+#include "PL_LED.h"
 
-#include "stdio.h"
-#include "math.h"
+#include "CL_EnoderGyro.h"
+#include "CL_sensor.h"
+#include "Control_motor.h"
+#include "PID_wall.h"
+#include "fail_safe.h"
+
+
 
 struct PID enc;
 struct PID Gyro;

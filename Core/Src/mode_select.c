@@ -9,7 +9,12 @@
 
 #include "mode_select.h"
 
-#include "stdio.h"
+#include <stdio.h>
+#include <math.h>
+#include "stm32g4xx_hal.h"
+
+#include "define.h"
+
 
 #include "PL_timer.h"
 #include "PL_LED.h"
@@ -29,9 +34,6 @@
 #include "turning_parameter.h"
 #include "record.h"
 
-//#include "wait_ms.h"
-#include "define.h"
-#include "math.h"
 #include "fail_safe.h"
 #include "maze_strategy.h"
 #include "maze_wall.h"
@@ -351,7 +353,7 @@ void mode_PLtest(unsigned char main_modeR) {
 			pl_r_blue_LED(OFF);
 			pl_l_blue_LED(OFF);
 		break;
-	case 0b1111:	//record_out
+	case 0b1111:	//flash_out
 		record_print();
 		break;
 
@@ -476,7 +478,7 @@ void mode_Running(unsigned char main_modeR){
 		case 0b0000://迷路表示
 			//maze_maker2(1, 0, 0, 0, 7, 7);
 			maze_display(&error_wall);
-			record_out();
+			flash_out();
 			//wall.row[8]=(1<<8);
 		//	maze_clear();
 			maze_out_matlab();
@@ -514,14 +516,14 @@ void mode_Running(unsigned char main_modeR){
 			printf("tim1=%f,tim2=%f\n", tim1, tim2);
 		break;
 		case 0b0001://足立法(遅い)
-			record_out();
+			flash_out();
 			create_StepCountMap_queue();
 			maze_display(&wall);
 		break;
 		case 0b0010://Flashから
 			//maze_clear();
-			//record_in();
-			record_out();
+			//flash_in();
+			flash_out();
 			//create_StepCountMap_queue();
 			//maze_display(&wall);
 		break;
@@ -530,47 +532,47 @@ void mode_Running(unsigned char main_modeR){
 			AdatiWayReturn(300,700,4000,8000,speed300_exploration,1,1);
 		break;
 		case 0b0100://ゴミ
-			record_out();
+			flash_out();
 			run_shortest(1000,3000,3000,TURN_OFF,FUN_OFF,SLANT_OFF,speed300_shortest,2.4,0,0);
 		break;
 		case 0b0101://
-			record_out();
+			flash_out();
 			run_shortest(1000,3000,3000,TURN_ON,FUN_OFF,SLANT_OFF,speed600_shortest_mollifier,6.12,1,0);
 		break;
 		case 0b0110://吸引なしで斜め走行
-			record_out();
+			flash_out();
 			run_shortest(1000,3000,3000,TURN_ON,FUN_OFF,SLANT_ON,speed600_shortest_mollifier,6.12,1,0);
 		break;
 		case 0b0111://吸引ありで斜め走行
-			record_out();
+			flash_out();
 			run_shortest(3000,15000,15000,TURN_ON,FUN_ON,SLANT_ON,speed1000_shortest_mollifier,5.0,1,0);
 		break;
 		case 0b1000://
-			record_out();
+			flash_out();
 			run_shortest(4000,18000,18000,TURN_ON,FUN_ON,SLANT_ON,speed1000_shortest_mollifier,5.0,1,0);
 		break;
 		case 0b1001:
-			record_out();
+			flash_out();
 			run_shortest(4000,18000,18000,TURN_ON,FUN_ON,SLANT_ON,speed1400_shortest_mollifier,6.12,1,0);
 		break;
 		case 0b1010:
-			record_out();
+			flash_out();
 			run_shortest(4000,22000,22000,TURN_ON,FUN_ON,SLANT_ON,speed1400_shortest_mollifier,6.12,1,0);
 		break;
 		case 0b1011:
-			record_out();
+			flash_out();
 			run_shortest(5000,25000,25000,TURN_ON,FUN_ON,SLANT_ON,speed1400_shortest_mollifier,6.12,1,0);
 		break;
 		case 0b1100:
-			record_out();
+			flash_out();
 			run_shortest(6000,40000,40000,TURN_ON,FUN_ON,SLANT_ON,speed1400_shortest_mollifier,6.12,1,0);
 		break;
 		case 0b1101:
-			record_out();
+			flash_out();
 			run_shortest(4000,13000,14000,TURN_ON,FUN_ON,SLANT_ON,speed1200_shortest_mollifier,6.12,1,2);
 		break;
 		case 0b1110:
-			record_out();
+			flash_out();
 			run_shortest(4000,17000,20000,TURN_ON,FUN_ON,SLANT_ON,speed1200_shortest_mollifier,6.12,1,2);
 //			run_shortest(3100,11000,11000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,0.99,1,0);
 		break;
@@ -599,24 +601,24 @@ void mode_Running2(unsigned char main_modeR){
 			AdatiWayReturn(300,400,3000,3000,speed300_exploration,0,1);
 		break;
 		case 0b0001:
-			record_out();
+			flash_out();
 			tic_timer();
 			AdatiWayReturn(300,400,3000,3000,speed300_exploration,1,1);
 		break;
 		case 0b0010:
-			record_out();
+			flash_out();
 			run_shortest(4000,13000,14000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8.1,1,0);
 		break;
 		case 0b0011:
-			record_out();
+			flash_out();
 			run_shortest(4000,17000,20000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8.1,1,2);
 		break;
 		case 0b0100:
-			record_out();
+			flash_out();
 			run_shortest(6000,40000,40000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8.1,1,2);
 		break;
 		case 0b0101:
-			record_out();
+			flash_out();
 			run_shortest(6000,55000,55000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8.1,1,2);
 		break;
 		case 0b0110:

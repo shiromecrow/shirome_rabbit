@@ -6,13 +6,15 @@
  */
 
 #include "cal_acceleration.h"
-#include "CL_EnoderGyro.h"
-#include "PL_timer.h"
+
+#include <math.h>
 
 #include "define.h"
+
+#include "PL_timer.h"
+#include "CL_EnoderGyro.h"
 #include "FF_motor.h"
 
-#include "math.h"
 
 float mollifier_timer;
 
