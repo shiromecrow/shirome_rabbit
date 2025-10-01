@@ -15,40 +15,40 @@
 //#define CONTROLRIGHTWALL 2
 
 // 壁制御に使用する値
-#define SENSOR_GAIN_P 0.5//0.16横壁制御のゲイン
-#define SENSOR_GAIN_D -0.001//0.16横壁制御のゲイン
+#define SENSOR_GAIN_P 0.6//0.16横壁制御のゲイン
+#define SENSOR_GAIN_D 0.001//0.16横壁制御のゲイン
 //#define SENSOR_GAIN_SHORT 0.5*800/1200//0.16横壁制御のゲイン最短用
 #define SENSOR_GAIN_SHORT_P 0.4//0.16横壁制御のゲイン最短用
 #define SENSOR_GAIN_SHORT_D -0.001//0.16横壁制御のゲイン最短用
 
-#define	CENTER_L                        	986
-#define	CENTER_R                        	1475
-#define	CONTROLWALL_THRESHOLD_L         	431
-#define	CONTROLWALL_THRESHOLD_R         	663
-#define	CONTROLWALLCUT_THRESHOLD_L      	129
-#define	CONTROLWALLCUT_THRESHOLD_R      	62
-#define	WALLCUT_THRESHOLD_L90           	368
-#define	WALLCUT_THRESHOLD_R90           	421
-#define	CONTROLWALLCUT_THRESHOLD_SHORT_L	163
-#define	CONTROLWALLCUT_THRESHOLD_SHORT_R	304
-#define	SENSOR_L_MIN                    	431
-#define	SENSOR_L_MAX                    	2640
-#define	SENSOR_R_MIN                    	663
-#define	SENSOR_R_MAX                    	3425
+#define	CENTER_L                        	1029
+#define	CENTER_R                        	1394
+#define	CONTROLWALL_THRESHOLD_L         	433
+#define	CONTROLWALL_THRESHOLD_R         	640
+#define	CONTROLWALLCUT_THRESHOLD_L      	147
+#define	CONTROLWALLCUT_THRESHOLD_R      	56
+#define	WALLCUT_THRESHOLD_L90           	347
+#define	WALLCUT_THRESHOLD_R90           	335
+#define	CONTROLWALLCUT_THRESHOLD_SHORT_L	290
+#define	CONTROLWALLCUT_THRESHOLD_SHORT_R	185
+#define	SENSOR_L_MIN                    	433
+#define	SENSOR_L_MAX                    	2651
+#define	SENSOR_R_MIN                    	640
+#define	SENSOR_R_MAX                    	3362
 
 #define STABILITY_LIMIT 6
 #define STABILITY_LIMIT_SHORT 4
 
 
 //串制御
-#define	CENTER_L_PILLAR	561
-#define	CENTER_R_PILLAR 753
+#define	CENTER_L_PILLAR	497
+#define	CENTER_R_PILLAR 868
 #define SKEWER_GAIN 0.9
 #define SKEWER_GAIN_SHORT 0.9
-#define SKEWER_LIMIT 20//左90
+#define SKEWER_LIMIT 30//左90
 #define SKEWER_LIMIT_SHORT 90//左90
-#define	PILLAR_THRESHOLD_L	300
-#define	PILLAR_THRESHOLD_R 400
+#define	PILLAR_THRESHOLD_L	190
+#define	PILLAR_THRESHOLD_R 260
 
 //前壁制御3348,SEN3=1366,SEN4=1710
 #define SENSOR_FRONT_GAIN_P 1.8
