@@ -18,8 +18,7 @@
 #define RECORD_STOPMODE 1000
 
 typedef struct {
-    const char* header[MAX_RECORD_NUM];
-    void (*record_func)(float*);
+    void (*record_func)(float* d, const char* header_out[], int request);
 } RecordMode;
 
 extern RecordMode record_modes[];
