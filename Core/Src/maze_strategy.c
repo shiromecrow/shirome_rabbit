@@ -41,6 +41,20 @@ int pass[PASS_NUM]; //1f 2r 3l
 uint8_t flg_backhit=OFF;
 
 
+/**
+ * @brief センサ値から前方・右・左の壁の有無を判定する
+ * 
+ * @param[out] front_wall 前方に壁がある場合 true、ない場合 false
+ * @param[out] right_wall 右側に壁がある場合 true、ない場合 false
+ * @param[out] left_wall 左側に壁がある場合 true、ない場合 false
+ * 
+ * @details
+ * 左右の前方センサ（SENSOR_FRONT_L, SENSOR_FRONT_R）の平均値が
+ * F_PRESENCE 閾値の2倍以上であれば前方に壁があると判定する。
+ * 右・左の壁はそれぞれ R_PRESENCE, L_PRESENCE を閾値として判定。
+ * 
+ * 使用するセンサ値は g_sensor_mean[] に格納されている平均化済みの値。
+ */
 void get_wallData_sensor(_Bool* front_wall,_Bool* right_wall,_Bool* left_wall){
 
 	*front_wall = ((g_sensor_mean[SENSOR_FRONT_L] + g_sensor_mean[SENSOR_FRONT_R]) >= 2 * F_PRESENCE);
@@ -49,13 +63,24 @@ void get_wallData_sensor(_Bool* front_wall,_Bool* right_wall,_Bool* left_wall){
 
 }
 
-
+/**
+ * @brief 指定された方向に応じて座標 (x, y) を更新する
+ * 
+ * @param[in,out] x X座標へのポインタ。東西方向の移動に応じて加減算される
+ * @param[in,out] y Y座標へのポインタ。南北方向の移動に応じて加減算される
+ * @param[in] direction 移動方向を示す数値（1:北, 2:東, 3:南, 4:西）
+ * 
+ * @details
+ * マイクロマウスの進行方向に応じて座標を1マス分更新する。
+ * - 北（1）：Y座標を +1
+ * - 東（2）：X座標を +1
+ * - 南（3）：Y座標を -1
+ * - 西（4）：X座標を -1
+ * 
+ * 方向は整数値で表現され、switch文で分岐処理される。
+ */
 void update_coordinate(int *x,int *y,int direction){
-// int direction,int *x_coordinate,int *y_coordinate
-//	*direction = *direction % 4;
-//	if (*direction <= 0) {
-//		*direction = *direction+4;
-//	}
+
 	switch (direction) {
 	case 1://北
 		*y += 1;
@@ -71,10 +96,36 @@ void update_coordinate(int *x,int *y,int direction){
 		break;
 	}
 
-
-
 }
 
+
+/**
+ * @brief 探索中に停止せず連続して移動するための方向判断・制御を行う
+ * 
+ * @param[in,out] direction 現在の進行方向（1:北, 2:東, 3:南, 4:西）。旋回時に更新される
+ * @param[in] front_count 足立法による前方の歩数マップ値（小さいほどゴールに近い）
+ * @param[in] right_count 足立法による右方向の歩数マップ値
+ * @param[in] back_count 足立法による後方向の歩数マップ値
+ * @param[in] left_count 足立法による左方向の歩数マップ値
+ * @param[in] input_StraightVelocity 直進時の目標速度
+ * @param[in] input_TurningVelocity 旋回時の目標速度
+ * @param[in] input_StraightAcceleration 直進時の加速度
+ * @param[in] input_TurningAcceleration 旋回時の加速度
+ * @param[in] howspeed 旋回速度パラメータ構造体（slalom_R, slalom_Lなどを含む）
+ * @param[in] front_wall 前方に壁があるかどうか（true:あり）
+ * @param[in] right_wall 右側に壁があるかどうか
+ * @param[in] left_wall 左側に壁があるかどうか
+ * 
+ * @details
+ * 停止せずに連続して移動する探索モード。
+ * 各方向の歩数マップの値が最も小さい方向がゴールに近い方向として選択される。
+ * 
+ * 優先順位は「前→右→左→後」の順。
+ * - 前方が最も近い場合：直進（WallControl有効）
+ * - 右が最も近い場合：右旋回（slalomR）
+ * - 左が最も近い場合：左旋回（slalomL）
+ * - 後方が最も近い場合：180度旋回（壁補正・ジャイロリセット含む）
+ */
 void run_movement_continuity(int *direction,unsigned short front_count,unsigned short right_count,
 		unsigned short back_count,unsigned short left_count,float input_StraightVelocity,
 		float input_TurningVelocity, float input_StraightAcceleration,
@@ -130,7 +181,46 @@ void run_movement_continuity(int *direction,unsigned short front_count,unsigned 
 
 
 
-
+/**
+ * @brief 探索中に一時停止を挟みながら移動するための方向判断・制御を行う
+ * 
+ * @param[in,out] direction 現在の進行方向（1:北, 2:東, 3:南, 4:西）。旋回時に更新される
+ * @param[in] front_count 足立法による前方の歩数マップ値（小さいほどゴールに近い）
+ * @param[in] right_count 足立法による右方向の歩数マップ値
+ * @param[in] back_count 足立法による後方向の歩数マップ値
+ * @param[in] left_count 足立法による左方向の歩数マップ値
+ * @param[in] input_StraightVelocity 直進時の目標速度
+ * @param[in] input_TurningVelocity 旋回時の目標速度
+ * @param[in] input_StraightAcceleration 直進時の加速度
+ * @param[in] input_TurningAcceleration 旋回時の加速度
+ * @param[in] howspeed 旋回速度パラメータ構造体（slalom_R, slalom_Lなどを含む）
+ * @param[in] front_wall 前方に壁があるかどうか（true:あり）
+ * @param[in] right_wall 右側に壁があるかどうか
+ * @param[in] left_wall 左側に壁があるかどうか
+ * @param[in] x 現在のX座標
+ * @param[in] y 現在のY座標
+ * @param[in] MazeRecord_mode フラッシュ記録モード（1で記録）
+ * @param[in] Dijkstra_mode ダイクストラ探索モード（ダイクストラ法での最短経路を探索する）
+ * 
+ * @details
+ * 一時停止を挟みながら移動する探索モード。
+ * 各方向の `_count` 値は足立法による歩数マップの値であり、
+ * その方向に進んだ場合のゴールまでの推定歩数を示す。
+ * 最も小さい方向が「最も有望な進行方向」として選択される。
+ * 
+ * 停止後に以下の処理を実行：
+ * - 地図記録（MazeRecord_mode）
+ * - 最短経路探索（Dijkstra_mode）
+ * - 周囲の歩数マップ再評価
+ * 
+ * 優先順位は「前→右→左→後」の順。
+ * - 前方が最も近い場合：直進
+ * - 右が最も近い場合：右旋回（mollifier_turning_table）
+ * - 左が最も近い場合：左旋回（mollifier_turning_table）
+ * - 後方が最も近い場合：180度旋回（壁補正・ジャイロリセット含む）
+ * 
+ * 迷路破損時には探索を停止し、LED表示とモータ停止を実行する。
+ */
 void run_movement_suspension(int *direction, unsigned short front_count,
 		unsigned short right_count, unsigned short back_count,
 		unsigned short left_count, float input_StraightVelocity,
@@ -225,7 +315,44 @@ if(error_mode==0){
 
 
 
-
+/**
+ * @brief マイクロマウスによる迷路探索のメイン処理を実行する
+ * 
+ * @param[in] input_StraightVelocity 直進時の目標速度
+ * @param[in] input_TurningVelocity 旋回時の目標速度
+ * @param[in] input_StraightAcceleration 直進時の加速度
+ * @param[in] input_TurningAcceleration 旋回時の加速度
+ * @param[in] howspeed 旋回速度パラメータ構造体（slalom_R, slalom_Lなどを含む）
+ * @param[in] know_mode 既知区間加速モード（0:既知区間等速, 1:既知区間加速）
+ * @param[in] Dijkstra_mode ダイクストラ探索モード（帰りにダイクストラ法での最短経路を探索する）
+ * 
+ * @details
+ * この関数は迷路探索の全体制御を行う。
+ * 初期化 → センサ取得 → 壁更新 → 歩数マップ生成 → 方向判断 → 移動制御
+ * をループしながら、ゴール到達または異常検出まで探索を継続する。
+ * 
+ * - 足立法による歩数マップ（StepCountMap）を用いて、各方向の歩数を評価
+ * - 最も歩数が少ない方向を選択し、`run_movement_continuity` または `run_movement_suspension` を呼び出す
+ * - `kitikukan` フラグにより既知区間の圧縮移動を実行
+ * - ゴール到達時には `GOAL_ALL` フラグを確認し、静止動作で最終調整
+ * - `error_mode` による異常検出（自己位置破損、迷路破損、時間制限など）を含む
+ * - 探索終了後、壁情報をフラッシュに記録（正常終了時は `flash_in()`、異常時は `flash_out()`）
+ * 
+ * 使用される主な補助関数：
+ * - `get_wallData_sensor()`：壁センサ取得
+ * - `update_wall()`：壁情報更新
+ * - `create_StepCountMap_queue()`：足立法マップ生成
+ * - `search_AroundWalkCount()`：周囲の歩数取得
+ * - `decision_kitiku()`：既知区間判定
+ * - `compress_kitiku()`：既知区間圧縮移動
+ * - `run_movement_continuity()`：連続移動制御
+ * - `run_movement_suspension()`：静止移動制御
+ * 
+ * @note
+ * `x`, `y`, `direction` は本来構造体化すべきだが、現状は個別変数で管理。
+ * `MAX_WALKCOUNT` は到達不能領域を示す特殊値。
+ * `GOAL_ALL` フラグはゴール到達判定に使用。
+ */
 void AdatiWayReturn(float input_StraightVelocity, float input_TurningVelocity, float input_StraightAcceleration,
 		float input_TurningAcceleration, parameter_speed howspeed,int know_mode,uint8_t Dijkstra_mode) {
 
@@ -485,7 +612,28 @@ void AdatiWayReturn(float input_StraightVelocity, float input_TurningVelocity, f
 
 
 
-
+/**
+ * @brief 足立法による歩数マップを用いて最短走行用のパスを生成する
+ * 
+ * @details
+ * 探索済みの迷路情報と足立法の歩数マップ（StepCountMap）をもとに、
+ * ゴールまでの最短経路を `pass[]` 配列に記録する。
+ * 
+ * - 初期位置 (x=0, y=0, direction=1) からスタート
+ * - 各方向の歩数を比較し、最も少ない方向へ進む
+ * - 壁がある方向は MAX_WALKCOUNT に置き換え、選択対象から除外
+ * - 移動内容は以下の形式で `pass[]` に記録：
+ *   - `+2`：直進（2区画分）
+ *   - `-2`：右旋回
+ *   - `-3`：左旋回
+ *   - `+1`：ゴール調整（直進1区画）
+ * 
+ * ゴール到達時には方向補正を行い、探索を終了する。
+ * 
+ * @note
+ * `pass[]` は走行命令列として使用され、最短走行時に再生される。
+ * `pass_count` は命令数のインデックス。
+ */
 void pass_maker(void){
 	unsigned short front_count, right_count, back_count, left_count;
 
@@ -498,11 +646,9 @@ void pass_maker(void){
 	int direction = 1;
 	pass_count = 0;
 	create_StepCountMap_queue();
-	//maze_makerST(stmass);
 	maze_display(&wall);
 	pass[0] = 1;
 	while (1) {
-//		if (mode_safty == 1) {break;}
 		update_coordinate(&x,&y,direction);
 
 		if(GOAL_ALL){
@@ -512,10 +658,7 @@ void pass_maker(void){
 						pass_count++;
 					}
 					pass[pass_count] = pass[pass_count] + 1;
-		//			wait(10);
-		//			maze_display(&wall);
-		//			x = 0;
-		//			y = 0;
+
 					direction = direction + 2;
 					if (direction == 5) {
 						direction = 1;
@@ -580,7 +723,32 @@ void pass_maker(void){
 
 
 
-
+/**
+ * @brief ダイクストラ法による歩数マップを用いて最短走行用のパスを生成する
+ * 
+ * @details
+ * ゴールまでの最短経路を、ダイクストラ法で生成した歩数マップ（DijkstraMap）をもとに
+ * `pass[]` 配列へ記録する。
+ * 
+ * - 初期位置 (x=0, y=0, direction=1) からスタート
+ * - 各方向の歩数を比較し、最も少ない方向へ進む
+ * - 壁がある方向は MAX_WALKCOUNT_DIJKSTRA に置き換え、選択対象から除外
+ * - 移動内容は以下の形式で `pass[]` に記録：
+ *   - `+2`：直進（2区画分）
+ *   - `-2`：右旋回
+ *   - `-3`：左旋回
+ * 
+ * ゴール到達後は、姿勢に応じて貫通するようなゴールを実施するための補正を行う。
+ * - `goal_mode = 0`：直進ゴール
+ * - `goal_mode = 1`：左旋回ゴール
+ * - `goal_mode = 2`：右旋回ゴール
+ * 
+ * ゴール補正後、`+1` を追加してパスを完了させる。
+ * 
+ * @note
+ * `pass[]` は最短走行命令列として使用される。
+ * `pass_count` は命令数のインデックス。
+ */
 void pass_maker_Dijkstra(void){
 
 	unsigned short front_count, right_count, back_count, left_count;
@@ -594,10 +762,10 @@ void pass_maker_Dijkstra(void){
 	int direction = 1;
 	pass_count = 0;
 	create_DijkstraMap3();
-	maze_display_Dijkstra();
+	//maze_display_Dijkstra();
 	pass[0] = 1;
 	while (1) {
-//		if (mode_safty == 1) {break;}
+
 		update_coordinate(&x,&y,direction);
 
 		if(GOAL_ALL){
@@ -735,15 +903,6 @@ void run_shortest(float inspeed, float inacc, float indec, char pass_mode, char 
     g_dijkstra_parameter.Turn_parameter=howspeed;
 	g_dijkstra_parameter.Turn_parameter_corrtime = convert_parameter_speed_to_corrtime(&g_dijkstra_parameter.Turn_parameter);
 
-//	unsigned short front_count, right_count, back_count, left_count;
-//
-//	_Bool front_wall;
-//	_Bool right_wall;
-//	_Bool left_wall;
-//
-//	int x = 0;
-//	int y = 0;
-//	int direction = 1;
 	slant_direction = -2;
 
 	MOTOR_MODE mode;
@@ -771,10 +930,7 @@ void run_shortest(float inspeed, float inacc, float indec, char pass_mode, char 
 	pass_count = 1;
 if(pass_mode==1){
 	while (1) {		//パス圧縮
-//		if (mode_safty == 1) {
-//
-//			break;
-//		}
+
 		if (pass[pass_count] == 0) {
 			break;
 		}
