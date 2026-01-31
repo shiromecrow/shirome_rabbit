@@ -57,7 +57,7 @@ void init_FailSafe(void){
 	encoder_gyro_error=1000;
 
 	encoder_PID_error_highspeed=800;//3000
-	gyro_PID_error_highspeed=1000;
+	gyro_PID_error_highspeed=1300;
 	gyro_x_error_highspeed=200;
 	encoder_gyro_error_highspeed=2500;
 	wallcut_error=3;

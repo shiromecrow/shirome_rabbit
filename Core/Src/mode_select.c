@@ -172,8 +172,10 @@ switch (main_modeL) {
 		testturning(speed1600_shortest_mollifier,16+main_modeR,1,ON,8.1,1);
 	break;
 	case 0b1100:
+		testturning(speed1800_shortest_mollifier,main_modeR,1,ON,8.1,1);
 	break;
 	case 0b1101:
+	testturning(speed1800_shortest_mollifier,16+main_modeR,1,ON,8.1,1);
 	break;
 	case 0b1110:
 		mode_Tuning2(main_modeR);
@@ -273,7 +275,7 @@ void mode_PLtest(unsigned char main_modeR) {
 			reset_gyro();
 			reset_speed();
 			clear_Ierror();
-			stop_fun();
+			
 			pl_r_blue_LED(ON);
 			pl_l_blue_LED(ON);
 			while (g_sensor[0][0] <= SENSOR_FINGER_0 || g_sensor[2][0] <= SENSOR_FINGER_2 || g_sensor[4][0] <= SENSOR_FINGER_4) {
@@ -281,6 +283,7 @@ void mode_PLtest(unsigned char main_modeR) {
 			}
 			pl_r_blue_LED(OFF);
 			pl_l_blue_LED(OFF);
+			stop_fun();
 			printf("encoder  var : %f\n",g_encY_variance);
 			printf("ACC   mean : %f, var : %f\n",g_accelY_mean, g_accelY_variance);
 			printf("GYRO   mean : %f\n",g_omegaZ_mean);
@@ -622,10 +625,12 @@ void mode_Running2(unsigned char main_modeR){
 			run_shortest(6000,55000,55000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8.1,1,2);
 		break;
 		case 0b0110:
-
+			flash_out();
+			run_shortest(5000,40000,40000,TURN_ON,FUN_ON,SLANT_ON,speed1800_shortest_mollifier,8.1,1,2);
 		break;
 		case 0b0111:
-
+			flash_out();
+			run_shortest(6000,55000,55000,TURN_ON,FUN_ON,SLANT_ON,speed1800_shortest_mollifier,8.1,1,2);
 		break;
 		case 0b1000:
 

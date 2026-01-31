@@ -50,6 +50,7 @@ extern parameter_speed speed1000_shortest_mollifier;
 extern parameter_speed speed1200_shortest_mollifier;
 extern parameter_speed speed1400_shortest_mollifier;
 extern parameter_speed speed1600_shortest_mollifier;
+extern parameter_speed speed1800_shortest_mollifier;
 
 float get_center_velocity(parameter_speed,int);
 
