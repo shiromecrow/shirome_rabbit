@@ -72,13 +72,13 @@ void EncoderGyro_PID(float *PID_s, float *PID_t,float straight_velocity,float tu
 		Ksp = 2.2; //3//P項の制御量直進
 		Ksi = 0.08; //80//5//43//I項の制御量直進
 		Ksd = 0.00; //D項の制御量直進
-		Ktp = 1.1; //295//P項の制御量旋回
-		Kti = 0.05; //1//.6//I項の制御量旋回
+		Ktp = 1.0; //295//P項の制御量旋回
+		Kti = 0.07; //1//.6//I項の制御量旋回
 		Ktd = 0.00; //205//D項の制御量旋回
 		Ktp_angle = 5.0; //P項の制御量旋回
 		Ktd_angle = 0; //D項の制御量旋回
 		if(modeacc == 2 || modeacc == 9){//旋回
-			Ktp = 1.2; //295//P項の制御量旋回
+			Ktp = 1.0; //295//P項の制御量旋回
 			Kti = 0.07; //1//.6//I項の制御量旋回
 			Ktd = 0.0; //205//D項の制御量旋回
 			Ktp_angle = 30; //P項の制御量旋回
@@ -96,12 +96,12 @@ void EncoderGyro_PID(float *PID_s, float *PID_t,float straight_velocity,float tu
 		obs_vel_turn = angle_speed;
 		obs_angle_turn = yaw_angle;
 	}else if(highspeed_mode == 1){//最短用
-		Ksp = 3.1; //3//P項の制御量直進
-		Ksi = 0.10; //80//5//43//I項の制御量直進
-		Ksd = 0.1; //D項の制御量直進
-		Ktp = 2.7; //295//P項の制御量旋回
-		Kti = 0.082; //1//.6//I項の制御量旋回
-		Ktd = -0.1; //205//D項の制御量旋回		
+		Ksp = 5.1; //3//P項の制御量直進
+		Ksi = 0.60; //80//5//43//I項の制御量直進
+		Ksd = 0.5; //D項の制御量直進
+		Ktp = 2.5; //295//P項の制御量旋回
+		Kti = 0.072; //1//.6//I項の制御量旋回
+		Ktd = -0.15; //205//D項の制御量旋回		
 		Ktp_angle = 50; //P項の制御量旋回
 		Ktd_angle = 0; //D項の制御量旋回
 		/*	
@@ -116,11 +116,11 @@ void EncoderGyro_PID(float *PID_s, float *PID_t,float straight_velocity,float tu
 			Ksd = 0.05; //D項の制御量直進
 			Ktp = 3.2; //295//P項の制御量旋回
 			Kti = 0.092; //1//.6//I項の制御量旋回
-			Ktd = 0.01; //205//D項の制御量旋回
+			Ktd = 0.02; //205//D項の制御量旋回
 			Ktp_angle = 70; //P項の制御量旋回
 			Ktd_angle = 0; //D項の制御量旋回
 		}
-		if (straight_velocity < 50){
+		if (straight_velocity < 0){
 			kalman_mode=0;
 		}else{
 			kalman_mode=1;
