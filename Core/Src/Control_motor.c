@@ -562,6 +562,13 @@ float straight_table2(float input_displacement, float input_start_velocity,
 
 	if(motor_mode.calMazeMode==0){
 	while (g_acc_flag!=4){
+		/* 後オフセット時の壁制御を途中から有効にする */
+		if(g_WallControl_mode == 2 && straight.displacement>input_displacement*TURNAFTER_WALLCONTROLOFF_RATIO){
+			g_WallControl_mode = 1;
+		}
+		if(g_WallControl_mode == 4 && straight.displacement>input_displacement*TURNAFTER_WALLCONTROLOFF_RATIO){
+			g_WallControl_mode = 3;
+		}
 		if(motor_mode.WallCutMode==1){
 			if((NoWallDisplacementL90>=input_displacement+CUTPLACE_TO_CENTER_L90 ||
 			   NoWallDisplacementR90>=input_displacement+CUTPLACE_TO_CENTER_R90)){

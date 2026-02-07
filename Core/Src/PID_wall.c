@@ -364,7 +364,18 @@ float calWallConrol(void) {
 		}
 
 	} else if (g_WallControl_mode == 2) {
-// 斜めの制御
+// 途中で壁制御開始フラグ
+		g_WallControlStatus = 0;
+		StabilityCount_reset = 0;
+		StabilityCount_L = 0;
+		StabilityCount_R = 0;
+		Stabilitydisplacement_L = 0;
+		Stabilitydisplacement_R = 0;
+		g_sensor_max_l = CENTER_L_PILLAR;
+		g_sensor_max_r = CENTER_R_PILLAR;
+		g_skewer_displacement = SKEWER_LIMIT;
+		PID_wall = 0;
+		pl_yellow_LED_off();
 
 
 	} else if (g_WallControl_mode == 3) {
@@ -750,7 +761,21 @@ float calWallConrol(void) {
 
 		}
 
+	}else if (g_WallControl_mode == 4) {
+// 途中で斜め壁制御開始フラグ
+		g_WallControlStatus = 0;
+		StabilityCount_reset = 0;
+		StabilityCount_L = 0;
+		StabilityCount_R = 0;
+		Stabilitydisplacement_L = 0;
+		Stabilitydisplacement_R = 0;
+		g_sensor_max_l = CENTER_L_PILLAR;
+		g_sensor_max_r = CENTER_R_PILLAR;
+		g_skewer_displacement = SKEWER_LIMIT;
+		PID_wall = 0;
+		pl_yellow_LED_off();
 	}
+
 	PID_w = PID_wall / MAXMOTOR * g_V_battery_mean;
 
 	return PID_w;

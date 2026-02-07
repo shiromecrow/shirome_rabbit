@@ -13,9 +13,9 @@
 #define OFFSET_CONTROL_IN_SLALOM 0//大回りのオフセットでの壁制御(入り)
 #define OFFSET_CONTROL_OUT_SLALOM 0//大回りのオフセットでの壁制御(出る)
 #define OFFSET_CONTROL_IN 0//大回りのオフセットでの壁制御(入り)
-#define OFFSET_CONTROL_OUT 1//大回りのオフセットでの壁制御(出る)
+#define OFFSET_CONTROL_OUT 2//大回りのオフセットでの壁制御(出る)
 #define OFFSET_CONTROL_IN_SLANT 0//3で制御あり
-#define OFFSET_CONTROL_OUT_SLANT 0//3で制御あり
+#define OFFSET_CONTROL_OUT_SLANT 4//3で制御あり
 
 void test_mollifier_slalomR(parameter);
 
