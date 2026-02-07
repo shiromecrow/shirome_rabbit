@@ -47,7 +47,7 @@ void test_mollifier_slalomR(parameter turnpara) {
 		wallmode.WallControlMode=0;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 									turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
-		mollifier_slalom_table(turnpara.g_speed,-90,turnpara.t_speed);
+		mollifier_slalom_table(turnpara.g_speed,-90,turnpara.t_speed,2);
 		wallmode.WallControlMode=0;
 		wallmode.WallCutMode=0;
 		straight_table2(45 + turnpara.e_ofset, turnpara.g_speed, 0, turnpara.g_speed,
@@ -164,7 +164,7 @@ void slalomR(parameter turnpara,char test_mode,char shortest_mode,char mollifier
 									turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		}
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,-90,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,-90,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,-90, 0, 0, -turnpara.t_speed, turnpara.t_acc);
 		}
@@ -186,7 +186,7 @@ void slalomR(parameter turnpara,char test_mode,char shortest_mode,char mollifier
 														turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		}
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,-90,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,-90,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,-90, 0, 0, -turnpara.t_speed, turnpara.t_acc);
 		}
@@ -224,7 +224,7 @@ void slalomL(parameter turnpara,char test_mode,char shortest_mode,char mollifier
 									turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		}
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,90,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,90,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,90, 0, 0, turnpara.t_speed, turnpara.t_acc);
 		}
@@ -246,7 +246,7 @@ void slalomL(parameter turnpara,char test_mode,char shortest_mode,char mollifier
 														turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		}
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,90,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,90,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,90, 0, 0, turnpara.t_speed, turnpara.t_acc);
 		}
@@ -274,7 +274,7 @@ void turn90R(parameter turnpara, char test_mode,char mollifier_mode,float end_ve
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,-90,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,-90,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,-90, 0, 0, -turnpara.t_speed, turnpara.t_acc);
 		}
@@ -291,7 +291,7 @@ void turn90R(parameter turnpara, char test_mode,char mollifier_mode,float end_ve
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,-90,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,-90,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,-90, 0, 0, -turnpara.t_speed, turnpara.t_acc);
 		}
@@ -319,7 +319,7 @@ void turn90L(parameter turnpara, char test_mode,char mollifier_mode,float end_ve
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,90,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,90,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,90, 0, 0, turnpara.t_speed, turnpara.t_acc);
 		}
@@ -336,7 +336,7 @@ void turn90L(parameter turnpara, char test_mode,char mollifier_mode,float end_ve
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,90,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,90,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,90, 0, 0, turnpara.t_speed, turnpara.t_acc);
 		}
@@ -365,7 +365,7 @@ void turn180R(parameter turnpara, char test_mode,char mollifier_mode,float end_v
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,-180,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,-180,turnpara.t_speed,4);
 		}else{
 			slalom_table2(turnpara.g_speed,-180, 0, 0, -turnpara.t_speed, turnpara.t_acc);
 		}
@@ -382,7 +382,7 @@ void turn180R(parameter turnpara, char test_mode,char mollifier_mode,float end_v
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,-180,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,-180,turnpara.t_speed,4);
 		}else{
 			slalom_table2(turnpara.g_speed,-180, 0, 0, -turnpara.t_speed, turnpara.t_acc);
 		}
@@ -410,7 +410,7 @@ void turn180L(parameter turnpara, char test_mode,char mollifier_mode,float end_v
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,180,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,180,turnpara.t_speed,4);
 		}else{
 			slalom_table2(turnpara.g_speed,180, 0, 0, turnpara.t_speed, turnpara.t_acc);
 		}
@@ -427,7 +427,7 @@ void turn180L(parameter turnpara, char test_mode,char mollifier_mode,float end_v
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,180,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,180,turnpara.t_speed,4);
 		}else{
 			slalom_table2(turnpara.g_speed,180, 0, 0, turnpara.t_speed, turnpara.t_acc);
 		}
@@ -457,7 +457,7 @@ void turn45inR(parameter turnpara, char test_mode,char mollifier_mode,float end_
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,-45,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,-45,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,-45, 0, 0, -turnpara.t_speed, turnpara.t_acc);
 		}
@@ -475,7 +475,7 @@ void turn45inR(parameter turnpara, char test_mode,char mollifier_mode,float end_
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,-45,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,-45,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,-45, 0, 0, -turnpara.t_speed, turnpara.t_acc);
 		}
@@ -499,7 +499,7 @@ void turn45inR(parameter turnpara, char test_mode,char mollifier_mode,float end_
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,-45,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,-45,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,-45, 0, 0, -turnpara.t_speed, turnpara.t_acc);
 		}
@@ -527,7 +527,7 @@ void turn45inL(parameter turnpara, char test_mode,char mollifier_mode,float end_
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,45,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,45,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,45, 0, 0, turnpara.t_speed, turnpara.t_acc);
 		}
@@ -545,7 +545,7 @@ void turn45inL(parameter turnpara, char test_mode,char mollifier_mode,float end_
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,45,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,45,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,45, 0, 0, turnpara.t_speed, turnpara.t_acc);
 		}
@@ -569,7 +569,7 @@ void turn45inL(parameter turnpara, char test_mode,char mollifier_mode,float end_
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,45,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,45,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,45, 0, 0, turnpara.t_speed, turnpara.t_acc);
 		}
@@ -597,7 +597,7 @@ void turn135inR(parameter turnpara, char test_mode,char mollifier_mode,float end
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,-135,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,-135,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,-135, 0, 0, -turnpara.t_speed, turnpara.t_acc);
 		}
@@ -615,7 +615,7 @@ void turn135inR(parameter turnpara, char test_mode,char mollifier_mode,float end
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,-135,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,-135,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,-135, 0, 0, -turnpara.t_speed, turnpara.t_acc);
 		}
@@ -639,7 +639,7 @@ void turn135inR(parameter turnpara, char test_mode,char mollifier_mode,float end
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,-135,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,-135,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,-135, 0, 0, -turnpara.t_speed, turnpara.t_acc);
 		}
@@ -667,7 +667,7 @@ void turn135inL(parameter turnpara, char test_mode,char mollifier_mode,float end
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,135,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,135,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,135, 0, 0, turnpara.t_speed, turnpara.t_acc);
 		}
@@ -685,7 +685,7 @@ void turn135inL(parameter turnpara, char test_mode,char mollifier_mode,float end
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,135,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,135,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,135, 0, 0, turnpara.t_speed, turnpara.t_acc);
 		}
@@ -709,7 +709,7 @@ void turn135inL(parameter turnpara, char test_mode,char mollifier_mode,float end
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,135,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,135,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,135, 0, 0, turnpara.t_speed, turnpara.t_acc);
 		}
@@ -739,7 +739,7 @@ void turn45outR(parameter turnpara,  char test_mode,char mollifier_mode,float en
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,-45,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,-45,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,-45, 0, 0, -turnpara.t_speed, turnpara.t_acc);
 		}
@@ -757,7 +757,7 @@ void turn45outR(parameter turnpara,  char test_mode,char mollifier_mode,float en
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,-45,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,-45,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,-45, 0, 0, -turnpara.t_speed, turnpara.t_acc);
 		}
@@ -774,7 +774,7 @@ void turn45outR(parameter turnpara,  char test_mode,char mollifier_mode,float en
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,-45,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,-45,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,-45, 0, 0, -turnpara.t_speed, turnpara.t_acc);
 		}
@@ -803,7 +803,7 @@ void turn45outL(parameter turnpara,  char test_mode,char mollifier_mode,float en
 			straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 					turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
 			if(mollifier_mode == ON){
-				mollifier_slalom_table(turnpara.g_speed,45,turnpara.t_speed);
+				mollifier_slalom_table(turnpara.g_speed,45,turnpara.t_speed,2);
 			}else{
 				slalom_table2(turnpara.g_speed,45, 0, 0, turnpara.t_speed, turnpara.t_acc);
 			}
@@ -821,7 +821,7 @@ void turn45outL(parameter turnpara,  char test_mode,char mollifier_mode,float en
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,45,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,45,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,45, 0, 0, turnpara.t_speed, turnpara.t_acc);
 		}
@@ -838,7 +838,7 @@ void turn45outL(parameter turnpara,  char test_mode,char mollifier_mode,float en
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,45,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,45,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,45, 0, 0, turnpara.t_speed, turnpara.t_acc);
 		}
@@ -868,7 +868,7 @@ void turn135outR(parameter turnpara,  char test_mode,char mollifier_mode,float e
 			straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 					turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
 			if(mollifier_mode == ON){
-				mollifier_slalom_table(turnpara.g_speed,-135,turnpara.t_speed);
+				mollifier_slalom_table(turnpara.g_speed,-135,turnpara.t_speed,2);
 			}else{
 				slalom_table2(turnpara.g_speed,-135, 0, 0, -turnpara.t_speed, turnpara.t_acc);
 			}
@@ -886,7 +886,7 @@ void turn135outR(parameter turnpara,  char test_mode,char mollifier_mode,float e
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,-135,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,-135,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,-135, 0, 0, -turnpara.t_speed, turnpara.t_acc);
 		}
@@ -903,7 +903,7 @@ void turn135outR(parameter turnpara,  char test_mode,char mollifier_mode,float e
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,-135,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,-135,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,-135, 0, 0, -turnpara.t_speed, turnpara.t_acc);
 		}
@@ -932,7 +932,7 @@ void turn135outL(parameter turnpara,  char test_mode,char mollifier_mode,float e
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,135,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,135,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,135, 0, 0, turnpara.t_speed, turnpara.t_acc);
 		}
@@ -950,7 +950,7 @@ void turn135outL(parameter turnpara,  char test_mode,char mollifier_mode,float e
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,135,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,135,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,135, 0, 0, turnpara.t_speed, turnpara.t_acc);
 		}
@@ -967,7 +967,7 @@ void turn135outL(parameter turnpara,  char test_mode,char mollifier_mode,float e
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,135,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,135,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,135, 0, 0, turnpara.t_speed, turnpara.t_acc);
 		}
@@ -996,7 +996,7 @@ void V90R(parameter turnpara,  char test_mode,char mollifier_mode,float end_velo
 			straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 					turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
 			if(mollifier_mode == ON){
-				mollifier_slalom_table(turnpara.g_speed,-90,turnpara.t_speed);
+				mollifier_slalom_table(turnpara.g_speed,-90,turnpara.t_speed,2);
 			}else{
 				slalom_table2(turnpara.g_speed,-90, 0, 0, -turnpara.t_speed, turnpara.t_acc);
 			}
@@ -1014,7 +1014,7 @@ void V90R(parameter turnpara,  char test_mode,char mollifier_mode,float end_velo
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,-90,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,-90,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,-90, 0, 0, -turnpara.t_speed, turnpara.t_acc);
 		}
@@ -1031,7 +1031,7 @@ void V90R(parameter turnpara,  char test_mode,char mollifier_mode,float end_velo
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,-90,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,-90,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,-90, 0, 0, -turnpara.t_speed, turnpara.t_acc);
 		}
@@ -1059,7 +1059,7 @@ void V90L(parameter turnpara,  char test_mode,char mollifier_mode,float end_velo
 				straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 						turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
 				if(mollifier_mode == ON){
-					mollifier_slalom_table(turnpara.g_speed,90,turnpara.t_speed);
+					mollifier_slalom_table(turnpara.g_speed,90,turnpara.t_speed,2);
 				}else{
 					slalom_table2(turnpara.g_speed,90, 0, 0, turnpara.t_speed, turnpara.t_acc);
 				}
@@ -1077,7 +1077,7 @@ void V90L(parameter turnpara,  char test_mode,char mollifier_mode,float end_velo
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,90,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,90,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,90, 0, 0, turnpara.t_speed, turnpara.t_acc);
 		}
@@ -1094,7 +1094,7 @@ void V90L(parameter turnpara,  char test_mode,char mollifier_mode,float end_velo
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
-			mollifier_slalom_table(turnpara.g_speed,90,turnpara.t_speed);
+			mollifier_slalom_table(turnpara.g_speed,90,turnpara.t_speed,2);
 		}else{
 			slalom_table2(turnpara.g_speed,90, 0, 0, turnpara.t_speed, turnpara.t_acc);
 		}
@@ -1202,10 +1202,11 @@ void testturning(parameter_speed Howspeed,int turnmode,char shortest_mode,char f
 		clear_Ierror();
 
 	}
-	//record_mode = 2;
+	record_mode = 2;
 	//record_mode = 12;
-	record_mode = 25;
-	record_mode = 36;
+	// record_mode = 25;
+	// record_mode = 36;
+	// record_mode = 37;/* simscape用 */
 //	if(turnmode==0){test_mollifier_slalomR(Howspeed.slalom_R);}
 	if(turnmode==0){slalomR(Howspeed.slalom_R,ON,shortest_mode,mollifier_mode,-100);}
 	if(turnmode==1){slalomL(Howspeed.slalom_L,ON,shortest_mode,mollifier_mode,-100);}

@@ -818,7 +818,7 @@ void mollifier_turning_table(float input_displacement, float input_max_turning_v
 	gf_speed=0;
 }
 
-void mollifier_slalom_table(float input_center_velocity,float input_displacement, float input_max_turning_velocity) {
+void mollifier_slalom_table(float input_center_velocity,float input_displacement, float input_max_turning_velocity,char mollifier_dim) {
 
 	// 例外処理
 
@@ -826,6 +826,7 @@ void mollifier_slalom_table(float input_center_velocity,float input_displacement
 	Mollifier_turning.displacement = input_displacement;
 	Mollifier_turning.max_turning_velocity = input_max_turning_velocity;
 
+	g_mollifier_dim = mollifier_dim;
 
 	turning.velocity = 0;
 	turning.displacement = 0;

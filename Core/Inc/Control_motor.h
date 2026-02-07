@@ -57,7 +57,7 @@ float straight_table_max(float,float,float,float,float,float,MOTOR_MODE);
 float turning_table2(float,float,float,float,float);
 float slalom_table2(float,float,float,float,float,float);
 void mollifier_turning_table(float, float);
-void mollifier_slalom_table(float,float, float);
+void mollifier_slalom_table(float,float, float,char);
 
 void no_frontwall_straight();
 

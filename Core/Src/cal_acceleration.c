@@ -22,6 +22,8 @@ volatile char g_acc_flag;
 volatile char g_MotorEnd_flag;
 float mollifier_accGain=1;
 
+char g_mollifier_dim=2;/* 4のときのみ分岐 */
+
 
 void cal_table(TRAPEZOID input,TARGET *target){
 float time_over;
@@ -482,13 +484,26 @@ float old_velocity;
 //float time_delay4=5;
 float time_delay5;
 //float OverShot=0;
+
+float (*cal_mollifier_velocity)(float, float, float);
+float (*cal_mollifier_acceleration)(float, float, float);
+
+if(g_mollifier_dim == 4){
+    cal_mollifier_velocity = cal_mollifier_velocity4;
+    cal_mollifier_acceleration = cal_mollifier_acceleration4;
+}else{
+    cal_mollifier_velocity = cal_mollifier_velocity2;
+    cal_mollifier_acceleration = cal_mollifier_acceleration2;
+}
+
+
+
 	mollifier_timer+=INTERRUPT_TIME;
 		mollifier_T=2*fabs(input.displacement)/MOLLIFIER_INTEGRAL*exp(-1)/input.max_turning_velocity;
 		time_delay5 = mollifier_T/70;
 		if (mollifier_timer>-mollifier_T/2 && mollifier_timer<mollifier_T/2){
 			old_velocity=target->velocity;
 			target->velocity = cal_mollifier_velocity(mollifier_timer,mollifier_T,input.displacement);
-			
 			if( mollifier_timer < -mollifier_T / 2 / 1.316 - time_delay5 ){
 				mollifier_accGain = 1;
 				target->acceleration = mollifier_accGain*cal_mollifier_acceleration(-mollifier_T/2/1.316,mollifier_T,input.displacement);
@@ -557,13 +572,26 @@ float time_delay5;
 }
 
 
-float cal_mollifier_velocity(float t_now,float mollifier_T,float integral){
+float cal_mollifier_velocity2(float t_now,float mollifier_T,float integral){
 	float velocity;
 	velocity=(2/mollifier_T)*integral/MOLLIFIER_INTEGRAL*exp(-mollifier_T*mollifier_T/4/(mollifier_T*mollifier_T/4-t_now*t_now));
 	return velocity;
 }
-float cal_mollifier_acceleration(float t_now,float mollifier_T,float integral){
+float cal_mollifier_acceleration2(float t_now,float mollifier_T,float integral){
 	float acceleration;
 	acceleration= integral/MOLLIFIER_INTEGRAL*(-mollifier_T*t_now/(mollifier_T*mollifier_T/4-t_now*t_now)/(mollifier_T*mollifier_T/4-t_now*t_now))*exp(-mollifier_T*mollifier_T/4/(mollifier_T*mollifier_T/4-t_now*t_now));
+	return acceleration;
+}
+
+
+/* １８０ターン用に外回り改善機能 */
+float cal_mollifier_velocity4(float t_now,float mollifier_T,float integral){
+	float velocity;
+	velocity=(2/mollifier_T)*integral/MOLLIFIER_INTEGRAL4*exp(-mollifier_T*mollifier_T*mollifier_T*mollifier_T/16/(mollifier_T*mollifier_T*mollifier_T*mollifier_T/16-t_now*t_now*t_now*t_now));
+	return velocity;
+}
+float cal_mollifier_acceleration4(float t_now,float mollifier_T,float integral){
+	float acceleration;
+	acceleration= integral/MOLLIFIER_INTEGRAL4*(-mollifier_T*mollifier_T*mollifier_T*t_now*t_now*t_now/2/(mollifier_T*mollifier_T*mollifier_T*mollifier_T/16-t_now*t_now*t_now*t_now)/(mollifier_T*mollifier_T*mollifier_T*mollifier_T/16-t_now*t_now*t_now*t_now))*exp(-mollifier_T*mollifier_T*mollifier_T*mollifier_T/16/(mollifier_T*mollifier_T*mollifier_T*mollifier_T/16-t_now*t_now*t_now*t_now));
 	return acceleration;
 }

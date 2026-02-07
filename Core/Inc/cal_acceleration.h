@@ -33,17 +33,22 @@ typedef struct{
 }MOLLIFIER;
 
 #define MOLLIFIER_INTEGRAL 0.444
+#define MOLLIFIER_INTEGRAL4 0.5615
 
 extern float mollifier_timer;
 
 extern volatile char g_acc_flag;
 extern volatile char g_MotorEnd_flag;
 
+extern char g_mollifier_dim;
+
 void cal_table(TRAPEZOID,TARGET *);
 void cal_table_dis(TRAPEZOID,TARGET *);
 void cal_table_max(TRAPEZOID,TARGET *);
 void cal_mollifier_table(MOLLIFIER,TARGET *);
-float cal_mollifier_velocity(float,float,float);
-float cal_mollifier_acceleration(float,float,float);
+float cal_mollifier_velocity2(float,float,float);
+float cal_mollifier_acceleration2(float,float,float);
+float cal_mollifier_velocity4(float,float,float);
+float cal_mollifier_acceleration4(float,float,float);
 
 #endif /* INC_CAL_ACCELERATION_H_ */
