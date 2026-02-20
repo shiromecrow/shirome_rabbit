@@ -1295,7 +1295,7 @@ if(pass_mode==1){
 				}else if(max_mode==1){
 				straight_table_dis((45 * sqrt(2) * (pass[pass_count] - SLANT_PASS_COUNT)),first_v, end_velocity,inspeed, inacc,indec, mode);
 				}else if(max_mode==2){
-				straight_table_max((45 * sqrt(2) * (pass[pass_count] - SLANT_PASS_COUNT)),first_v, end_velocity,inspeed, inacc,indec, mode);
+				straight_table_dis((45 * sqrt(2) * (pass[pass_count] - SLANT_PASS_COUNT)),first_v, end_velocity,inspeed, inacc,indec, mode);
 				}
 			} else {
 				mode.WallControlMode=1;
