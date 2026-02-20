@@ -746,7 +746,9 @@ void interrupt_record(void) {
 	if (record_mode == 0) {
 		return;
 	}else{
+        if( record_mode != RECORD_STOPMODE ){
 		head_record_mode = record_mode;
+        }
 	}
 
 	if (record_mode == RECORD_STOPMODE && recordstop_count == 0 ) {

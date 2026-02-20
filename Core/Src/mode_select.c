@@ -534,17 +534,17 @@ void mode_Running(unsigned char main_modeR){
 			tic_timer();
 			AdatiWayReturn(300,700,4000,8000,speed300_exploration,1,1);
 		break;
-		case 0b0100://ゴミ
-			flash_out();
-			run_shortest(1000,3000,3000,TURN_OFF,FUN_OFF,SLANT_OFF,speed300_shortest,2.4,0,0);
+		case 0b0100://バッファ置き換え保存
+			wallbuf_backup(2);
+			goal_cheak();
 		break;
 		case 0b0101://
-			flash_out();
-			run_shortest(1000,3000,3000,TURN_ON,FUN_OFF,SLANT_OFF,speed600_shortest_mollifier,6.12,1,0);
+			wallbuf_backup(5);
+			goal_cheak();
 		break;
 		case 0b0110://吸引なしで斜め走行
-			flash_out();
-			run_shortest(1000,3000,3000,TURN_ON,FUN_OFF,SLANT_ON,speed600_shortest_mollifier,6.12,1,0);
+			wallbuf_backup(8);
+			goal_cheak();
 		break;
 		case 0b0111://吸引ありで斜め走行
 			flash_out();
@@ -600,8 +600,9 @@ void mode_Running2(unsigned char main_modeR){
 
 	switch (main_modeR) {
 		case 0b0000:
+			flash_out();
 			tic_timer();
-			AdatiWayReturn(300,400,3000,3000,speed300_exploration,0,1);
+			AdatiWayReturn(300,400,3000,3000,speed300_exploration,1,0);
 		break;
 		case 0b0001:
 			flash_out();
@@ -611,6 +612,7 @@ void mode_Running2(unsigned char main_modeR){
 		case 0b0010:
 			flash_out();
 			run_shortest(4000,13000,14000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8.1,1,0);
+			AdatiWayReturnOnly(300,400,3000,3000,speed300_exploration,1,1);
 		break;
 		case 0b0011:
 			flash_out();
@@ -639,13 +641,25 @@ void mode_Running2(unsigned char main_modeR){
 
 		break;
 		case 0b1010:
-
+			tic_timer();
+			AdatiWayReturn(300,700,4000,8000,speed300_exploration,1,0);
+			run_shortest(4000,13000,14000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8.1,1,0);
+			AdatiWayReturnOnly(300,400,3000,3000,speed300_exploration,1,1);
+			run_shortest(4000,13000,14000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8.1,1,0);
+			AdatiWayReturnOnly(300,400,3000,3000,speed300_exploration,1,1);
+			run_shortest(6000,55000,55000,TURN_ON,FUN_ON,SLANT_ON,speed1800_shortest_mollifier,8.1,1,2);
 		break;
 		case 0b1011:
-
+			tic_timer();
+			for(int i=0;i<=20;i++){
+			AdatiWayReturn(300,700,4000,8000,speed300_exploration,1,1);
+			if(error_mode>=1) break;
+			maze_clear(); 
+			}
 		break;
 		case 0b1100:
-
+		tic_timer();
+		AdatiWayReturn(300,700,4000,8000,speed300_exploration,0,0);
 		break;
 		case 0b1101:
 		tic_timer();
@@ -657,8 +671,11 @@ void mode_Running2(unsigned char main_modeR){
 		AdatiWayReturn(300,700,4000,8000,speed300_exploration,0,1);
 		break;
 		case 0b1111:
+			wallbuf_backup(3);
 			create_StepCountMap_queue();
 			maze_display(&wall);
+			maze_display(&wall_buf.buf[0]);
+			maze_display(&wall_buf.buf[1]);
 		break;
 	}
 

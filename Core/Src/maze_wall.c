@@ -31,6 +31,7 @@
 WALL wall;
 WALL record;
 WALL error_wall;
+WALL_BUFFER wall_buf;
 
 char Dijkstra_maker_flag;
 
@@ -46,6 +47,32 @@ Dijkstra_parameter g_dijkstra_parameter;
 // int16_t discount_d[D_NUM_MAX]={91,58,49,43,32};//5
 int16_t discount_v[V_NUM_MAX]={129,88,75,67,61,56,52,49,47,44,42,41,39,38,37,37,37,37,37,37};
 int16_t discount_d[D_NUM_MAX]={91,67,59,53,49,45,42,40,38,36,35,34,32,31,30,29,29,28,27,27};
+
+
+void wallbuf_init(void)
+{
+	wall_buf.count = 0;
+    wall_buf.head = 0;
+}
+
+void wallbuf_push(void)
+{
+	wall_buf.count++;
+	
+	if(wall_buf.count >= WALL_BUF_COUNT){
+    wall_buf.buf[wall_buf.head] = wall;                 // 最新 wall を保存
+    wall_buf.head = (wall_buf.head + 1) % WALL_BUF_NUM; // 0→1→2→3→0→1…
+	wall_buf.count = 0;
+	}
+}
+
+void wallbuf_backup(uint8_t n)/* nは何個前のバッファか判定0で最新、1で1個前... */
+{
+	uint8_t index = (wall_buf.head + WALL_BUF_NUM - 1 - n) % WALL_BUF_NUM;
+    wall = wall_buf.buf[index];
+}
+
+
 
 void maze_out_matlab(void){
 
@@ -106,6 +133,8 @@ void maze_clear(void) { //初期化
 create_StepCountMap_queue();
 
 //kokomade
+
+wallbuf_init();
 
 }
 
@@ -320,7 +349,6 @@ int16_t add_or_zero(int16_t a, int16_t b) {
  * @return 差分コスト（整数値）
  */
 uint16_t compute_step_cost_diff(int step_index,uint8_t is_diagonal,float Turn_velocity,float max_velocity,float acc,int16_t correction_time){
-    float secTOcost=1000;
     if (step_index < 0) return 0;
 	// if(g_Dijkstra_ver3==OFF){
 	// 	if(is_diagonal==0){return discount_v[step_index];}else{return discount_d[step_index];}
@@ -330,7 +358,7 @@ uint16_t compute_step_cost_diff(int step_index,uint8_t is_diagonal,float Turn_ve
 
     if (step_index == 0) {
         // 初期コスト：加速しない（旋回のみ）
-        float start_cost = unit_distance / Turn_velocity * secTOcost;
+        float start_cost = unit_distance / Turn_velocity * SEC_TO_COST;
 		uint16_t time_cost=(uint16_t)roundf(add_or_zero(start_cost, correction_time));
         return time_cost;
     }
@@ -346,20 +374,20 @@ uint16_t compute_step_cost_diff(int step_index,uint8_t is_diagonal,float Turn_ve
     float time_prev;
     if (dist_prev < threshold) {
         float peak_v_prev = sqrtf(Turn_velocity*Turn_velocity + acc * dist_prev);
-        time_prev = 2.0f * (peak_v_prev - Turn_velocity) / acc * secTOcost;
+        time_prev = 2.0f * (peak_v_prev - Turn_velocity) / acc * SEC_TO_COST;
     } else {
         float const_dist_prev = dist_prev - threshold;
-        time_prev = (2.0f * (max_velocity - Turn_velocity) / acc + const_dist_prev / max_velocity) * secTOcost;
+        time_prev = (2.0f * (max_velocity - Turn_velocity) / acc + const_dist_prev / max_velocity) * SEC_TO_COST;
     }
 
     // 現ステップの移動時間
     float time_curr;
     if (dist_curr < threshold) {
         float peak_v_curr = sqrtf(Turn_velocity*Turn_velocity + acc * dist_curr);
-        time_curr = 2.0f * (peak_v_curr - Turn_velocity) / acc * secTOcost;
+        time_curr = 2.0f * (peak_v_curr - Turn_velocity) / acc * SEC_TO_COST;
     } else {
         float const_dist_curr = dist_curr - threshold;
-        time_curr = (2.0f * (max_velocity - Turn_velocity) / acc + const_dist_curr / max_velocity) * secTOcost;
+        time_curr = (2.0f * (max_velocity - Turn_velocity) / acc + const_dist_curr / max_velocity) * SEC_TO_COST;
     }
 
     return (uint16_t)roundf(time_curr - time_prev);
@@ -449,13 +477,12 @@ void calculate_turn_profile(uint8_t dir_next,volatile uint8_t dir,uint8_t dir_bu
 
 parameter_speed_corrtime convert_parameter_speed_to_corrtime(const parameter_speed *src) {
     parameter_speed_corrtime corrtime;
-	float secTOcost=1000;//defineのほうがいいかも
 
-    corrtime.turn90_corrtime = (int16_t)roundf((90 + 45.0f * sqrtf(2.0f))*(1/g_dijkstra_parameter.Turn_parameter.turn90_R.g_speed-1/g_dijkstra_parameter.Turn_parameter.turn45in_R.g_speed) * secTOcost);
-    corrtime.turn180_corrtime  =(int16_t)roundf((2 * 90 + 2 * 45.0f * sqrtf(2.0f))*(1/g_dijkstra_parameter.Turn_parameter.turn180_R.g_speed-1/g_dijkstra_parameter.Turn_parameter.turn45in_R.g_speed) * secTOcost);
-    corrtime.turn135in_corrtime  =(int16_t)roundf((90 + 2 * 45.0f * sqrtf(2.0f))*(1/g_dijkstra_parameter.Turn_parameter.turn135in_R.g_speed-1/g_dijkstra_parameter.Turn_parameter.turn45in_R.g_speed) * secTOcost);
-    corrtime.turn135out_corrtime   = (int16_t)roundf(2 * 45.0f * sqrtf(2.0f)*(1/g_dijkstra_parameter.Turn_parameter.turn135out_R.g_speed-1/g_dijkstra_parameter.Turn_parameter.turn45out_R.g_speed) * secTOcost);
-    corrtime.V90_corrtime           = (int16_t)roundf(45.0f * sqrtf(2.0f)*(1/g_dijkstra_parameter.Turn_parameter.V90_R.g_speed-1/g_dijkstra_parameter.Turn_parameter.turn45out_R.g_speed) * secTOcost);
+    corrtime.turn90_corrtime = (int16_t)roundf((90 + 45.0f * sqrtf(2.0f))*(1/g_dijkstra_parameter.Turn_parameter.turn90_R.g_speed-1/g_dijkstra_parameter.Turn_parameter.turn45in_R.g_speed) * SEC_TO_COST);
+    corrtime.turn180_corrtime  =(int16_t)roundf((2 * 90 + 2 * 45.0f * sqrtf(2.0f))*(1/g_dijkstra_parameter.Turn_parameter.turn180_R.g_speed-1/g_dijkstra_parameter.Turn_parameter.turn45in_R.g_speed) * SEC_TO_COST);
+    corrtime.turn135in_corrtime  =(int16_t)roundf((90 + 2 * 45.0f * sqrtf(2.0f))*(1/g_dijkstra_parameter.Turn_parameter.turn135in_R.g_speed-1/g_dijkstra_parameter.Turn_parameter.turn45in_R.g_speed) * SEC_TO_COST);
+    corrtime.turn135out_corrtime   = (int16_t)roundf(2 * 45.0f * sqrtf(2.0f)*(1/g_dijkstra_parameter.Turn_parameter.turn135out_R.g_speed-1/g_dijkstra_parameter.Turn_parameter.turn45out_R.g_speed) * SEC_TO_COST);
+    corrtime.V90_corrtime           = (int16_t)roundf(45.0f * sqrtf(2.0f)*(1/g_dijkstra_parameter.Turn_parameter.V90_R.g_speed-1/g_dijkstra_parameter.Turn_parameter.turn45out_R.g_speed) * SEC_TO_COST);
 
     return corrtime;
 }
@@ -1149,7 +1176,7 @@ void route_Dijkstra(void){
 	pushStack_walk(&stack_x,0);pushStack_walk(&stack_y,0);
 	pushStack_walk(&stack_matrix,ROW);
 
-	unsigned short front_count, right_count, back_count, left_count;
+	unsigned short front_count = 0, right_count = 0, back_count = 0, left_count = 0;
 
 	//_Bool front_wall;
 	//_Bool right_wall;
@@ -1233,7 +1260,7 @@ void route_Dijkstra(void){
 				pushStack_walk(&stack_matrix,ROW);
 				break;
 			}
-			direction_d++;
+			direction_d = update_direction(direction_d, 1);
 		}
 		if(left_count < front_count && left_count < right_count && left_count <= back_count){
 			// 左旋回
@@ -1259,20 +1286,7 @@ void route_Dijkstra(void){
 				pushStack_walk(&stack_matrix,ROW);
 				break;
 			}
-			direction_d--;
-		}
-
-		if (direction_d == 5) {
-			direction_d = 1;
-		}
-		if (direction_d == 6) {
-			direction_d = 2;
-		}
-		if (direction_d == 0) {
-			direction_d = 4;
-		}
-		if (direction_d == -1) {
-			direction_d = 3;
+			direction_d = update_direction(direction_d, -1);
 		}
 
 	}

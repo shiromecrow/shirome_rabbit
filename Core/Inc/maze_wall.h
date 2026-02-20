@@ -26,6 +26,8 @@
 #define MIN_DIAGONALCOST 10
 #define DISCOUNTCOST_V 1//絶対1
 #define DISCOUNTCOST_D 1//絶対1
+// ダイクストラ法　タイムベース整数化の係数
+#define SEC_TO_COST 1000 
 // #define V_NUM_MAX 5
 // #define D_NUM_MAX 5
 #define V_NUM_MAX 20
@@ -102,10 +104,21 @@ typedef struct {
     int size;
 } MinHeap;
 
+#define WALL_BUF_NUM 9
+#define WALL_BUF_COUNT 5
+
+typedef struct {
+    WALL buf[WALL_BUF_NUM];
+    uint8_t head;   // 次に書き込む位置（0 or 1）
+    uint8_t count;   // 動作カウント数
+} WALL_BUFFER;
+
+
 
 extern WALL wall;
 extern WALL record;
 extern WALL error_wall;
+extern WALL_BUFFER wall_buf;
 extern Dijkstra_parameter g_dijkstra_parameter;
 
 
@@ -114,6 +127,8 @@ extern char Dijkstra_maker_flag;
 
 extern uint16_t walk_count[MAZE_SQUARE_NUM][MAZE_SQUARE_NUM]; //歩数いれる箱
 
+void wallbuf_push();
+void wallbuf_backup(uint8_t);
 
 void maze_out_matlab();
 void maze_clear();
