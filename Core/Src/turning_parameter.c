@@ -93,15 +93,15 @@ void input_parameter(void) {
 			speed300_exploration.SlalomCentervelocity;
 	speed300_exploration.slalom_R.t_speed = 1150; //550
 	speed300_exploration.slalom_R.t_acc = 20000; //10000
-	speed300_exploration.slalom_R.f_ofset = 4.5; //55;
-	speed300_exploration.slalom_R.e_ofset = 26;
+	speed300_exploration.slalom_R.f_ofset = 8.5; //55;
+	speed300_exploration.slalom_R.e_ofset = 24;
 
 	speed300_exploration.slalom_L.g_speed =
 			speed300_exploration.SlalomCentervelocity;
 	speed300_exploration.slalom_L.t_speed = 1150;
 	speed300_exploration.slalom_L.t_acc = 20000;
-	speed300_exploration.slalom_L.f_ofset = 5; //50;
-	speed300_exploration.slalom_L.e_ofset = 25;
+	speed300_exploration.slalom_L.f_ofset = 8; //50;
+	speed300_exploration.slalom_L.e_ofset = 22;
 
 	speed300_exploration.turn45in_R.g_speed =
 			speed300_exploration.SlalomCentervelocity;

@@ -34,7 +34,8 @@
 			"pl_timer.h": "c",
 			"main.h": "c",
 			"tim.h": "c",
-			"record.h": "c"
+			"record.h": "c",
+			"maze_turning.h": "c"
 		}
 	}
 }

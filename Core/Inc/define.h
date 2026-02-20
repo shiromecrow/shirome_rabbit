@@ -39,8 +39,7 @@
 
 #define FIRST_MOVE_R90 38 // 1400:16
 #define FIRST_MOVE_R45 30 // 1400:21
-#define FIRST_MOVE_R135 30 // 1400:20
-
+#define FIRST_MOVE_R135 25
 // 16対応
 // #define GOAL_SIZE 2
 // #define GOAL_X 7
