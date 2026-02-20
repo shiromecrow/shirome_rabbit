@@ -840,7 +840,7 @@ void mode_Tuning2(unsigned char main_modeR){
 			record_mode=2;
 			straight_acceleration_lpf=turn_speed*turn_speed/ BACK_TO_CENTER_FRONT;
 			straight_table2(BACK_TO_CENTER_FRONT+FIRST_MOVE_R90,0,turn_speed,turn_speed,turn_speed*turn_speed/ BACK_TO_CENTER_FRONT/2, mode);
-			turn90R(speed1600_shortest_mollifier.turn90_R, OFF,ON,turn_speed);
+			turn90R(speed1600_shortest_mollifier.turn90_R, OFF,ON,turn_speed,ON);
 			straight_table2(90*sqrt(2) ,turn_speed,0,turn_speed,turn_speed*turn_speed/ 45/2, mode);
 		break;
 		case 12://初手ターン確認45 1110 1100
@@ -855,7 +855,7 @@ void mode_Tuning2(unsigned char main_modeR){
 			record_mode=2;
 			straight_acceleration_lpf=turn_speed*turn_speed/ BACK_TO_CENTER_FRONT;
 			straight_table2(BACK_TO_CENTER_FRONT+FIRST_MOVE_R45,0,turn_speed,turn_speed,turn_speed*turn_speed/ BACK_TO_CENTER_FRONT/2, mode);
-			turn45inR(speed1600_shortest_mollifier.turn45in_R, OFF,ON,turn_speed);
+			turn45inR(speed1600_shortest_mollifier.turn45in_R, OFF,ON,turn_speed,ON);
 			straight_table2(90*sqrt(2) ,turn_speed,0,turn_speed,turn_speed*turn_speed/ 45/2, mode);
 
 		break;
@@ -871,7 +871,7 @@ void mode_Tuning2(unsigned char main_modeR){
 			record_mode=2;
 			straight_acceleration_lpf=turn_speed*turn_speed/ BACK_TO_CENTER_FRONT;
 			straight_table2(BACK_TO_CENTER_FRONT+FIRST_MOVE_R135,0,turn_speed,turn_speed,turn_speed*turn_speed/ BACK_TO_CENTER_FRONT/2, mode);
-			turn135inR(speed1600_shortest_mollifier.turn135in_R, OFF,ON,turn_speed);
+			turn135inR(speed1600_shortest_mollifier.turn135in_R, OFF,ON,turn_speed,ON);
 			straight_table2(90*sqrt(2) ,turn_speed,0,turn_speed,turn_speed*turn_speed/ 45/2, mode);
 		break;
 		case 14://串制御
@@ -1360,7 +1360,7 @@ void mode_Tuning0(unsigned char main_modeR){
 			for(int i=0;i<40;i++){
 			straight_table2(MAZE_OFFSET, speed300_exploration.slalom_R.g_speed, speed300_exploration.slalom_R.g_speed, speed300_exploration.slalom_R.g_speed,
 									speed300_exploration.slalom_R.g_speed * speed300_exploration.slalom_R.g_speed  / 2 / 45,mode);
-			slalomR(speed300_exploration.slalom_R, OFF,EXPLORATION,0,300);
+			slalomR(speed300_exploration.slalom_R, OFF,EXPLORATION,0,300,ON);
 			}
 			mode.WallControlMode=0;
 			straight_table2(45, speed300_exploration.slalom_R.g_speed, 0, speed300_exploration.slalom_R.g_speed,

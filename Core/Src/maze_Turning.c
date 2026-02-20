@@ -139,8 +139,12 @@ void backTurn_controlWall(float input_TurningVelocity,float input_TurningAcceler
 }
 
 
-void slalomR(parameter turnpara,char test_mode,char shortest_mode,char mollifier_mode,float end_velocity) {
+void slalomR(parameter turnpara,char test_mode,char shortest_mode,char mollifier_mode,float end_velocity, char wallcut_mode) {
 	MOTOR_MODE wallmode;
+	uint8_t wallcut = 0;
+	if (wallcut_mode == ON){
+		wallcut = 1;
+	}
 	if (test_mode == ON) {
 		highspeed_mode = 0;
 		wallmode.WallControlMode=1;
@@ -154,7 +158,7 @@ void slalomR(parameter turnpara,char test_mode,char shortest_mode,char mollifier
 			straight_table2(BACK_TO_CENTER_FRONT + 135, 0, turnpara.g_speed, turnpara.g_speed,
 					turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		}
-		wallmode.WallCutMode=1;
+		wallmode.WallCutMode=wallcut;
 		wallmode.WallControlMode=0;
 		if(shortest_mode==0){
 			straight_table2(MAZE_OFFSET+turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
@@ -176,7 +180,7 @@ void slalomR(parameter turnpara,char test_mode,char shortest_mode,char mollifier
 	} else {
 		wallmode.WallControlMode=OFFSET_CONTROL_IN_SLALOM;
 		wallmode.WallControlStatus=0;
-		wallmode.WallCutMode=1;
+		wallmode.WallCutMode=wallcut;
 		wallmode.calMazeMode=0;
 		if(shortest_mode==0){
 			straight_table2(MAZE_OFFSET+turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
@@ -199,8 +203,12 @@ void slalomR(parameter turnpara,char test_mode,char shortest_mode,char mollifier
 	}
 }
 
-void slalomL(parameter turnpara,char test_mode,char shortest_mode,char mollifier_mode,float end_velocity) {
+void slalomL(parameter turnpara,char test_mode,char shortest_mode,char mollifier_mode,float end_velocity, char wallcut_mode) {
 	MOTOR_MODE wallmode;
+	uint8_t wallcut = 0;
+	if (wallcut_mode == ON){
+		wallcut = 1;
+	}
 	if (test_mode == ON) {
 		highspeed_mode = 0;
 		wallmode.WallControlMode=1;
@@ -215,7 +223,7 @@ void slalomL(parameter turnpara,char test_mode,char shortest_mode,char mollifier
 					turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		}
 		wallmode.WallControlMode=OFFSET_CONTROL_IN_SLALOM;
-		wallmode.WallCutMode=1;
+		wallmode.WallCutMode=wallcut;
 		if(shortest_mode==0){
 			straight_table2(MAZE_OFFSET+turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 									turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
@@ -236,7 +244,7 @@ void slalomL(parameter turnpara,char test_mode,char shortest_mode,char mollifier
 	} else {
 		wallmode.WallControlMode=0;
 		wallmode.WallControlStatus=0;
-		wallmode.WallCutMode=1;
+		wallmode.WallCutMode=wallcut;
 		wallmode.calMazeMode=0;
 		if(shortest_mode==0){
 			straight_table2(MAZE_OFFSET+turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
@@ -259,8 +267,12 @@ void slalomL(parameter turnpara,char test_mode,char shortest_mode,char mollifier
 }
 
 
-void turn90R(parameter turnpara, char test_mode,char mollifier_mode,float end_velocity) {
+void turn90R(parameter turnpara, char test_mode,char mollifier_mode,float end_velocity,char wallcut_mode) {
 	MOTOR_MODE wallmode;
+	uint8_t wallcut = 0;
+	if (wallcut_mode == ON){
+		wallcut = 2;
+	}
 	if (test_mode == 1) {
 		highspeed_mode = 1;
 		wallmode.WallControlMode=1;
@@ -270,7 +282,7 @@ void turn90R(parameter turnpara, char test_mode,char mollifier_mode,float end_ve
 		straight_table2(BACK_TO_CENTER_FRONT + 90, 0, turnpara.g_speed, turnpara.g_speed,
 						turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		wallmode.WallControlMode=0;
-		wallmode.WallCutMode=2;
+		wallmode.WallCutMode=wallcut;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
@@ -286,7 +298,7 @@ void turn90R(parameter turnpara, char test_mode,char mollifier_mode,float end_ve
 	} else {
 		wallmode.WallControlMode=OFFSET_CONTROL_IN;
 		wallmode.WallControlStatus=0;
-		wallmode.WallCutMode=2;
+		wallmode.WallCutMode=wallcut;
 		wallmode.calMazeMode=0;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
@@ -304,8 +316,12 @@ void turn90R(parameter turnpara, char test_mode,char mollifier_mode,float end_ve
 
 }
 
-void turn90L(parameter turnpara, char test_mode,char mollifier_mode,float end_velocity) {
+void turn90L(parameter turnpara, char test_mode,char mollifier_mode,float end_velocity,char wallcut_mode) {
 	MOTOR_MODE wallmode;
+	uint8_t wallcut = 0;
+	if (wallcut_mode == ON){
+		wallcut = 2;
+	}
 	if (test_mode == 1) {
 		highspeed_mode = 1;
 		wallmode.WallControlMode=1;
@@ -315,7 +331,7 @@ void turn90L(parameter turnpara, char test_mode,char mollifier_mode,float end_ve
 		straight_table2(BACK_TO_CENTER_FRONT + 90, 0, turnpara.g_speed, turnpara.g_speed,
 						turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		wallmode.WallControlMode=0;
-		wallmode.WallCutMode=2;
+		wallmode.WallCutMode=wallcut;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
@@ -331,7 +347,7 @@ void turn90L(parameter turnpara, char test_mode,char mollifier_mode,float end_ve
 	} else {
 		wallmode.WallControlMode=OFFSET_CONTROL_IN;
 		wallmode.WallControlStatus=0;
-		wallmode.WallCutMode=2;
+		wallmode.WallCutMode=wallcut;
 		wallmode.calMazeMode=0;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
@@ -350,8 +366,12 @@ void turn90L(parameter turnpara, char test_mode,char mollifier_mode,float end_ve
 }
 
 
-void turn180R(parameter turnpara, char test_mode,char mollifier_mode,float end_velocity) {
+void turn180R(parameter turnpara, char test_mode,char mollifier_mode,float end_velocity,char wallcut_mode) {
 	MOTOR_MODE wallmode;
+	uint8_t wallcut = 0;
+	if (wallcut_mode == ON){
+		wallcut = 2;
+	}
 	if (test_mode == 1) {
 		highspeed_mode = 1;
 		wallmode.WallControlMode=1;
@@ -361,7 +381,7 @@ void turn180R(parameter turnpara, char test_mode,char mollifier_mode,float end_v
 		straight_table2(BACK_TO_CENTER_FRONT + 90, 0, turnpara.g_speed, turnpara.g_speed,
 						turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		wallmode.WallControlMode=0;
-		wallmode.WallCutMode=2;
+		wallmode.WallCutMode=wallcut;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
@@ -377,7 +397,7 @@ void turn180R(parameter turnpara, char test_mode,char mollifier_mode,float end_v
 	} else {
 		wallmode.WallControlMode=OFFSET_CONTROL_IN;
 		wallmode.WallControlStatus=0;
-		wallmode.WallCutMode=2;
+		wallmode.WallCutMode=wallcut;
 		wallmode.calMazeMode=0;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
@@ -395,8 +415,12 @@ void turn180R(parameter turnpara, char test_mode,char mollifier_mode,float end_v
 
 }
 
-void turn180L(parameter turnpara, char test_mode,char mollifier_mode,float end_velocity) {
+void turn180L(parameter turnpara, char test_mode,char mollifier_mode,float end_velocity,char wallcut_mode) {
 	MOTOR_MODE wallmode;
+	uint8_t wallcut = 0;
+	if (wallcut_mode == ON){
+		wallcut = 2;
+	}
 	if (test_mode == 1) {
 		highspeed_mode = 1;
 		wallmode.WallControlMode=1;
@@ -406,7 +430,7 @@ void turn180L(parameter turnpara, char test_mode,char mollifier_mode,float end_v
 		straight_table2(BACK_TO_CENTER_FRONT + 90, 0, turnpara.g_speed, turnpara.g_speed,
 						turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		wallmode.WallControlMode=0;
-		wallmode.WallCutMode=2;
+		wallmode.WallCutMode=wallcut;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
@@ -422,7 +446,7 @@ void turn180L(parameter turnpara, char test_mode,char mollifier_mode,float end_v
 	} else {
 		wallmode.WallControlMode=OFFSET_CONTROL_IN;
 		wallmode.WallControlStatus=0;
-		wallmode.WallCutMode=2;
+		wallmode.WallCutMode=wallcut;
 		wallmode.calMazeMode=0;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
@@ -442,8 +466,12 @@ void turn180L(parameter turnpara, char test_mode,char mollifier_mode,float end_v
 
 
 
-void turn45inR(parameter turnpara, char test_mode,char mollifier_mode,float end_velocity) {
+void turn45inR(parameter turnpara, char test_mode,char mollifier_mode,float end_velocity,char wallcut_mode) {
 	MOTOR_MODE wallmode;
+	uint8_t wallcut = 0;
+	if (wallcut_mode == ON){
+		wallcut = 2;
+	}
 	if (test_mode == 1) {
 		highspeed_mode = 1;
 		wallmode.WallControlMode=1;
@@ -453,7 +481,7 @@ void turn45inR(parameter turnpara, char test_mode,char mollifier_mode,float end_
 		straight_table2(BACK_TO_CENTER_FRONT + 90, 0, turnpara.g_speed, turnpara.g_speed,
 					turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		wallmode.WallControlMode=0;
-		wallmode.WallCutMode=2;
+		wallmode.WallCutMode=wallcut;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
@@ -470,7 +498,7 @@ void turn45inR(parameter turnpara, char test_mode,char mollifier_mode,float end_
 	if (test_mode == 0) {
 		wallmode.WallControlMode=OFFSET_CONTROL_IN;
 		wallmode.WallControlStatus=0;
-		wallmode.WallCutMode=2;
+		wallmode.WallCutMode=wallcut;
 		wallmode.calMazeMode=0;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
@@ -495,7 +523,7 @@ void turn45inR(parameter turnpara, char test_mode,char mollifier_mode,float end_
 		straight_table2(BACK_TO_CENTER_FRONT + 90, 0, turnpara.g_speed, turnpara.g_speed,
 					turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		wallmode.WallControlMode=0;
-		wallmode.WallCutMode=2;
+		wallmode.WallCutMode=wallcut;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
@@ -512,8 +540,12 @@ void turn45inR(parameter turnpara, char test_mode,char mollifier_mode,float end_
 
 }
 
-void turn45inL(parameter turnpara, char test_mode,char mollifier_mode,float end_velocity) {
+void turn45inL(parameter turnpara, char test_mode,char mollifier_mode,float end_velocity,char wallcut_mode) {
 	MOTOR_MODE wallmode;
+	uint8_t wallcut = 0;
+	if (wallcut_mode == ON){
+		wallcut = 2;
+	}
 	if (test_mode == 1) {
 		highspeed_mode = 1;
 		wallmode.WallControlMode=1;
@@ -523,7 +555,7 @@ void turn45inL(parameter turnpara, char test_mode,char mollifier_mode,float end_
 		straight_table2(BACK_TO_CENTER_FRONT + 90, 0, turnpara.g_speed, turnpara.g_speed,
 					turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		wallmode.WallControlMode=0;
-		wallmode.WallCutMode=2;
+		wallmode.WallCutMode=wallcut;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
@@ -540,7 +572,7 @@ void turn45inL(parameter turnpara, char test_mode,char mollifier_mode,float end_
 	if (test_mode == 0) {
 		wallmode.WallControlMode=OFFSET_CONTROL_IN;
 		wallmode.WallControlStatus=0;
-		wallmode.WallCutMode=2;
+		wallmode.WallCutMode=wallcut;
 		wallmode.calMazeMode=0;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
@@ -565,7 +597,7 @@ void turn45inL(parameter turnpara, char test_mode,char mollifier_mode,float end_
 		straight_table2(BACK_TO_CENTER_FRONT + 90, 0, turnpara.g_speed, turnpara.g_speed,
 					turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		wallmode.WallControlMode=0;
-		wallmode.WallCutMode=2;
+		wallmode.WallCutMode=wallcut;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
@@ -582,8 +614,12 @@ void turn45inL(parameter turnpara, char test_mode,char mollifier_mode,float end_
 
 }
 
-void turn135inR(parameter turnpara, char test_mode,char mollifier_mode,float end_velocity) {
+void turn135inR(parameter turnpara, char test_mode,char mollifier_mode,float end_velocity,char wallcut_mode) {
 	MOTOR_MODE wallmode;
+	uint8_t wallcut = 0;
+	if (wallcut_mode == ON){
+		wallcut = 2;
+	}
 	if (test_mode == 1) {
 		highspeed_mode = 1;
 		wallmode.WallControlMode=1;
@@ -593,7 +629,7 @@ void turn135inR(parameter turnpara, char test_mode,char mollifier_mode,float end
 		straight_table2(BACK_TO_CENTER_FRONT + 90, 0, turnpara.g_speed, turnpara.g_speed,
 					turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		wallmode.WallControlMode=0;
-		wallmode.WallCutMode=2;
+		wallmode.WallCutMode=wallcut;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
@@ -610,7 +646,7 @@ void turn135inR(parameter turnpara, char test_mode,char mollifier_mode,float end
 	if (test_mode == 0) {
 		wallmode.WallControlMode=OFFSET_CONTROL_IN;
 		wallmode.WallControlStatus=0;
-		wallmode.WallCutMode=2;
+		wallmode.WallCutMode=wallcut;
 		wallmode.calMazeMode=0;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
@@ -635,7 +671,7 @@ void turn135inR(parameter turnpara, char test_mode,char mollifier_mode,float end
 		straight_table2(BACK_TO_CENTER_FRONT + 90, 0, turnpara.g_speed, turnpara.g_speed,
 					turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		wallmode.WallControlMode=0;
-		wallmode.WallCutMode=2;
+		wallmode.WallCutMode=wallcut;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
@@ -652,8 +688,12 @@ void turn135inR(parameter turnpara, char test_mode,char mollifier_mode,float end
 
 }
 
-void turn135inL(parameter turnpara, char test_mode,char mollifier_mode,float end_velocity) {
+void turn135inL(parameter turnpara, char test_mode,char mollifier_mode,float end_velocity, char wallcut_mode) {
 	MOTOR_MODE wallmode;
+	uint8_t wallcut = 0;
+	if (wallcut_mode == ON){
+		wallcut = 2;
+	}
 	if (test_mode == 1) {
 		highspeed_mode = 1;
 		wallmode.WallControlMode=1;
@@ -663,7 +703,7 @@ void turn135inL(parameter turnpara, char test_mode,char mollifier_mode,float end
 		straight_table2(BACK_TO_CENTER_FRONT + 90, 0, turnpara.g_speed, turnpara.g_speed,
 					turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		wallmode.WallControlMode=0;
-		wallmode.WallCutMode=2;
+		wallmode.WallCutMode=wallcut;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
@@ -680,7 +720,7 @@ void turn135inL(parameter turnpara, char test_mode,char mollifier_mode,float end
 	if (test_mode == 0) {
 		wallmode.WallControlMode=OFFSET_CONTROL_IN;
 		wallmode.WallControlStatus=0;
-		wallmode.WallCutMode=2;
+		wallmode.WallCutMode=wallcut;
 		wallmode.calMazeMode=0;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
@@ -705,7 +745,7 @@ void turn135inL(parameter turnpara, char test_mode,char mollifier_mode,float end
 		straight_table2(BACK_TO_CENTER_FRONT + 90, 0, turnpara.g_speed, turnpara.g_speed,
 					turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		wallmode.WallControlMode=0;
-		wallmode.WallCutMode=2;
+		wallmode.WallCutMode=wallcut;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
 		if(mollifier_mode == ON){
@@ -723,8 +763,12 @@ void turn135inL(parameter turnpara, char test_mode,char mollifier_mode,float end
 }
 
 
-void turn45outR(parameter turnpara,  char test_mode,char mollifier_mode,float end_velocity) {
+void turn45outR(parameter turnpara,  char test_mode,char mollifier_mode,float end_velocity, char wallcut_mode) {
 	MOTOR_MODE wallmode;
+	uint8_t wallcut = 0;
+	if (wallcut_mode == ON){
+		wallcut = 3;
+	}
 
 	if (test_mode == 1) {
 		highspeed_mode = 1;
@@ -735,7 +779,7 @@ void turn45outR(parameter turnpara,  char test_mode,char mollifier_mode,float en
 		straight_table2(BACK_TO_CENTER_FRONT_SLANT + MAZE_SECTION/2*sqrt(2), 0, turnpara.g_speed, turnpara.g_speed,
 					turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
 		wallmode.WallControlMode=0;
-		wallmode.WallCutMode=3;
+		wallmode.WallCutMode=wallcut;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
 		if(mollifier_mode == ON){
@@ -752,7 +796,7 @@ void turn45outR(parameter turnpara,  char test_mode,char mollifier_mode,float en
 		highspeed_mode = 1;
 		wallmode.WallControlMode=0;
 		wallmode.WallControlStatus=0;
-		wallmode.WallCutMode=3;
+		wallmode.WallCutMode=wallcut;
 		wallmode.calMazeMode=0;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
@@ -769,7 +813,7 @@ void turn45outR(parameter turnpara,  char test_mode,char mollifier_mode,float en
 	}else {
 		wallmode.WallControlMode=OFFSET_CONTROL_IN_SLANT;
 		wallmode.WallControlStatus=0;
-		wallmode.WallCutMode=3;
+		wallmode.WallCutMode=wallcut;
 		wallmode.calMazeMode=0;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
@@ -788,8 +832,12 @@ void turn45outR(parameter turnpara,  char test_mode,char mollifier_mode,float en
 }
 
 
-void turn45outL(parameter turnpara,  char test_mode,char mollifier_mode,float end_velocity) {
+void turn45outL(parameter turnpara,  char test_mode,char mollifier_mode,float end_velocity, char wallcut_mode) {
 	MOTOR_MODE wallmode;
+	uint8_t wallcut = 0;
+	if (wallcut_mode == ON){
+		wallcut = 4;
+	}
 	if (test_mode == 1) {
 			highspeed_mode = 1;
 			wallmode.WallControlMode=0;
@@ -799,7 +847,7 @@ void turn45outL(parameter turnpara,  char test_mode,char mollifier_mode,float en
 			straight_table2(BACK_TO_CENTER_FRONT_SLANT + MAZE_SECTION/2*sqrt(2), 0, turnpara.g_speed, turnpara.g_speed,
 						turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
 			wallmode.WallControlMode=0;
-			wallmode.WallCutMode=4;
+			wallmode.WallCutMode=wallcut;
 			straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 					turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
 			if(mollifier_mode == ON){
@@ -816,7 +864,7 @@ void turn45outL(parameter turnpara,  char test_mode,char mollifier_mode,float en
 		highspeed_mode = 1;
 		wallmode.WallControlMode=0;
 		wallmode.WallControlStatus=0;
-		wallmode.WallCutMode=4;
+		wallmode.WallCutMode=wallcut;
 		wallmode.calMazeMode=0;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
@@ -833,7 +881,7 @@ void turn45outL(parameter turnpara,  char test_mode,char mollifier_mode,float en
 	} else {
 		wallmode.WallControlMode=OFFSET_CONTROL_IN_SLANT;
 		wallmode.WallControlStatus=0;
-		wallmode.WallCutMode=4;
+		wallmode.WallCutMode=wallcut;
 		wallmode.calMazeMode=0;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
@@ -853,8 +901,12 @@ void turn45outL(parameter turnpara,  char test_mode,char mollifier_mode,float en
 
 
 
-void turn135outR(parameter turnpara,  char test_mode,char mollifier_mode,float end_velocity) {
+void turn135outR(parameter turnpara,  char test_mode,char mollifier_mode,float end_velocity, char wallcut_mode) {
 	MOTOR_MODE wallmode;
+	uint8_t wallcut = 0;
+	if (wallcut_mode == ON){
+		wallcut = 3;
+	}
 	if (test_mode == 1) {
 			highspeed_mode = 1;
 			wallmode.WallControlMode=0;
@@ -864,7 +916,7 @@ void turn135outR(parameter turnpara,  char test_mode,char mollifier_mode,float e
 			straight_table2(BACK_TO_CENTER_FRONT_SLANT + MAZE_SECTION/2*sqrt(2), 0, turnpara.g_speed, turnpara.g_speed,
 						turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
 			wallmode.WallControlMode=0;
-			wallmode.WallCutMode=3;
+			wallmode.WallCutMode=wallcut;
 			straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 					turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
 			if(mollifier_mode == ON){
@@ -881,7 +933,7 @@ void turn135outR(parameter turnpara,  char test_mode,char mollifier_mode,float e
 		highspeed_mode = 1;
 		wallmode.WallControlMode=0;
 		wallmode.WallControlStatus=0;
-		wallmode.WallCutMode=3;
+		wallmode.WallCutMode=wallcut;
 		wallmode.calMazeMode=0;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
@@ -898,7 +950,7 @@ void turn135outR(parameter turnpara,  char test_mode,char mollifier_mode,float e
 	} else {
 		wallmode.WallControlMode=OFFSET_CONTROL_IN_SLANT;
 		wallmode.WallControlStatus=0;
-		wallmode.WallCutMode=3;
+		wallmode.WallCutMode=wallcut;
 		wallmode.calMazeMode=0;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
@@ -917,8 +969,12 @@ void turn135outR(parameter turnpara,  char test_mode,char mollifier_mode,float e
 }
 
 
-void turn135outL(parameter turnpara,  char test_mode,char mollifier_mode,float end_velocity) {
+void turn135outL(parameter turnpara,  char test_mode,char mollifier_mode,float end_velocity, char wallcut_mode) {
 	MOTOR_MODE wallmode;
+	uint8_t wallcut = 0;
+	if (wallcut_mode == ON){
+		wallcut = 4;
+	}
 	if (test_mode == 1) {
 		highspeed_mode = 1;
 		wallmode.WallControlMode=0;
@@ -928,7 +984,7 @@ void turn135outL(parameter turnpara,  char test_mode,char mollifier_mode,float e
 		straight_table2(BACK_TO_CENTER_FRONT_SLANT + MAZE_SECTION/2*sqrt(2), 0, turnpara.g_speed, turnpara.g_speed,
 					turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
 		wallmode.WallControlMode=0;
-		wallmode.WallCutMode=4;
+		wallmode.WallCutMode=wallcut;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
 		if(mollifier_mode == ON){
@@ -945,7 +1001,7 @@ void turn135outL(parameter turnpara,  char test_mode,char mollifier_mode,float e
 		highspeed_mode = 1;
 		wallmode.WallControlMode=0;
 		wallmode.WallControlStatus=0;
-		wallmode.WallCutMode=4;
+		wallmode.WallCutMode=wallcut;
 		wallmode.calMazeMode=0;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
@@ -962,7 +1018,7 @@ void turn135outL(parameter turnpara,  char test_mode,char mollifier_mode,float e
 	} else {
 		wallmode.WallControlMode=OFFSET_CONTROL_IN_SLANT;
 		wallmode.WallControlStatus=0;
-		wallmode.WallCutMode=4;
+		wallmode.WallCutMode=wallcut;
 		wallmode.calMazeMode=0;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
@@ -981,8 +1037,12 @@ void turn135outL(parameter turnpara,  char test_mode,char mollifier_mode,float e
 }
 
 
-void V90R(parameter turnpara,  char test_mode,char mollifier_mode,float end_velocity) {
+void V90R(parameter turnpara,  char test_mode,char mollifier_mode,float end_velocity, char wallcut_mode) {
 	MOTOR_MODE wallmode;
+	uint8_t wallcut = 0;
+	if (wallcut_mode == ON){
+		wallcut = 3;
+	}
 	if (test_mode == 1) {
 			highspeed_mode = 1;
 			wallmode.WallControlMode=0;
@@ -992,7 +1052,7 @@ void V90R(parameter turnpara,  char test_mode,char mollifier_mode,float end_velo
 			straight_table2(BACK_TO_CENTER_FRONT_SLANT + MAZE_SECTION/2*sqrt(2), 0, turnpara.g_speed, turnpara.g_speed,
 						turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
 			wallmode.WallControlMode=0;
-			wallmode.WallCutMode=3;
+			wallmode.WallCutMode=wallcut;
 			straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 					turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
 			if(mollifier_mode == ON){
@@ -1009,7 +1069,7 @@ void V90R(parameter turnpara,  char test_mode,char mollifier_mode,float end_velo
 		highspeed_mode = 1;
 		wallmode.WallControlMode=0;
 		wallmode.WallControlStatus=0;
-		wallmode.WallCutMode=3;
+		wallmode.WallCutMode=wallcut;
 		wallmode.calMazeMode=0;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
@@ -1026,7 +1086,7 @@ void V90R(parameter turnpara,  char test_mode,char mollifier_mode,float end_velo
 	} else {
 		wallmode.WallControlMode=OFFSET_CONTROL_IN_SLANT;
 		wallmode.WallControlStatus=0;
-		wallmode.WallCutMode=3;
+		wallmode.WallCutMode=wallcut;
 		wallmode.calMazeMode=0;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
@@ -1044,8 +1104,12 @@ void V90R(parameter turnpara,  char test_mode,char mollifier_mode,float end_velo
 
 }
 
-void V90L(parameter turnpara,  char test_mode,char mollifier_mode,float end_velocity) {
+void V90L(parameter turnpara,  char test_mode,char mollifier_mode,float end_velocity, char wallcut_mode) {
 	MOTOR_MODE wallmode;
+	uint8_t wallcut = 0;
+	if (wallcut_mode == ON){
+		wallcut = 4;
+	}
 	if (test_mode == 1) {
 				highspeed_mode = 1;
 				wallmode.WallControlMode=0;
@@ -1055,7 +1119,7 @@ void V90L(parameter turnpara,  char test_mode,char mollifier_mode,float end_velo
 				straight_table2(BACK_TO_CENTER_FRONT_SLANT + MAZE_SECTION/2*sqrt(2), 0, turnpara.g_speed, turnpara.g_speed,
 							turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
 				wallmode.WallControlMode=0;
-				wallmode.WallCutMode=4;
+				wallmode.WallCutMode=wallcut;
 				straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 						turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
 				if(mollifier_mode == ON){
@@ -1072,7 +1136,7 @@ void V90L(parameter turnpara,  char test_mode,char mollifier_mode,float end_velo
 		highspeed_mode = 1;
 		wallmode.WallControlMode=0;
 		wallmode.WallControlStatus=0;
-		wallmode.WallCutMode=4;
+		wallmode.WallCutMode=wallcut;
 		wallmode.calMazeMode=0;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
@@ -1089,7 +1153,7 @@ void V90L(parameter turnpara,  char test_mode,char mollifier_mode,float end_velo
 	} else {
 		wallmode.WallControlMode=OFFSET_CONTROL_IN_SLANT;
 		wallmode.WallControlStatus=0;
-		wallmode.WallCutMode=4;
+		wallmode.WallCutMode=wallcut;
 		wallmode.calMazeMode=0;
 		straight_table2(turnpara.f_ofset, turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / 45,wallmode);
@@ -1118,7 +1182,7 @@ void examine_V90R(parameter turnpara,char mollifier_mode){
 	straight_table2(BACK_TO_CENTER_SLANT + MAZE_SECTION/2*sqrt(2), 0, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
 	for(int i=0;i<8;i++){
-		V90R(turnpara,OFF,mollifier_mode,turnpara.g_speed);
+		V90R(turnpara,OFF,mollifier_mode,turnpara.g_speed,ON);
 		straight_table2(MAZE_SECTION/2*sqrt(2), turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 		turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);	
 	}
@@ -1141,7 +1205,7 @@ void examine_V90L(parameter turnpara,char mollifier_mode){
 	straight_table2(BACK_TO_CENTER_SLANT + MAZE_SECTION/2*sqrt(2), 0, turnpara.g_speed, turnpara.g_speed,
 				turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);
 	for(int i=0;i<8;i++){
-		V90L(turnpara,OFF,mollifier_mode,turnpara.g_speed);
+		V90L(turnpara,OFF,mollifier_mode,turnpara.g_speed,ON);
 		straight_table2(MAZE_SECTION/2*sqrt(2), turnpara.g_speed, turnpara.g_speed, turnpara.g_speed,
 		turnpara.g_speed * turnpara.g_speed  / 2 / (MAZE_SECTION/2),wallmode);	
 	}
@@ -1208,22 +1272,22 @@ void testturning(parameter_speed Howspeed,int turnmode,char shortest_mode,char f
 	// record_mode = 36;
 	// record_mode = 37;/* simscape用 */
 //	if(turnmode==0){test_mollifier_slalomR(Howspeed.slalom_R);}
-	if(turnmode==0){slalomR(Howspeed.slalom_R,ON,shortest_mode,mollifier_mode,-100);}
-	if(turnmode==1){slalomL(Howspeed.slalom_L,ON,shortest_mode,mollifier_mode,-100);}
-	if(turnmode==2){turn90R(Howspeed.turn90_R,ON,mollifier_mode,-100);}
-	if(turnmode==3){turn90L(Howspeed.turn90_L,ON,mollifier_mode,-100);}
-	if(turnmode==4){turn180R(Howspeed.turn180_R,ON,mollifier_mode,-100);}
-	if(turnmode==5){turn180L(Howspeed.turn180_L,ON,mollifier_mode,-100);}
-	if(turnmode==6){turn45inR(Howspeed.turn45in_R,ON,mollifier_mode,-100);}
-	if(turnmode==7){turn45inL(Howspeed.turn45in_L,ON,mollifier_mode,-100);}
-	if(turnmode==8){turn135inR(Howspeed.turn135in_R,ON,mollifier_mode,-100);}
-	if(turnmode==9){turn135inL(Howspeed.turn135in_L,ON,mollifier_mode,-100);}
-	if(turnmode==10){turn45outR(Howspeed.turn45out_R,ON,mollifier_mode,-100);}
-	if(turnmode==11){turn45outL(Howspeed.turn45out_L,ON,mollifier_mode,-100);}
-	if(turnmode==12){turn135outR(Howspeed.turn135out_R,ON,mollifier_mode,-100);}
-	if(turnmode==13){turn135outL(Howspeed.turn135out_L,ON,mollifier_mode,-100);}
-	if(turnmode==14){V90R(Howspeed.V90_R,ON,mollifier_mode,-100);}
-	if(turnmode==15){V90L(Howspeed.V90_L,ON,mollifier_mode,-100);}
+	if(turnmode==0){slalomR(Howspeed.slalom_R,ON,shortest_mode,mollifier_mode,-100,ON);}
+	if(turnmode==1){slalomL(Howspeed.slalom_L,ON,shortest_mode,mollifier_mode,-100,ON);}
+	if(turnmode==2){turn90R(Howspeed.turn90_R,ON,mollifier_mode,-100,ON);}
+	if(turnmode==3){turn90L(Howspeed.turn90_L,ON,mollifier_mode,-100,ON);}
+	if(turnmode==4){turn180R(Howspeed.turn180_R,ON,mollifier_mode,-100,ON);}
+	if(turnmode==5){turn180L(Howspeed.turn180_L,ON,mollifier_mode,-100,ON);}
+	if(turnmode==6){turn45inR(Howspeed.turn45in_R,ON,mollifier_mode,-100,ON);}
+	if(turnmode==7){turn45inL(Howspeed.turn45in_L,ON,mollifier_mode,-100,ON);}
+	if(turnmode==8){turn135inR(Howspeed.turn135in_R,ON,mollifier_mode,-100,ON);}
+	if(turnmode==9){turn135inL(Howspeed.turn135in_L,ON,mollifier_mode,-100,ON);}
+	if(turnmode==10){turn45outR(Howspeed.turn45out_R,ON,mollifier_mode,-100,ON);}
+	if(turnmode==11){turn45outL(Howspeed.turn45out_L,ON,mollifier_mode,-100,ON);}
+	if(turnmode==12){turn135outR(Howspeed.turn135out_R,ON,mollifier_mode,-100,ON);}
+	if(turnmode==13){turn135outL(Howspeed.turn135out_L,ON,mollifier_mode,-100,ON);}
+	if(turnmode==14){V90R(Howspeed.V90_R,ON,mollifier_mode,-100,ON);}
+	if(turnmode==15){V90L(Howspeed.V90_L,ON,mollifier_mode,-100,ON);}
 	if(turnmode==16){examine_V90R(Howspeed.V90_R,mollifier_mode);}
 	if(turnmode==17){examine_V90L(Howspeed.V90_L,mollifier_mode);}	
 //	if(turnmode==10){turn45inL(Howspeed.turn45in_L, CONNECT);turn45outR(Howspeed.turn45out_R,CONNECT);}

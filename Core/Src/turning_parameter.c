@@ -43,7 +43,9 @@ parameter_speed speed1800_shortest_mollifier;
 
 float get_center_velocity(parameter_speed Howspeed, int pass_number) {
 	float End_velocity;
-	if (pass_number == -2) {
+	if (pass_number == 0) {
+		End_velocity = Howspeed.TurnCentervelocity*0.3;/* 後オフセットで減速 */
+	}else if (pass_number == -2) {
 		End_velocity = Howspeed.slalom_R.g_speed;
 	} else if (pass_number == -3) {
 		End_velocity = Howspeed.slalom_L.g_speed;

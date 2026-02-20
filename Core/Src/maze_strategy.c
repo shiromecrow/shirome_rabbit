@@ -141,12 +141,12 @@ void run_movement_continuity(int *direction,unsigned short front_count,unsigned 
 	}
 	if(right_count < front_count && right_count <= left_count && right_count <= back_count){
 		// 右旋回
-		slalomR(howspeed.slalom_R, OFF,EXPLORATION,OFF,input_StraightVelocity);
+		slalomR(howspeed.slalom_R, OFF,EXPLORATION,OFF,input_StraightVelocity,ON);
 		*direction += 1;
 	}
 	if(left_count < front_count && left_count < right_count && left_count <= back_count){
 		// 左旋回
-		slalomL(howspeed.slalom_L, OFF,EXPLORATION,OFF,input_StraightVelocity);
+		slalomL(howspeed.slalom_L, OFF,EXPLORATION,OFF,input_StraightVelocity,ON);
 		*direction -= 1;
 	}
 	if(back_count < front_count && back_count < right_count
@@ -276,14 +276,18 @@ if(error_mode==0){
 	if (right_count < front_count && right_count <= left_count && right_count <= back_count) {
 		// 右旋回
 		//turning_table2(-90, 0, 0, -input_TurningVelocity, input_TurningAcceleration);
+		wait_ms_NoReset(50);
 		mollifier_turning_table(-90,input_TurningVelocity);
+		wait_ms_NoReset(50);
 		straight_table2(MAZE_SECTION / 2 - (BACK_TO_CENTER - BACK_TO_CENTER_FRONT), 0, input_StraightVelocity, input_StraightVelocity, input_StraightAcceleration, mode);
 		*direction += 1;
 	}
 	if (left_count < front_count && left_count < right_count && left_count <= back_count) {
 		// 左旋回
 		//turning_table2(90, 0, 0, input_TurningVelocity, input_TurningAcceleration);
+		wait_ms_NoReset(50);
 		mollifier_turning_table(90,input_TurningVelocity);
+		wait_ms_NoReset(50);
 		straight_table2(MAZE_SECTION / 2 - (BACK_TO_CENTER - BACK_TO_CENTER_FRONT), 0, input_StraightVelocity, input_StraightVelocity, input_StraightAcceleration, mode);
 		*direction -= 1;
 	}
@@ -1197,6 +1201,7 @@ if(pass_mode==1){
 //	gyro_PID_error=1800;
 	pass_count = 0;
 	float first_move_displacement = 0;
+	uint8_t wallcut_mode=ON;
 
 	mode.WallControlMode=1;
 	mode.WallControlStatus=0;
@@ -1223,76 +1228,81 @@ if(pass_mode==1){
 			pass_count2++;
 		}
 		end_velocity=get_center_velocity(howspeed,pass[pass_count2]);
+		if (pass[pass_count2] == 0){/* 次のパスが終了のとき止まる準備(壁切れOFF) */
+			wallcut_mode=OFF;
+		}else{
+			wallcut_mode=ON;
+		}
 
 		if (pass[pass_count] == -1) {
 			pass_count++;
 		}
 		else if (pass[pass_count] == -2) {
 
-			slalomR(howspeed.slalom_R, OFF,SHORTEST,mollifier_mode,end_velocity);
+			slalomR(howspeed.slalom_R, OFF,SHORTEST,mollifier_mode,end_velocity,wallcut_mode);
 
 			pass_count++;
 		}
 		else if (pass[pass_count] == -3) {
 
-			slalomL(howspeed.slalom_L, OFF,SHORTEST,mollifier_mode,end_velocity);
+			slalomL(howspeed.slalom_L, OFF,SHORTEST,mollifier_mode,end_velocity,wallcut_mode);
 
 			pass_count++;
 		}
 		else if (pass[pass_count] == -4) {
-			turn90R(howspeed.turn90_R, OFF,mollifier_mode,end_velocity);
+			turn90R(howspeed.turn90_R, OFF,mollifier_mode,end_velocity,wallcut_mode);
 			pass_count++;
 		}
 		else if (pass[pass_count] == -5) {
-			turn90L(howspeed.turn90_L, OFF,mollifier_mode,end_velocity);
+			turn90L(howspeed.turn90_L, OFF,mollifier_mode,end_velocity,wallcut_mode);
 			pass_count++;
 		}
 		else if (pass[pass_count] == -6) {
-			turn180R(howspeed.turn180_R, OFF,mollifier_mode,end_velocity);
+			turn180R(howspeed.turn180_R, OFF,mollifier_mode,end_velocity,wallcut_mode);
 			pass_count++;
 		}
 		else if (pass[pass_count] == -7) {
-			turn180L(howspeed.turn180_L, OFF,mollifier_mode,end_velocity);
+			turn180L(howspeed.turn180_L, OFF,mollifier_mode,end_velocity,wallcut_mode);
 			pass_count++;
 		}
 		else if (pass[pass_count] == -8) { //入り45R
-			turn45inR(howspeed.turn45in_R, OFF,mollifier_mode,end_velocity);
+			turn45inR(howspeed.turn45in_R, OFF,mollifier_mode,end_velocity,wallcut_mode);
 			pass_count++;
 		}
 		else if (pass[pass_count] == -9) { //入り45L
-			turn45inL(howspeed.turn45in_L, OFF,mollifier_mode,end_velocity);
+			turn45inL(howspeed.turn45in_L, OFF,mollifier_mode,end_velocity,wallcut_mode);
 			pass_count++;
 		}
 		else if (pass[pass_count] == -10) { //入り135R
-			turn135inR(howspeed.turn135in_R, OFF,mollifier_mode,end_velocity);
+			turn135inR(howspeed.turn135in_R, OFF,mollifier_mode,end_velocity,wallcut_mode);
 			pass_count++;
 		}
 		else if (pass[pass_count] == -11) { //入り135L
-			turn135inL(howspeed.turn135in_L, OFF,mollifier_mode,end_velocity);
+			turn135inL(howspeed.turn135in_L, OFF,mollifier_mode,end_velocity,wallcut_mode);
 			pass_count++;
 		}
 		else if (pass[pass_count] == -12) { //出り45R
-			turn45outR(howspeed.turn45out_R, OFF,mollifier_mode,end_velocity);
+			turn45outR(howspeed.turn45out_R, OFF,mollifier_mode,end_velocity,wallcut_mode);
 			pass_count++;
 		}
 		else if (pass[pass_count] == -13) { //出り45L
-			turn45outL(howspeed.turn45out_L, OFF,mollifier_mode,end_velocity);
+			turn45outL(howspeed.turn45out_L, OFF,mollifier_mode,end_velocity,wallcut_mode);
 			pass_count++;
 		}
 		else if (pass[pass_count] == -14) { //出り135R
-			turn135outR(howspeed.turn135out_R, OFF,mollifier_mode,end_velocity);
+			turn135outR(howspeed.turn135out_R, OFF,mollifier_mode,end_velocity,wallcut_mode);
 			pass_count++;
 		}
 		else if (pass[pass_count] == -15) { //出り135L
-			turn135outL(howspeed.turn135out_L, OFF,mollifier_mode,end_velocity);
+			turn135outL(howspeed.turn135out_L, OFF,mollifier_mode,end_velocity,wallcut_mode);
 			pass_count++;
 		}
 		else if (pass[pass_count] == -16) { //V90R
-			V90R(howspeed.V90_R, OFF,mollifier_mode,end_velocity);
+			V90R(howspeed.V90_R, OFF,mollifier_mode,end_velocity,wallcut_mode);
 			pass_count++;
 		}
 		else if (pass[pass_count] == -17) { //V90L
-			V90L(howspeed.V90_L, OFF,mollifier_mode,end_velocity);
+			V90L(howspeed.V90_L, OFF,mollifier_mode,end_velocity,wallcut_mode);
 			pass_count++;
 		}
 		else if (pass[pass_count] >= 1) {
