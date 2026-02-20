@@ -15,6 +15,7 @@
 #define MAX_DUTY_RATIO_ST 0.999
 
 #define TURNAFTER_WALLCONTROLOFF_RATIO 0.7
+#define TURNAFTER_WALLCONTROLOFF_RATIO_SLANT 0.9
 
 typedef struct {
 	uint8_t WallControlMode;//0で壁制御なし、1で通常の壁制御、2で斜めの制御

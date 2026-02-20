@@ -171,12 +171,12 @@ void run_movement_continuity(int *direction,unsigned short front_count,unsigned 
 	}
 	if(right_count < front_count && right_count <= left_count && right_count <= back_count){
 		// 右旋回
-		slalomR(howspeed.slalom_R, OFF,EXPLORATION,OFF,input_StraightVelocity,ON);
+		slalomR(howspeed.slalom_R, OFF,EXPLORATION,ON,input_StraightVelocity,ON);
 		*direction = update_direction(*direction, 1);
 	}
 	if(left_count < front_count && left_count < right_count && left_count <= back_count){
 		// 左旋回
-		slalomL(howspeed.slalom_L, OFF,EXPLORATION,OFF,input_StraightVelocity,ON);
+		slalomL(howspeed.slalom_L, OFF,EXPLORATION,ON,input_StraightVelocity,ON);
 		*direction = update_direction(*direction, -1);
 	}
 	if(back_count < front_count && back_count < right_count
@@ -562,7 +562,7 @@ void AdatiWayReturn(float input_StraightVelocity, float input_TurningVelocity, f
 			mode.calMazeMode=0;
 			mode.WallCutMode=0;
 			straight_table2(MAZE_SECTION/2-MAZE_OFFSET+(BACK_TO_CENTER - BACK_TO_CENTER_FRONT), input_StraightVelocity,0,input_StraightVelocity,input_StraightAcceleration, mode);
-			turning_table2(180,0,0,input_TurningVelocity,input_TurningAcceleration);
+			mollifier_turning_table(180,input_TurningVelocity);
 			straight_table2(-BACK_TO_CENTER_FRONT-10, 0,0,-150,input_StraightAcceleration, mode);
 			break;
 		}
@@ -1501,7 +1501,7 @@ if(error_mode>=1) return;
 			mode.calMazeMode=0;
 			mode.WallCutMode=0;
 			straight_table2(MAZE_SECTION/2-MAZE_OFFSET+(BACK_TO_CENTER - BACK_TO_CENTER_FRONT), input_StraightVelocity,0,input_StraightVelocity,input_StraightAcceleration, mode);
-			turning_table2(180,0,0,input_TurningVelocity,input_TurningAcceleration);
+			mollifier_turning_table(180,input_TurningVelocity);
 			straight_table2(-BACK_TO_CENTER_FRONT-10, 0,0,-150,input_StraightAcceleration, mode);
 			break;
 		}

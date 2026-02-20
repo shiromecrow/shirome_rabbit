@@ -566,7 +566,7 @@ float straight_table2(float input_displacement, float input_start_velocity,
 		if(g_WallControl_mode == 2 && straight.displacement>input_displacement*TURNAFTER_WALLCONTROLOFF_RATIO){
 			g_WallControl_mode = 1;
 		}
-		if(g_WallControl_mode == 4 && straight.displacement>input_displacement*TURNAFTER_WALLCONTROLOFF_RATIO){
+		if(g_WallControl_mode == 4 && straight.displacement>input_displacement*TURNAFTER_WALLCONTROLOFF_RATIO_SLANT){
 			g_WallControl_mode = 3;
 		}
 		if(motor_mode.WallCutMode==1){

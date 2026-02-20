@@ -616,26 +616,27 @@ void mode_Running2(unsigned char main_modeR){
 		break;
 		case 0b0011:
 			flash_out();
-			run_shortest(4000,17000,20000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8.1,1,2);
+			run_shortest(4000,17000,20000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8.1,1,0);
 		break;
 		case 0b0100:
 			flash_out();
-			run_shortest(6000,40000,40000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8.1,1,2);
+			run_shortest(5000,17000,20000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8.1,1,1);
 		break;
 		case 0b0101:
 			flash_out();
-			run_shortest(6000,55000,55000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8.1,1,2);
+			run_shortest(6000,40000,40000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8.1,1,2);
 		break;
 		case 0b0110:
 			flash_out();
-			run_shortest(5000,40000,40000,TURN_ON,FUN_ON,SLANT_ON,speed1800_shortest_mollifier,8.1,1,2);
+			run_shortest(6000,55000,55000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,8.1,1,2);
 		break;
 		case 0b0111:
 			flash_out();
-			run_shortest(6000,55000,55000,TURN_ON,FUN_ON,SLANT_ON,speed1800_shortest_mollifier,8.1,1,2);
+			run_shortest(5000,40000,40000,TURN_ON,FUN_ON,SLANT_ON,speed1800_shortest_mollifier,8.1,1,2);
 		break;
 		case 0b1000:
-
+			flash_out();
+			run_shortest(6000,55000,55000,TURN_ON,FUN_ON,SLANT_ON,speed1800_shortest_mollifier,8.1,1,2);
 		break;
 		case 0b1001:
 
@@ -749,8 +750,14 @@ void mode_Tuning2(unsigned char main_modeR){
 			mollifier_turning_table(-45,300*MAZE_SECTION/90);
 			slant_dbg_angle = 0;
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
+			highspeed_mode = 1;
+			start_fun(6.12);
+			//reset_gyro();
+			reset_gyro_integral();
+			reset_speed();
+			clear_Ierror();
 			record_mode=18;
-			straight_table2(90*3*sqrt(2), 0, 0, 300, 3000,mode);
+			straight_table2(90*3*sqrt(2), 0, 0, 1400, 15000,mode);
 		break;
 		case 5://斜め直進(45) 1110 0101
 			mode.WallControlMode=0;
@@ -761,8 +768,14 @@ void mode_Tuning2(unsigned char main_modeR){
 			mollifier_turning_table(-45,300*MAZE_SECTION/90);
 			slant_dbg_angle = 0;
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
+			highspeed_mode = 1;
+			start_fun(6.12);
+			//reset_gyro();
+			reset_gyro_integral();
+			reset_speed();
+			clear_Ierror();
 			record_mode=19;
-			straight_table2(90*3*sqrt(2), 0, 0, 300, 3000,mode);
+			straight_table2(90*3*sqrt(2), 0, 0, 1400, 15000,mode);
 		break;
 		case 6://斜め直進(90)
 			mode.WallControlMode=0;
@@ -838,7 +851,7 @@ void mode_Tuning2(unsigned char main_modeR){
 			mollifier_turning_table(90,400);
 			record_mode=27;
 			HAL_Delay(300);
-			record_mode=RECORD_STOPMODE;
+			record_mode=0;
 			for(int i=0;i<7;i++){
 			mollifier_turning_table(90,400);
 			}
