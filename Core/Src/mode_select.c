@@ -521,7 +521,9 @@ void mode_Running(unsigned char main_modeR){
 		case 0b0001://足立法(遅い)
 			flash_out();
 			create_StepCountMap_queue();
+			create_DijkstraMap3();
 			maze_display(&wall);
+			maze_display_Dijkstra();
 		break;
 		case 0b0010://Flashから
 			//maze_clear();
@@ -580,7 +582,8 @@ void mode_Running(unsigned char main_modeR){
 //			run_shortest(3100,11000,11000,TURN_ON,FUN_ON,SLANT_ON,speed1600_shortest_mollifier,0.99,1,0);
 		break;
 		case 0b1111:
-			maze_display(&error_wall);
+		maze_display(&wall);	
+		maze_display(&error_wall);
 			// AdatiWayReturn(250,400,2000,3000,speed250_exploration,1,0);
 		break;
 	}
@@ -1340,7 +1343,7 @@ void mode_Tuning0(unsigned char main_modeR){
 			V_cmd_sysid=0;
 			wait_ms(500);
 			V_cmd_sysid=0.5;
-			wait_ms(1000);
+			wait_ms(2000);
 			pl_DriveMotor_stop();
 			pl_r_blue_LED(OFF);
 			pl_l_blue_LED(OFF);

@@ -1271,6 +1271,7 @@ void testturning(parameter_speed Howspeed,int turnmode,char shortest_mode,char f
 	// record_mode = 25;
 	// record_mode = 36;
 	// record_mode = 37;/* simscape用 */
+	record_mode = 38;/* simscape用 */
 //	if(turnmode==0){test_mollifier_slalomR(Howspeed.slalom_R);}
 	if(turnmode==0){slalomR(Howspeed.slalom_R,ON,shortest_mode,mollifier_mode,-100,ON);}
 	if(turnmode==1){slalomL(Howspeed.slalom_L,ON,shortest_mode,mollifier_mode,-100,ON);}

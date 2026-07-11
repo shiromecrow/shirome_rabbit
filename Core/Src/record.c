@@ -233,8 +233,8 @@ void mode12(float* d, const char* header_out[], int request) {
     if (request == 0) {
     d[0] = turning.velocity;
     d[1] = angle_speed;
-    d[2] = g_V_L;
-    d[3] = g_V_R;
+    d[2] = E_speedL;
+    d[3] = E_speedR;
         return;
     }
     header_out[0] = "TarTurnVel";
@@ -622,6 +622,21 @@ void mode37(float* d, const char* header_out[], int request) {
     header_out[3] = "ActMotVolL";
 }
 
+// モード38: simscape用エンコーダ、ジャイロとFF項
+void mode38(float* d, const char* header_out[], int request) {
+    if (request == 0) {
+    d[0] = kalman_speed;
+    d[1] = angle_speed;
+    d[2] = g_feedforward_straight;
+    d[3] = g_feedforward_turning;
+        return;
+    }
+    header_out[0] = "ActKalVel";
+    header_out[1] = "ActTurnVel";
+    header_out[2] = "FF_s";
+    header_out[3] = "FF_t";
+}
+
 
 RecordMode record_modes[] = {
     { .record_func = mode1 },
@@ -661,6 +676,7 @@ RecordMode record_modes[] = {
     { .record_func = mode35 },
     { .record_func = mode36 },
     { .record_func = mode37 },
+    { .record_func = mode38 },
 };
 int num_record_modes = sizeof(record_modes) / sizeof(RecordMode);
 

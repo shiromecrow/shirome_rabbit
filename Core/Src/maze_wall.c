@@ -100,7 +100,22 @@ void maze_clear(void) { //初期化
 		tt++;
 	}
 	tt = 0;
+	wall.row_look[GOAL_Y] = wall.row_look[GOAL_Y] | (1 << (GOAL_X));
+	wall.row_look[GOAL_Y] = wall.row_look[GOAL_Y] | (1 << (GOAL_X+1));
+	wall.row_look[GOAL_Y] = wall.row_look[GOAL_Y] | (1 << (GOAL_X+2));
 
+	wall.row_look[GOAL_Y+1] = wall.row_look[GOAL_Y+1] | (1 << (GOAL_X));
+	wall.row_look[GOAL_Y+1] = wall.row_look[GOAL_Y+1] | (1 << (GOAL_X+1));
+	wall.row_look[GOAL_Y+1] = wall.row_look[GOAL_Y+1] | (1 << (GOAL_X+2));
+
+	wall.column_look[GOAL_X] = wall.column_look[GOAL_X] | (1 << (GOAL_Y));
+	wall.column_look[GOAL_X] = wall.column_look[GOAL_X] | (1 << (GOAL_Y+1));
+	wall.column_look[GOAL_X] = wall.column_look[GOAL_X] | (1 << (GOAL_Y+2));
+
+	wall.column_look[GOAL_X+1] = wall.column_look[GOAL_X+1] | (1 << (GOAL_Y));
+	wall.column_look[GOAL_X+1] = wall.column_look[GOAL_X+1] | (1 << (GOAL_Y+1));
+	wall.column_look[GOAL_X+1] = wall.column_look[GOAL_X+1] | (1 << (GOAL_Y+2));
+	
 	g_dijkstra_parameter.max_velocity=5000;
     g_dijkstra_parameter.acceleration=35000;
     g_dijkstra_parameter.Turn_parameter=speed1600_shortest_mollifier;
