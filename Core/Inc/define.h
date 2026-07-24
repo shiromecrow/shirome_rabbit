@@ -41,6 +41,9 @@
 #define FIRST_MOVE_R45 30 // 1400:21
 #define FIRST_MOVE_R135 30 // 1400:20
 
+/* 調整場所 4→4*4迷路、9→9*9迷路、16→16*16迷路、32→32*32迷路 */
+#define TUNING_AREA 4
+
 // 16対応
 #define GOAL_SIZE 2
 #define GOAL_X 3

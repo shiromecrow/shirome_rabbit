@@ -28,5 +28,8 @@ void mode_Tuning0(unsigned char);
 void mode_Tuning1(unsigned char);
 void mode_Tuning2(unsigned char);
 
+void mode_newTuning0(unsigned char);
+void mode_newTuning1(unsigned char);
+void mode_newTuning2(unsigned char);
 
 #endif /* INC_MODE_SELECT_H_ */

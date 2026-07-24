@@ -889,7 +889,6 @@ void interrupt_WallCut(void) {
 		}
 
 /* 大回りターンで用いる45度センサーの壁切れ */
-		//g_sensor_diff_wallcut[SENSOR_FRONT_LEFT] > WALLCUT_THRESHOLD_DIFF_L45 &&
 		if (g_sensor[SENSOR_FRONT_LEFT][0] > WALLCUT_THRESHOLD_L45) {
 			NoWallCountL45++;
 			NoWallCountL45_flag = 0;
@@ -905,7 +904,6 @@ void interrupt_WallCut(void) {
 			}
 		}
 
-		//g_sensor_diff_wallcut[SENSOR_FRONT_RIGHT] > WALLCUT_THRESHOLD_DIFF_R45 &&
 		if (g_sensor[SENSOR_FRONT_RIGHT][0] > WALLCUT_THRESHOLD_R45) {
 			NoWallCountR45++;
 			NoWallCountR45_flag = 0;

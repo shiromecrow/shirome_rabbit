@@ -65,35 +65,6 @@ int i;
 }
 
 
-/*******************************************************************/
-/*	割り込み用動作関数(センサー処理)			(interupt_calSensor)	*/
-/*******************************************************************/
-/*	センサーの情報を処理する割り込み関数．						*/
-/*******************************************************************/
-// void interupt_calSensor(void){
-// 	int j;
-	
-
-// 	for (j = 19; j >= 1; j--) {
-// 		//g_V_battery[j] = g_V_battery[j - 1];
-// 		for(int k=0;k < SENSOR_NUM; k++){
-// 			g_sensor[k][j] = g_sensor[k][j - 1];
-// 		}
-// 	}
-// 	//g_V_battery[0] = g_V_batt;
-// 	for(int k=0;k < SENSOR_NUM; k++){
-// 		g_sensor[k][0] = g_sensor_on[k] - g_sensor_off[k];
-// 	}
-
-// 	for (j = 0; j < SENSOR_NUM; j++) {
-// 		g_sensor_diff[j]=g_sensor[j][0]-g_sensor[j][11];
-// 		//g_sensor_diff_wallcut[j]=g_sensor[j][0]-g_sensor[j][6];
-// 		g_sensor_mean[j] = (g_sensor[j][0] + g_sensor[j][1] + g_sensor[j][2]) / 3;
-// 	}
-
-
-
-// }
 /* センサー計算用の高速なルート計算 */
 float fast_sqrt(float x) {
     float guess = x / 2.0f;
@@ -124,7 +95,6 @@ void interupt_calSensor(void){
 
 	for (j = 0; j < SENSOR_NUM; j++) {
 		g_sensor_diff[j]=g_sensor[j][0]-g_sensor[j][11];
-		//g_sensor_diff_wallcut[j]=g_sensor[j][0]-g_sensor[j][6];
 		g_sensor_mean[j] = (g_sensor[j][0] + g_sensor[j][1] + g_sensor[j][2]) / 3;
 	}
 

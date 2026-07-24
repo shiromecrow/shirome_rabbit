@@ -511,19 +511,15 @@ void mode26(float* d, const char* header_out[], int* out_count, int* sample_coun
 
 // モード27: 前壁センサの記録（生値のみ）
 void mode27(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
-    *out_count = 4;
+    *out_count = 2;
     *sample_count = 2;
     if (request == 0) {
     d[0] = g_sensor[SENSOR_FRONT_L][0];
     d[1] = g_sensor[SENSOR_FRONT_R][0];
-    d[2] = 0.0f;
-    d[3] = 0.0f;
         return;
     }
     header_out[0] = "SenLeftFrontVal";
     header_out[1] = "SenRightFrontVal";
-    header_out[2] = "Zero";
-    header_out[3] = "Zero";
 }
 
 // モード28: 前壁センサ + 壁切れ判定変位（L/R 45度）
@@ -718,6 +714,31 @@ void mode39(float* d, const char* header_out[], int* out_count, int* sample_coun
     *out_count = 8;
     *sample_count = 2;
     if (request == 0) {
+    d[0] = g_sensor_distance_slant[SENSOR_LEFT][0];
+    d[1] = g_log_CenterSlantL90;  
+    d[2] = g_sensor_distance_slant[SENSOR_FRONT_LEFT][0];
+    d[3] = g_log_CenterSlantL45;
+    d[4] = g_sensor_distance_slant[SENSOR_RIGHT][0];
+    d[5] = g_log_CenterSlantR90;
+    d[6] = g_sensor_distance_slant[SENSOR_FRONT_RIGHT][0];
+    d[7] = g_log_CenterSlantR45;
+        return;
+    }
+    header_out[0] = "SenDisL90";
+    header_out[1] = "RefDisL90";
+    header_out[2] = "SenDisL45";
+    header_out[3] = "RefDisL45";
+    header_out[4] = "SenDisR90";
+    header_out[5] = "RefDisR90";
+    header_out[6] = "SenDisR45";
+    header_out[7] = "RefDisR45";
+}
+
+// モード40: 斜め制御の確認
+void mode40(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 8;
+    *sample_count = 2;
+    if (request == 0) {
     d[0] = g_sensor[SENSOR_FRONT_L][0];
     d[1] = g_sensor[SENSOR_LEFT][0];    
     d[2] = g_sensor[SENSOR_FRONT_LEFT][0];
@@ -778,6 +799,7 @@ RecordMode record_modes[] = {
     { .record_func = mode37 },
     { .record_func = mode38 },
     { .record_func = mode39 },
+    { .record_func = mode40 },
 };
 int num_record_modes = sizeof(record_modes) / sizeof(RecordMode);
 
@@ -873,10 +895,9 @@ void interrupt_record(void) {
         head_record_mode = record_mode;
     }
 
-    int mode_index = record_mode - 1;
 
-    // ★チャンネル数取得
-    record_modes[mode_index].record_func(NULL, NULL, &out_count, &sample_time, 1);
+    // ★チャンネル数取得(最初の値から変更しない)
+    record_modes[head_record_mode - 1].record_func(NULL, NULL, &out_count, &sample_time, 1);
     record_ch_num = out_count;
     record_len_per_ch = MAX_RECORD_TOTAL / record_ch_num;
 
@@ -889,8 +910,10 @@ void interrupt_record(void) {
     }
 
     // ★実データ取得
-    record_modes[mode_index].record_func(r_data, NULL, &out_count, &sample_time, 0);
-    record_data(r_data, record_ch_num, sample_time);
+    if(record_mode <= num_record_modes && record_mode > 0) {
+        record_modes[record_mode - 1].record_func(r_data, NULL, &out_count, &sample_time, 0);
+        record_data(r_data, record_ch_num, sample_time);
+    }
 
     if (record_mode != RECORD_STOPMODE) {
         recordstop_count = 0;
