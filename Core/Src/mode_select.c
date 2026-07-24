@@ -1183,8 +1183,8 @@ void mode_Tuning1(unsigned char main_modeR){
 			straight_table2(BACK_TO_CENTER2+MAZE_SECTION/2,0,0,200*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
 			turning_table2(-45, 0, 0, -300*MAZE_SECTION/90, 3000*MAZE_SECTION/90);
 			straight_table2(-BACK_TO_CENTER_FRONT_SLANT,0,0,-100*MAZE_SECTION/90,5000*MAZE_SECTION/90, mode);
-			mode.WallControlMode=3;
-			record_mode=9;
+			mode.WallControlMode=0;
+			record_mode=39;
 			straight_table2(90*3*sqrt(2), 0, 0, 300, 3000,mode);
 		break;
 		case 14://斜め直進(45)

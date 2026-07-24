@@ -11,14 +11,13 @@
 
 #include <stdbool.h>
 
-#define MAX_RECORD_NUM 4
-#define MAX_RECORD_TIME 3000
+#define MAX_RECORD_TOTAL  13000   // 総データ数(メモリの限界)
 
 #define RECORD_STOPNUM -1
 #define RECORD_STOPMODE 1000
 
 typedef struct {
-    void (*record_func)(float* d, const char* header_out[], int request);
+    void (*record_func)(float* d, const char* header_out[], int* out_count, int* sample_count, int request);
 } RecordMode;
 
 extern RecordMode record_modes[];
@@ -36,7 +35,7 @@ void record_stop(void);
 void record_pause(void);
 void record_resume(void);
 
-void record_data(float *,int);
+void record_data(float *,int,int);
 void record_print();
 
 void record_reset(void);

@@ -35,12 +35,13 @@
 //#include "motor_control.h"
 //#include "PID_wall.h"
 
-float record_value[MAX_RECORD_NUM][MAX_RECORD_TIME];
+float record_value[MAX_RECORD_TOTAL]; 
+int   record_ch_num;  
+int   record_len_per_ch; 
 
 short record_mode;
 short head_record_mode;
 
-int sample_time;/* サンプリング時間 [0.5ms] */
 int sample_count;/* サンプリング観測用のカウント値 */
 
 int record_time;
@@ -61,8 +62,9 @@ char recordstop_count = 0;
 // ------------------------------------------------------------
 
 // モード01: エンコーダ速度・距離
-void mode1(float* d, const char* header_out[], int request) {
-
+void mode1(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
         d[0] = E_speedR;
         d[1] = E_speedL;
@@ -79,7 +81,9 @@ void mode1(float* d, const char* header_out[], int request) {
 
 
 // モード02: 回転・直進・推定速度比較
-void mode2(float* d, const char* header_out[], int request) {
+void mode2(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
         d[0] = turning.velocity;
         d[1] = angle_speed;
@@ -94,7 +98,9 @@ void mode2(float* d, const char* header_out[], int request) {
 }
 
 // モード03: 直進距離・速度と推定値比較
-void mode3(float* d, const char* header_out[], int request) {
+void mode3(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = straight.velocity;
     d[1] = straight.displacement;
@@ -109,7 +115,9 @@ void mode3(float* d, const char* header_out[], int request) {
 }
 
 // モード04: 距離比較（直進 vs エンコーダ vs 推定）
-void mode4(float* d, const char* header_out[], int request) {
+void mode4(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = straight.displacement;
     d[1] = (E_distanceR + E_distanceL) / 2.0f;
@@ -124,7 +132,9 @@ void mode4(float* d, const char* header_out[], int request) {
 }
 
 // モード05: 速度比較（直進 vs エンコーダ vs 推定）
-void mode5(float* d, const char* header_out[], int request) {
+void mode5(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = straight.velocity;
     d[1] = (E_speedL + E_speedR) / 2.0f;
@@ -139,7 +149,9 @@ void mode5(float* d, const char* header_out[], int request) {
 }
 
 // モード06: LPF速度比較
-void mode6(float* d, const char* header_out[], int request) {
+void mode6(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = straight.velocity;
     d[1] = E_lpf_speedL;
@@ -154,7 +166,9 @@ void mode6(float* d, const char* header_out[], int request) {
 }
 
 // モード07: 左右壁センサの生値と差分
-void mode7(float* d, const char* header_out[], int request) {
+void mode7(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = g_sensor[SENSOR_LEFT][0];
     d[1] = g_sensor_diff[SENSOR_LEFT];
@@ -169,7 +183,9 @@ void mode7(float* d, const char* header_out[], int request) {
 }
 
 // モード08: 前壁センサの生値と差分
-void mode8(float* d, const char* header_out[], int request) {
+void mode8(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = g_sensor[SENSOR_FRONT_LEFT][0];
     d[1] = g_sensor_diff_wallcut[SENSOR_FRONT_LEFT];
@@ -183,7 +199,9 @@ void mode8(float* d, const char* header_out[], int request) {
     header_out[3] = "SenRightFrontDiff";
 }
 // モード09: 左右壁センサ値 + 壁なし変位（45°斜め）
-void mode9(float* d, const char* header_out[], int request) {
+void mode9(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = g_sensor[SENSOR_LEFT][0];
     d[1] = g_sensor[SENSOR_RIGHT][0];
@@ -198,7 +216,9 @@ void mode9(float* d, const char* header_out[], int request) {
 }
 
 // モード10: 前左右センサ値 + 壁なし変位（45°斜め）
-void mode10(float* d, const char* header_out[], int request) {
+void mode10(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = g_sensor[SENSOR_FRONT_LEFT][0];
     d[1] = g_sensor[SENSOR_FRONT_RIGHT][0];
@@ -214,7 +234,9 @@ void mode10(float* d, const char* header_out[], int request) {
 
 
 // モード11: エンコーダ速度とカウント値比較（L/R）
-void mode11(float* d, const char* header_out[], int request) {
+void mode11(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = E_speedL;
     d[1] = encoder_L;
@@ -229,7 +251,9 @@ void mode11(float* d, const char* header_out[], int request) {
 }
 
 // モード12: 回転系速度とモータ個別速度比較
-void mode12(float* d, const char* header_out[], int request) {
+void mode12(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = turning.velocity;
     d[1] = angle_speed;
@@ -244,7 +268,9 @@ void mode12(float* d, const char* header_out[], int request) {
 }
 
 // モード13: 直進速度・エンコーダ速度・gf速度比較
-void mode13(float* d, const char* header_out[], int request) {
+void mode13(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = straight.velocity;
     d[1] = E_speedR;
@@ -259,7 +285,9 @@ void mode13(float* d, const char* header_out[], int request) {
 }
 
 // モード14: 直進速度・Kalman・モータ速度比較
-void mode14(float* d, const char* header_out[], int request) {
+void mode14(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = straight.velocity;
     d[1] = kalman_speed;
@@ -274,7 +302,9 @@ void mode14(float* d, const char* header_out[], int request) {
 }
 
 // モード15: 前左センサ + 壁切れ差分 + 壁なし変位＆回数
-void mode15(float* d, const char* header_out[], int request) {
+void mode15(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = g_sensor[SENSOR_FRONT_LEFT][0];
     d[1] = g_sensor_diff_wallcut[SENSOR_FRONT_LEFT];
@@ -289,7 +319,9 @@ void mode15(float* d, const char* header_out[], int request) {
 }
 
 // モード16: 前右センサ + 壁切れ差分 + 壁なし変位2種
-void mode16(float* d, const char* header_out[], int request) {
+void mode16(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = g_sensor[SENSOR_FRONT_RIGHT][0];
     d[1] = g_sensor_diff_wallcut_slant[SENSOR_FRONT_RIGHT];
@@ -304,7 +336,9 @@ void mode16(float* d, const char* header_out[], int request) {
 }
 
 // モード17: 前左センサ + 壁切れ差分 + 壁なし変位2種
-void mode17(float* d, const char* header_out[], int request) {
+void mode17(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = g_sensor[SENSOR_FRONT_LEFT][0];
     d[1] = g_sensor_diff_wallcut_slant[SENSOR_FRONT_LEFT];
@@ -319,7 +353,9 @@ void mode17(float* d, const char* header_out[], int request) {
 }
 
 // モード18: 斜め左右センサ距離 + 壁なし変位
-void mode18(float* d, const char* header_out[], int request) {
+void mode18(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = g_sensor_distance_slant[SENSOR_LEFT][0];
     d[1] = g_sensor_distance_slant[SENSOR_RIGHT][0];
@@ -334,7 +370,9 @@ void mode18(float* d, const char* header_out[], int request) {
 }
 
 // モード19: 斜め前左右センサ距離 + 壁なし変位
-void mode19(float* d, const char* header_out[], int request) {
+void mode19(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = g_sensor_distance_slant[SENSOR_FRONT_LEFT][0];
     d[1] = g_sensor_distance_slant[SENSOR_FRONT_RIGHT][0];
@@ -349,7 +387,9 @@ void mode19(float* d, const char* header_out[], int request) {
 }
 
 // モード20: 斜め左右センサ距離 + 90度中心補正ログ
-void mode20(float* d, const char* header_out[], int request) {
+void mode20(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = g_sensor_distance_slant[SENSOR_LEFT][0];
     d[1] = g_sensor_distance_slant[SENSOR_RIGHT][0];
@@ -364,7 +404,9 @@ void mode20(float* d, const char* header_out[], int request) {
 }
 
 // モード21: 斜め前左右センサ距離 + 45度中心補正ログ
-void mode21(float* d, const char* header_out[], int request) {
+void mode21(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = g_sensor_distance_slant[SENSOR_FRONT_LEFT][0];
     d[1] = g_sensor_distance_slant[SENSOR_FRONT_RIGHT][0];
@@ -380,7 +422,9 @@ void mode21(float* d, const char* header_out[], int request) {
 
 
 // モード22: Lターン時のセンサと融合距離
-void mode22(float* d, const char* header_out[], int request) {
+void mode22(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     float f = (fusion_distanceL + fusion_distanceR) / 2.0f / sqrtf(2.0f);
     d[0] = g_sensor[SENSOR_LEFT][0];
@@ -396,7 +440,9 @@ void mode22(float* d, const char* header_out[], int request) {
 }
 
 // モード23: Rターン時のセンサと融合距離
-void mode23(float* d, const char* header_out[], int request) {
+void mode23(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     float f = (fusion_distanceL + fusion_distanceR) / 2.0f / sqrtf(2.0f);
     d[0] = g_sensor[SENSOR_RIGHT][0];
@@ -412,7 +458,9 @@ void mode23(float* d, const char* header_out[], int request) {
 }
 
 // モード24: 複数速度推定の比較
-void mode24(float* d, const char* header_out[], int request) {
+void mode24(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = (E_speedL + E_speedR) / 2.0f;
     d[1] = (fusion_speedL + fusion_speedR) / 2.0f;
@@ -427,7 +475,9 @@ void mode24(float* d, const char* header_out[], int request) {
 }
 
 // モード25: FF加速度と実加速度の比較
-void mode25(float* d, const char* header_out[], int request) {
+void mode25(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = turning.velocity;
     d[1] = angle_speed;
@@ -443,7 +493,9 @@ void mode25(float* d, const char* header_out[], int request) {
 }
 
 // モード26: 旋回調整用ログ（回転・角速度・直進・融合速度）
-void mode26(float* d, const char* header_out[], int request) {
+void mode26(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = turning.velocity;
     d[1] = angle_speed;
@@ -458,7 +510,9 @@ void mode26(float* d, const char* header_out[], int request) {
 }
 
 // モード27: 前壁センサの記録（生値のみ）
-void mode27(float* d, const char* header_out[], int request) {
+void mode27(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = g_sensor[SENSOR_FRONT_L][0];
     d[1] = g_sensor[SENSOR_FRONT_R][0];
@@ -473,7 +527,9 @@ void mode27(float* d, const char* header_out[], int request) {
 }
 
 // モード28: 前壁センサ + 壁切れ判定変位（L/R 45度）
-void mode28(float* d, const char* header_out[], int request) {
+void mode28(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = g_sensor[SENSOR_FRONT_LEFT][0];
     d[1] = g_sensor[SENSOR_FRONT_RIGHT][0];
@@ -488,7 +544,9 @@ void mode28(float* d, const char* header_out[], int request) {
 }
 
 // モード29: 壁切れ差分 + 斜め変位（L/R 45度 Slant2）
-void mode29(float* d, const char* header_out[], int request) {
+void mode29(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = g_sensor_diff_wallcut_slant[SENSOR_FRONT_LEFT];
     d[1] = g_sensor_diff_wallcut_slant[SENSOR_FRONT_RIGHT];
@@ -503,7 +561,9 @@ void mode29(float* d, const char* header_out[], int request) {
 }
 
 // モード30: 速度・角速度・ヨー角の変化（回転中の状態確認）
-void mode30(float* d, const char* header_out[], int request) {
+void mode30(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = (fusion_speedR + fusion_speedL) / 2.0f;
     d[1] = angle_speed;
@@ -518,7 +578,9 @@ void mode30(float* d, const char* header_out[], int request) {
 }
 
 // モード31: 直進・旋回速度と旋回変位
-void mode31(float* d, const char* header_out[], int request) {
+void mode31(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = straight.velocity;
     d[1] = turning.velocity;
@@ -533,7 +595,9 @@ void mode31(float* d, const char* header_out[], int request) {
 }
 
 // モード32: モータ左右速度と電圧情報
-void mode32(float* d, const char* header_out[], int request) {
+void mode32(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = g_V_L;
     d[1] = g_V_R;
@@ -548,7 +612,9 @@ void mode32(float* d, const char* header_out[], int request) {
 }
 
 // モード33: 電圧と融合・直進速度の比較
-void mode33(float* d, const char* header_out[], int request) {
+void mode33(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = g_Vol1;
     d[1] = (fusion_speedR + fusion_speedL) / 2.0f;
@@ -563,7 +629,9 @@ void mode33(float* d, const char* header_out[], int request) {
 }
 
 // モード34: 各種速度と角速度の状態確認
-void mode34(float* d, const char* header_out[], int request) {
+void mode34(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = straight.velocity;
     d[1] = (fusion_speedR + fusion_speedL) / 2.0f;
@@ -578,7 +646,9 @@ void mode34(float* d, const char* header_out[], int request) {
 }
 
 // モード35: 回転速度と加速度・平均エンコーダ速度比較
-void mode35(float* d, const char* header_out[], int request) {
+void mode35(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = turning.velocity;
     d[1] = angle_speed;
@@ -593,7 +663,9 @@ void mode35(float* d, const char* header_out[], int request) {
 }
 
 // モード36: モータ推定出力（拡張FF項の確認）
-void mode36(float* d, const char* header_out[], int request) {
+void mode36(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = turning.velocity;
     d[1] = angle_speed;
@@ -608,7 +680,9 @@ void mode36(float* d, const char* header_out[], int request) {
 }
 
 // モード37: simscape用電圧とエンコーダ、ジャイロ
-void mode37(float* d, const char* header_out[], int request) {
+void mode37(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = kalman_speed;
     d[1] = angle_speed;
@@ -623,7 +697,9 @@ void mode37(float* d, const char* header_out[], int request) {
 }
 
 // モード38: simscape用エンコーダ、ジャイロとFF項
-void mode38(float* d, const char* header_out[], int request) {
+void mode38(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 4;
+    *sample_count = 2;
     if (request == 0) {
     d[0] = kalman_speed;
     d[1] = angle_speed;
@@ -637,6 +713,30 @@ void mode38(float* d, const char* header_out[], int request) {
     header_out[3] = "FF_t";
 }
 
+// モード39: 全センサ取得
+void mode39(float* d, const char* header_out[], int* out_count, int* sample_count, int request) {
+    *out_count = 8;
+    *sample_count = 2;
+    if (request == 0) {
+    d[0] = g_sensor[SENSOR_FRONT_L][0];
+    d[1] = g_sensor[SENSOR_LEFT][0];    
+    d[2] = g_sensor[SENSOR_FRONT_LEFT][0];
+    d[3] = g_sensor[SENSOR_FRONT_RIGHT][0];
+    d[4] = g_sensor[SENSOR_RIGHT][0];
+    d[5] = g_sensor[SENSOR_FRONT_R][0];
+    d[6] = NoWallDisplacementL45slant;
+    d[7] = NoWallDisplacementR45slant;
+        return;
+    }
+    header_out[0] = "SenFrontL";
+    header_out[1] = "SenLeft90";
+    header_out[2] = "SenLeft45";
+    header_out[3] = "SenRight45";
+    header_out[4] = "SenRight90";
+    header_out[5] = "SenFrontR";
+    header_out[6] = "NoWallDispL45";
+    header_out[7] = "NoWallDispR45";
+}
 
 RecordMode record_modes[] = {
     { .record_func = mode1 },
@@ -677,6 +777,7 @@ RecordMode record_modes[] = {
     { .record_func = mode36 },
     { .record_func = mode37 },
     { .record_func = mode38 },
+    { .record_func = mode39 },
 };
 int num_record_modes = sizeof(record_modes) / sizeof(RecordMode);
 
@@ -685,106 +786,115 @@ void record_reset(void) {
 	record_mode = 0;
 	record_time = 0;
 	record_rupe_flag = 0;
-	sample_time = 2;
 	sample_count = 0;
 	recordstop_count = 0;
 }
 
-void record_data(float *input_record_data, int numlen) {
+void record_data(float *input_record_data, int numlen, int samtim) {
 
-	sample_count = sample_count % sample_time;
+    sample_count = sample_count % samtim;
 
-	if( sample_count == 0 ){
-		for (int record_count = 0; record_count < numlen; record_count++) {
-			record_value[record_count][record_time] =
-					input_record_data[record_count];
-		}
-		if (record_rupe_flag == 1) {
-			record_end_point = record_time;
-		}
-		record_time++;
-		if (record_time >= MAX_RECORD_TIME) {
-			record_time = 0;
-			record_rupe_flag = 1;
-		}
-		recordstop_count++;
+    if (sample_count == 0) {
 
-	}
-	sample_count++;
+        for (int ch = 0; ch < numlen; ch++) {
+            int index = ch * record_len_per_ch + record_time;
+            record_value[index] = input_record_data[ch];
+        }
 
-}
+        if (record_rupe_flag == 1) {
+            record_end_point = record_time;
+        }
 
-void record_print(void) {
-	int a, time_index;
-    const char* header[MAX_RECORD_NUM];
-    if(head_record_mode > 0 && head_record_mode <= num_record_modes){ 
-    record_modes[head_record_mode - 1].record_func(NULL, header, 1);
+        record_time++;
+        if (record_time >= record_len_per_ch) {
+            record_time = 0;
+            record_rupe_flag = 1;
+        }
+
+        recordstop_count++;
     }
 
-	// ヘッダー行
+    sample_count++;
+}
+
+
+void record_print(void) {
+    int a, time_index;
+    int out_count = 0;
+    int sample_time = 0;
+    const char* header[16];
+
+    if (head_record_mode > 0 && head_record_mode <= num_record_modes) {
+        record_modes[head_record_mode - 1].record_func(NULL, header, &out_count, &sample_time, 1);
+    }
+
     printf("Time[s]");
-    for (int i = 0; i < MAX_RECORD_NUM; i++) {
+    for (int i = 0; i < out_count; i++) {
         printf(",%s", header[i]);
     }
     printf("\n");
 
+    if (record_rupe_flag == 0) {
 
-	if (record_rupe_flag == 0) {
-		for (a = 0; a <= record_time - 1; a++) {
+        for (a = 0; a < record_time; a++) {
+            printf("%f", (float)(a * sample_time) * INTERRUPT_TIME);
 
-			printf("%f", (float)(a*sample_time)*INTERRUPT_TIME);
-			for (int record_count = 0; record_count < MAX_RECORD_NUM;
-					record_count++) {
-				printf(",%f", record_value[record_count][a]);
-			}
-			printf("\n");
-		}
-	} else {
-		for (a = 0; a <= MAX_RECORD_TIME - 1; a++) {
-			time_index = record_end_point + 1 + a;
-			if (time_index >= MAX_RECORD_TIME) {
-				time_index -= MAX_RECORD_TIME;
-			}
-			printf("%f", (float)(a*sample_time)*INTERRUPT_TIME);
-			for (int record_count = 0; record_count < MAX_RECORD_NUM;
-					record_count++) {
-				printf(",%f", record_value[record_count][time_index]);
-			}
-			printf("\n");
-		}
-	}
+            for (int ch = 0; ch < out_count; ch++) {
+                int index = ch * record_len_per_ch + a;
+                printf(",%f", record_value[index]);
+            }
+            printf("\n");
+        }
 
+    } else {
+
+        for (a = 0; a < record_len_per_ch; a++) {
+            time_index = (record_end_point + 1 + a) % record_len_per_ch;
+
+            printf("%f", (float)(a * sample_time) * INTERRUPT_TIME);
+
+            for (int ch = 0; ch < out_count; ch++) {
+                int index = ch * record_len_per_ch + time_index;
+                printf(",%f", record_value[index]);
+            }
+            printf("\n");
+        }
+    }
 }
 
 void interrupt_record(void) {
-	float r_data[MAX_RECORD_NUM];
+    int out_count = 0;
+    int sample_time = 0;
+    float r_data[16];
 
-	if (record_mode == 0) {
-		return;
-	}else{
-        if( record_mode != RECORD_STOPMODE ){
-		head_record_mode = record_mode;
+    if (record_mode == 0) return;
+
+    if (record_mode != RECORD_STOPMODE) {
+        head_record_mode = record_mode;
+    }
+
+    int mode_index = record_mode - 1;
+
+    // ★チャンネル数取得
+    record_modes[mode_index].record_func(NULL, NULL, &out_count, &sample_time, 1);
+    record_ch_num = out_count;
+    record_len_per_ch = MAX_RECORD_TOTAL / record_ch_num;
+
+    if (record_mode == RECORD_STOPMODE && recordstop_count == 0) {
+        for (int ch = 0; ch < record_ch_num; ch++) {
+            r_data[ch] = RECORD_STOPNUM;
         }
-	}
+        record_data(r_data, record_ch_num, sample_time);
+        return;
+    }
 
-	if (record_mode == RECORD_STOPMODE && recordstop_count == 0 ) {
-		r_data[0] = RECORD_STOPNUM;
-		r_data[1] = RECORD_STOPNUM;
-		r_data[2] = RECORD_STOPNUM;
-		r_data[3] = RECORD_STOPNUM;
-		record_data(r_data, 4);	
-		return;		
-	}
+    // ★実データ取得
+    record_modes[mode_index].record_func(r_data, NULL, &out_count, &sample_time, 0);
+    record_data(r_data, record_ch_num, sample_time);
 
-	if(record_mode <= num_record_modes){
-    	record_modes[record_mode - 1].record_func(r_data, NULL, 0);
-    	record_data(r_data, MAX_RECORD_NUM);
-	}
-
-	if (record_mode != RECORD_STOPMODE){
-		recordstop_count=0;
-	}
-
-
+    if (record_mode != RECORD_STOPMODE) {
+        recordstop_count = 0;
+    }
 }
+
 
